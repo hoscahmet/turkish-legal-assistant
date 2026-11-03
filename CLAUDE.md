@@ -1,0 +1,29 @@
+# turkish-legal-assistant
+
+Question answering system over Turkish legislation.
+
+## Kurallar
+- Kod, isimler, yorumlar, testler, README ve commit mesajları İngilizce.
+- Kanun metinleri, test soruları ve son kullanıcıya verilen cevaplar Türkçe.
+- Paket yönetimi uv ile. Her yeni özellik için pytest testi yazılır.
+- Türkçe metinde küçük harfe çevirmek için str.lower() değil,
+  tr_lower() kullanılır (İ ve I harfleri için).
+
+## Yol haritası
+- Faz 0: FastAPI iskeleti, Pydantic modelleri (tamamlandı)
+- Faz 1: mevzuat.gov.tr'den kanun metinlerini çekmek, madde bazlı
+  chunking ve metadata. Kanunlar: 4857 İş Kanunu, 6698 KVKK,
+  6502 Tüketicinin Korunması Hakkında Kanun, 6098 TBK (kira bölümü)
+- Faz 2: LLM API, structured output, tool calling
+- Faz 3: Qdrant, BGE-M3 embedding, hybrid search, reranker,
+  golden dataset ile Recall@k / MRR ölçümü
+- Faz 4: LangGraph agent
+- Faz 5: MCP server
+- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis
+- Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
+- Faz 8: Docker Compose, demo arayüz, README
+
+## Commands
+- Install: `uv sync`
+- Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
+- Test: `uv run pytest`
