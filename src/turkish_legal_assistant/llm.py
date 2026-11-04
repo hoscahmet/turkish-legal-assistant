@@ -1,16 +1,23 @@
-"""Answer questions with Claude: tool calling to find articles, structured output for the answer."""
+"""Answer questions with an LLM: tool calling to find articles, structured output for the answer.
+
+Two providers run the same loop: Gemini (free tier, default) and Claude. Pick with LLM_PROVIDER.
+"""
 
 import json
+import os
 from functools import cache
 
 import anthropic
+from google import genai
+from google.genai import types
 
 from .data import find_article
 from .ingest import LAWS
 from .models import AskResponse, LegalAnswer
 from .search import search
 
-MODEL = "claude-opus-5-5"
+CLAUDE_MODEL = "claude-opus-5-5"
+GEMINI_MODEL = "gemini-3.8-flash"  # has a free tier
 MAX_TURNS = 6  # cap tool-calling rounds so a confused model cannot loop (and bill) forever
 REFUSAL_ANSWER = "Bu soruya cevap veremiyorum."
 
@@ -63,10 +70,21 @@ class LLMError(Exception):
     pass
 
 
+class LLMNotConfigured(LLMError):
+    pass
+
+
+# Clients are created on first use so the app (and tests) start without an API key.
 @cache
-def get_client() -> anthropic.Anthropic:
-    # Created on first use so the app (and tests) start without an API key.
+def get_claude_client() -> anthropic.Anthropic:
     return anthropic.Anthropic()
+
+
+@cache
+def get_gemini_client() -> genai.Client:
+    if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")):
+        raise LLMNotConfigured("set GEMINI_API_KEY")
+    return genai.Client()
 
 
 def run_tool(name: str, args: dict, top_k: int) -> tuple[str, bool]:
@@ -85,10 +103,26 @@ def run_tool(name: str, args: dict, top_k: int) -> tuple[str, bool]:
 
 
 def answer(question: str, top_k: int = 5) -> AskResponse:
+    provider = os.environ.get("LLM_PROVIDER", "gemini")
+    if provider == "gemini":
+        return answer_gemini(question, top_k)
+    if provider == "claude":
+        return answer_claude(question, top_k)
+    raise LLMNotConfigured(f"Unknown LLM_PROVIDER: {provider}")
+
+
+def to_response(question: str, json_text: str) -> AskResponse:
+    """Validate the model's JSON answer and keep only citations of real articles (hallucination guard)."""
+    parsed = LegalAnswer.model_validate_json(json_text)
+    sources = [a for c in parsed.citations if (a := find_article(c.law_number, c.article_number))]
+    return AskResponse(question=question, answer=parsed.answer, sources=sources)
+
+
+def answer_claude(question: str, top_k: int = 5) -> AskResponse:
     messages: list = [{"role": "user", "content": question}]
     for _ in range(MAX_TURNS):
-        response = get_client().beta.messages.create(
-            model=MODEL,
+        response = get_claude_client().beta.messages.create(
+            model=CLAUDE_MODEL,
             max_tokens=16000,
             system=SYSTEM,
             tools=TOOLS,
@@ -118,8 +152,53 @@ def answer(question: str, top_k: int = 5) -> AskResponse:
     if response.stop_reason != "end_turn":
         raise LLMError(f"Unexpected stop reason: {response.stop_reason}")
 
-    text = next(b.text for b in response.content if b.type == "text")
-    parsed = LegalAnswer.model_validate_json(text)
-    # Hallucination guard: only keep citations of articles that really exist.
-    sources = [a for c in parsed.citations if (a := find_article(c.law_number, c.article_number))]
-    return AskResponse(question=question, answer=parsed.answer, sources=sources)
+    return to_response(question, next(b.text for b in response.content if b.type == "text"))
+
+
+GEMINI_CONFIG = types.GenerateContentConfig(
+    system_instruction=SYSTEM,
+    tools=[
+        types.Tool(
+            function_declarations=[
+                types.FunctionDeclaration(
+                    name=t["name"], description=t["description"], parameters_json_schema=t["input_schema"]
+                )
+                for t in TOOLS
+            ]
+        )
+    ],
+    # We run the tool loop ourselves, same as for Claude, instead of letting the SDK call Python functions.
+    automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+    response_mime_type="application/json",
+    response_json_schema=LegalAnswer.model_json_schema(),
+)
+BLOCKED = {"SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST", "SPII"}
+
+
+def answer_gemini(question: str, top_k: int = 5) -> AskResponse:
+    contents: list[types.Content] = [types.Content(role="user", parts=[types.Part(text=question)])]
+    for _ in range(MAX_TURNS):
+        response = get_gemini_client().models.generate_content(
+            model=GEMINI_MODEL, contents=contents, config=GEMINI_CONFIG
+        )
+        if not response.function_calls:
+            break
+        # Send the model turn back unchanged (it carries thought signatures), then all tool results.
+        contents.append(response.candidates[0].content)
+        parts = []
+        for call in response.function_calls:
+            content, is_error = run_tool(call.name, call.args or {}, top_k)
+            result = types.FunctionResponse(
+                id=call.id, name=call.name, response={"error" if is_error else "result": content}
+            )
+            parts.append(types.Part(function_response=result))
+        contents.append(types.Content(role="user", parts=parts))
+    else:
+        raise LLMError(f"No answer after {MAX_TURNS} tool-calling rounds")
+
+    if not response.text:
+        reason = response.candidates[0].finish_reason if response.candidates else None
+        if not response.candidates or getattr(reason, "name", None) in BLOCKED:
+            return AskResponse(question=question, answer=REFUSAL_ANSWER, sources=[])
+        raise LLMError(f"Empty answer, finish reason: {reason}")
+    return to_response(question, response.text)

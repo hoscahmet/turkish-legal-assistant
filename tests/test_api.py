@@ -52,6 +52,16 @@ def test_ask_without_api_key_returns_503(monkeypatch):
     assert client.post("/ask", json={"question": "Yıllık izin?"}).status_code == 503
 
 
+def test_ask_without_gemini_key_returns_503(monkeypatch):
+    def fail(question, top_k):
+        raise llm.LLMNotConfigured("set GEMINI_API_KEY")
+
+    monkeypatch.setattr(llm, "answer", fail)
+    r = client.post("/ask", json={"question": "Yıllık izin?"})
+    assert r.status_code == 503
+    assert "GEMINI_API_KEY" in r.json()["detail"]
+
+
 def test_ask_validates_input():
     assert client.post("/ask", json={"question": "a"}).status_code == 422
     assert client.post("/ask", json={"question": "kira", "top_k": 0}).status_code == 422

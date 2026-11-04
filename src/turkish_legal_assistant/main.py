@@ -1,4 +1,5 @@
 import anthropic
+from google.genai import errors as genai_errors
 from fastapi import FastAPI, HTTPException
 
 from . import llm
@@ -31,9 +32,15 @@ def get_article(law_number: str, article_number: str) -> Article:
 def ask(req: AskRequest) -> AskResponse:
     try:
         return llm.answer(req.question, req.top_k)
+    except llm.LLMNotConfigured as e:
+        raise HTTPException(status_code=503, detail=f"LLM is not configured: {e}")
     except anthropic.AuthenticationError:
         raise HTTPException(status_code=503, detail="LLM is not configured: set ANTHROPIC_API_KEY")
     except anthropic.RateLimitError:
         raise HTTPException(status_code=503, detail="LLM rate limit reached, try again later")
+    except genai_errors.APIError as e:
+        # The free tier has per-minute and per-day request limits.
+        status = 503 if e.code == 429 else 502
+        raise HTTPException(status_code=status, detail=f"Gemini request failed: {e.message}")
     except (anthropic.APIError, llm.LLMError) as e:
         raise HTTPException(status_code=502, detail=f"LLM request failed: {e}")
