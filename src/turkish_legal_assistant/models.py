@@ -8,6 +8,8 @@ class Article(BaseModel):
     article_number: str
     title: str
     text: str
+    section: str = ""  # e.g. "DÖRDÜNCÜ BÖLÜM: Kira Sözleşmesi > BİRİNCİ AYIRIM: Genel Hükümler"
+    source_url: str
 
 
 class Law(BaseModel):

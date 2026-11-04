@@ -22,6 +22,11 @@ def test_get_article():
     assert r.json()["title"] == "Yıllık ücretli izin hakkı ve izin süreleri"
 
 
+def test_get_article_with_slash_and_prefix():
+    assert client.get("/laws/6502/articles/47/A").json()["title"] == "Doğrudan satış sistemi"
+    assert client.get("/laws/6698/articles/Geçici 1").json()["title"] == "Geçiş hükümleri"
+
+
 def test_get_article_not_found():
     assert client.get("/laws/4857/articles/9999").status_code == 404
 

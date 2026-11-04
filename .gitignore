@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Raw HTML cache from mevzuat.gov.tr (regenerate with the ingest script)
+data/raw/

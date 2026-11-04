@@ -6,12 +6,16 @@ Target laws: 4857 Labour Law, 6698 Personal Data Protection Law (KVKK), 6502 Con
 
 ## Status
 
-Phase 0: FastAPI skeleton with Pydantic models, a few sample articles, and naive keyword search. See `CLAUDE.md` for the full roadmap (scraping, LLM, hybrid search, agents, MCP, fine-tuning, evaluation, deployment).
+- Phase 0: FastAPI skeleton with Pydantic models and naive keyword search.
+- Phase 1: `ingest.py` downloads the four laws from mevzuat.gov.tr, splits them into one chunk per article (348 articles), and stores title, section path and source URL as metadata in `data/articles.json`.
+
+See `CLAUDE.md` for the full roadmap (scraping, LLM, hybrid search, agents, MCP, fine-tuning, evaluation, deployment).
 
 ## Quick start
 
 ```bash
 uv sync
+uv run python -m turkish_legal_assistant.ingest  # optional: rebuild data/articles.json
 uv run uvicorn turkish_legal_assistant.main:app --reload
 uv run pytest
 ```

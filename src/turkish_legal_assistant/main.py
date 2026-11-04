@@ -35,7 +35,8 @@ def list_laws() -> list[Law]:
     return LAWS
 
 
-@app.get("/laws/{law_number}/articles/{article_number}")
+# ":path" lets numbers like "47/A" contain a slash.
+@app.get("/laws/{law_number}/articles/{article_number:path}")
 def get_article(law_number: str, article_number: str) -> Article:
     for a in ARTICLES:
         if a.law_number == law_number and a.article_number == article_number:
