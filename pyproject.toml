@@ -8,10 +8,12 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "anthropic>=2.4.0",
     "fastapi>=0.162.0",
     "flagembedding>=1.4.2",
-    "google-genai>=2.34.0",
+    "langchain>=1.4.9",
+    "langchain-anthropic>=1.7.10",
+    "langchain-google-genai>=4.4.3",
+    "langgraph>=1.2.19",
     "qdrant-client>=1.20.0",
     "uvicorn>=0.54.0",
 ]

@@ -17,7 +17,7 @@ Question answering system over Turkish legislation.
 - Faz 2: LLM API, structured output, tool calling (tamamlandı)
 - Faz 3: Qdrant, BGE-M3 embedding, hybrid search, reranker,
   golden dataset ile Recall@k / MRR ölçümü (tamamlandı; en iyi: dense, MRR 0.77)
-- Faz 4: LangGraph agent
+- Faz 4: LangGraph agent (tamamlandı)
 - Faz 5: MCP server
 - Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis
 - Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
@@ -26,7 +26,7 @@ Question answering system over Turkish legislation.
 ## Commands
 - Install: `uv sync`
 - Ingest laws: `uv run python -m turkish_legal_assistant.ingest` (writes `data/articles.json`; delete `data/raw/` to re-download)
-- LLM: `/ask` runs a tool loop in `llm.py`. `LLM_PROVIDER=gemini` (default, free tier, needs `GEMINI_API_KEY`) or `claude` (needs `ANTHROPIC_API_KEY`). Tests use fake clients, never a real API.
+- LLM: `/ask` runs the LangGraph agent in `agent.py`. `LLM_PROVIDER=gemini` (default, free tier, needs `GEMINI_API_KEY`; `GEMINI_MODEL` overrides the model) or `claude` (needs `ANTHROPIC_API_KEY`). Tests use a scripted fake model, never a real API.
 - Embed articles: `uv run python -m turkish_legal_assistant.vectors` (BGE-M3, writes `data/embeddings_*`, gitignored). Tests never load the model (see `tests/conftest.py`).
 - Evaluate retrieval: `uv run python -m turkish_legal_assistant.evaluate` (golden set: `data/golden.json`, Turkish questions with expected articles)
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`

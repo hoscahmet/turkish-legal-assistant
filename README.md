@@ -8,8 +8,18 @@ Target laws: 4857 Labour Law, 6698 Personal Data Protection Law (KVKK), 6502 Con
 
 - Phase 0: FastAPI skeleton with Pydantic models and naive keyword search.
 - Phase 1: `ingest.py` downloads the four laws from mevzuat.gov.tr, splits them into one chunk per article (348 articles), and stores title, section path and source URL as metadata in `data/articles.json`.
-- Phase 2: `/ask` sends the question to an LLM (Gemini by default, or Claude) with two tools (`search_articles`, `get_article`). The model searches the articles itself, then returns a structured JSON answer (`LegalAnswer`) with citations. Citations to articles that do not exist are dropped.
+- Phase 2: an LLM answers with tool calling and structured output, with citations checked against the data (first as hand-written loops for Claude and Gemini, replaced in Phase 4).
 - Phase 3: BGE-M3 embeddings (dense + sparse) in an in-memory Qdrant collection, an optional bge-reranker-v2-m3 second stage (`vectors.py`), and a golden dataset of 39 everyday Turkish questions with their expected articles, and `evaluate.py` to score retrievers with Recall@k and MRR.
+- Phase 4: a LangGraph agent (`agent.py`) runs the loop for any provider: the model calls `search_articles` / `get_article` until it has enough, then a separate `respond` step returns a `LegalAnswer` JSON. Citations to articles that do not exist are dropped.
+
+```mermaid
+graph TD;
+    START([start]) --> agent;
+    agent -. tool calls .-> tools["tools: search_articles, get_article"];
+    tools --> agent;
+    agent -. no tool calls .-> respond;
+    respond --> END([end]);
+```
 
 ## Retrieval results
 

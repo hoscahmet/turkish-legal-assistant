@@ -1,8 +1,8 @@
-import anthropic
-import httpx2
+import pytest
 from fastapi.testclient import TestClient
+from langchain_core.exceptions import ModelAPIError, ModelAuthenticationError, ModelRateLimitError, ModelRefusalError
 
-from turkish_legal_assistant import llm
+from turkish_legal_assistant import agent
 from turkish_legal_assistant.main import app
 from turkish_legal_assistant.models import AskResponse
 
@@ -35,31 +35,40 @@ def test_get_article_not_found():
     assert client.get("/laws/4857/articles/9999").status_code == 404
 
 
-def test_ask_uses_llm(monkeypatch):
+def test_ask_uses_agent(monkeypatch):
     fake = AskResponse(question="soru", answer="Cevap.", sources=[])
-    monkeypatch.setattr(llm, "answer", lambda question, top_k: fake)
+    monkeypatch.setattr(agent, "answer", lambda question, top_k: fake)
     r = client.post("/ask", json={"question": "Yıllık izin kaç gündür?"})
     assert r.status_code == 200
     assert r.json()["answer"] == "Cevap."
 
 
-def test_ask_without_api_key_returns_503(monkeypatch):
+@pytest.mark.parametrize(
+    "error, status",
+    [
+        (agent.LLMNotConfigured("set GEMINI_API_KEY"), 503),
+        (ModelAuthenticationError("invalid key"), 503),
+        (ModelRateLimitError("slow down"), 503),
+        (ModelAPIError("server error"), 502),
+        (agent.LLMError("no answer"), 502),
+    ],
+)
+def test_ask_maps_llm_errors(monkeypatch, error, status):
     def fail(question, top_k):
-        request = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
-        raise anthropic.AuthenticationError("invalid x-api-key", response=httpx2.Response(401, request=request), body=None)
+        raise error
 
-    monkeypatch.setattr(llm, "answer", fail)
-    assert client.post("/ask", json={"question": "Yıllık izin?"}).status_code == 503
+    monkeypatch.setattr(agent, "answer", fail)
+    assert client.post("/ask", json={"question": "Yıllık izin?"}).status_code == status
 
 
-def test_ask_without_gemini_key_returns_503(monkeypatch):
-    def fail(question, top_k):
-        raise llm.LLMNotConfigured("set GEMINI_API_KEY")
+def test_ask_refusal_returns_turkish_message(monkeypatch):
+    def refuse(question, top_k):
+        raise ModelRefusalError()
 
-    monkeypatch.setattr(llm, "answer", fail)
+    monkeypatch.setattr(agent, "answer", refuse)
     r = client.post("/ask", json={"question": "Yıllık izin?"})
-    assert r.status_code == 503
-    assert "GEMINI_API_KEY" in r.json()["detail"]
+    assert r.status_code == 200
+    assert r.json()["answer"] == "Bu soruya cevap veremiyorum."
 
 
 def test_ask_validates_input():

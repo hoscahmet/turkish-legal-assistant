@@ -1,12 +1,18 @@
-import anthropic
-from google.genai import errors as genai_errors
 from fastapi import FastAPI, HTTPException
+from langchain_core.exceptions import (
+    ModelAPIError,
+    ModelAuthenticationError,
+    ModelError,
+    ModelRateLimitError,
+    ModelRefusalError,
+)
 
-from . import llm
+from . import agent
 from .data import LAWS, find_article
 from .models import Article, AskRequest, AskResponse, Law
 
 app = FastAPI(title="Turkish Legal Assistant")
+REFUSAL_ANSWER = "Bu soruya cevap veremiyorum."
 
 
 @app.get("/health")
@@ -30,17 +36,18 @@ def get_article(law_number: str, article_number: str) -> Article:
 
 @app.post("/ask")
 def ask(req: AskRequest) -> AskResponse:
+    # LangChain maps every provider's errors to the same Model*Error classes.
     try:
-        return llm.answer(req.question, req.top_k)
-    except llm.LLMNotConfigured as e:
+        return agent.answer(req.question, req.top_k)
+    except ModelRefusalError:
+        return AskResponse(question=req.question, answer=REFUSAL_ANSWER, sources=[])
+    except (agent.LLMNotConfigured, ModelAuthenticationError) as e:
         raise HTTPException(status_code=503, detail=f"LLM is not configured: {e}")
-    except anthropic.AuthenticationError:
-        raise HTTPException(status_code=503, detail="LLM is not configured: set ANTHROPIC_API_KEY")
-    except anthropic.RateLimitError:
+    except ModelRateLimitError:
         raise HTTPException(status_code=503, detail="LLM rate limit reached, try again later")
-    except genai_errors.APIError as e:
-        # 429: free-tier request limits; 503: model overloaded. Both are temporary.
-        status = 503 if e.code in (429, 503) else 502
-        raise HTTPException(status_code=status, detail=f"Gemini request failed: {e.message}")
-    except (anthropic.APIError, llm.LLMError) as e:
+    except ModelAPIError as e:
+        # Gemini's free tier answers 503 "high demand" when overloaded: temporary, so 503 too.
+        status = 503 if getattr(e, "code", None) == 503 else 502
+        raise HTTPException(status_code=status, detail=f"LLM request failed: {e}")
+    except (ModelError, agent.LLMError) as e:
         raise HTTPException(status_code=502, detail=f"LLM request failed: {e}")
