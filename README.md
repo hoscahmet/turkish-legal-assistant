@@ -9,6 +9,13 @@ Target laws: 4857 Labour Law, 6698 Personal Data Protection Law (KVKK), 6502 Con
 - Phase 0: FastAPI skeleton with Pydantic models and naive keyword search.
 - Phase 1: `ingest.py` downloads the four laws from mevzuat.gov.tr, splits them into one chunk per article (348 articles), and stores title, section path and source URL as metadata in `data/articles.json`.
 - Phase 2: `/ask` sends the question to Claude with two tools (`search_articles`, `get_article`). Claude searches the articles itself, then returns a structured JSON answer (`LegalAnswer`) with citations. Citations to articles that do not exist are dropped.
+- Phase 3 (in progress): a golden dataset of 39 everyday Turkish questions with their expected articles, and `evaluate.py` to score retrievers with Recall@k and MRR.
+
+## Retrieval results
+
+| Retriever | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR |
+|-----------|----------|----------|----------|-----------|-----|
+| Keyword overlap (baseline) | 0.19 | 0.33 | 0.38 | 0.41 | 0.30 |
 
 See `CLAUDE.md` for the full roadmap (scraping, LLM, hybrid search, agents, MCP, fine-tuning, evaluation, deployment).
 

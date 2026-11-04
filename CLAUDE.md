@@ -27,5 +27,6 @@ Question answering system over Turkish legislation.
 - Install: `uv sync`
 - Ingest laws: `uv run python -m turkish_legal_assistant.ingest` (writes `data/articles.json`; delete `data/raw/` to re-download)
 - LLM: `/ask` calls Claude (`llm.py`); needs `ANTHROPIC_API_KEY`. Tests use a fake client, never the real API.
+- Evaluate retrieval: `uv run python -m turkish_legal_assistant.evaluate` (golden set: `data/golden.json`, Turkish questions with expected articles)
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
 - Test: `uv run pytest`
