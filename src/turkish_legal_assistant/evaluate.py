@@ -46,11 +46,13 @@ def keyword_retriever(query: str, k: int) -> list[ArticleKey]:
     return [(r.article.law_number, r.article.article_number) for r in search(query, k)]
 
 
-def vector_retriever(mode: str) -> Retriever:
+def vector_retriever(mode: str, rerank: bool = False) -> Retriever:
     def retrieve(query: str, k: int) -> list[ArticleKey]:
         from .vectors import get_index  # loads BGE-M3 only when a vector retriever runs
 
-        return [(a.law_number, a.article_number) for a, _ in get_index().search(query, k, mode)]
+        index = get_index()
+        hits = index.search_reranked(query, k, mode) if rerank else index.search(query, k, mode)
+        return [(a.law_number, a.article_number) for a, _ in hits]
 
     return retrieve
 
@@ -60,15 +62,21 @@ RETRIEVERS: dict[str, Retriever] = {
     "dense": vector_retriever("dense"),
     "sparse": vector_retriever("sparse"),
     "hybrid": vector_retriever("hybrid"),
+    "dense+rerank": vector_retriever("dense", rerank=True),
+    "hybrid+rerank": vector_retriever("hybrid", rerank=True),
 }
 
 
 def main() -> None:
+    import sys
+
     golden = load_golden()
+    names = sys.argv[1:] or list(RETRIEVERS)  # e.g. `... evaluate dense dense+rerank`
     print(f"{len(golden)} questions\n")
-    for name, retrieve in RETRIEVERS.items():
+    for name in names:
+        retrieve = RETRIEVERS[name]
         scores = evaluate(retrieve, golden)
-        print(f"{name:10}" + "  ".join(f"{m}={scores[m]:.2f}" for m in [*(f"recall@{k}" for k in K_VALUES), "mrr"]))
+        print(f"{name:14}" + "  ".join(f"{m}={scores[m]:.2f}" for m in [*(f"recall@{k}" for k in K_VALUES), "mrr"]))
         print(f"  misses (nothing relevant in top 5): {len(scores['misses'])}")
         for q in scores["misses"]:
             print(f"   - {q}")

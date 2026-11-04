@@ -15,6 +15,8 @@ from .ingest import DATA_DIR
 from .models import Article
 
 MODEL_NAME = "BAAI/bge-m3"
+RERANKER_NAME = "BAAI/bge-reranker-v2-m3"
+RERANK_CANDIDATES = 20  # first-stage hits the reranker re-orders
 COLLECTION = "articles"
 DENSE_FILE = DATA_DIR / "embeddings_dense.npy"
 SPARSE_FILE = DATA_DIR / "embeddings_sparse.json"
@@ -37,6 +39,22 @@ def embed(texts: list[str]) -> tuple[np.ndarray, list[Sparse]]:
     out = get_model().encode(texts, batch_size=2, max_length=4096, return_dense=True, return_sparse=True)
     sparse = [{int(t): float(w) for t, w in weights.items()} for weights in out["lexical_weights"]]
     return out["dense_vecs"], sparse
+
+
+@cache
+def get_reranker():
+    from FlagEmbedding import FlagReranker
+
+    return FlagReranker(RERANKER_NAME, use_fp16=False)
+
+
+def rerank_scores(query: str, articles: list[Article]) -> list[float]:
+    """Cross-encoder: reads query and article together, slower but more precise than comparing vectors."""
+    pairs = [[query, article_text(a)] for a in articles]
+    # 512 tokens (the reranker's training length) scored best: MRR 0.72 vs 0.68 at 1024 and 2048.
+    # Longer inputs let broad, long articles win. batch_size 2 keeps memory near 3 GB.
+    scores = get_reranker().compute_score(pairs, batch_size=2, max_length=512, normalize=True)
+    return scores if isinstance(scores, list) else [scores]  # a single pair returns a bare float
 
 
 def article_text(a: Article) -> str:
@@ -99,6 +117,16 @@ class VectorIndex:
             raise ValueError(f"Unknown mode: {mode}")
         hits = self.client.query_points(COLLECTION, limit=k, **kwargs).points
         return [(self.articles[h.id], h.score) for h in hits]
+
+    def search_reranked(
+        self, query: str, k: int, mode: str = "dense", law_number: str | None = None
+    ) -> list[tuple[Article, float]]:
+        """Two-stage retrieval: fast vector search for candidates, then the reranker picks the top k."""
+        candidates = [a for a, _ in self.search(query, RERANK_CANDIDATES, mode, law_number)]
+        if not candidates:
+            return []
+        ranked = sorted(zip(candidates, rerank_scores(query, candidates)), key=lambda x: x[1], reverse=True)
+        return ranked[:k]
 
 
 @cache

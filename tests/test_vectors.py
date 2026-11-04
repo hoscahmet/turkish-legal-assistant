@@ -53,3 +53,11 @@ def test_article_text_carries_context():
     text = vectors.article_text(find_article("6098", "313"))
     assert text.startswith("Türk Borçlar Kanunu, madde 313: 1. Genel olarak")
     assert "Kira Sözleşmesi" in text
+
+
+def test_search_reranked_reorders_candidates(index, monkeypatch):
+    # The reranker prefers article 2 even though dense search ranks it last.
+    monkeypatch.setattr(vectors, "rerank_scores", lambda q, arts: [0.9 if a.article_number == "342" else 0.1 for a in arts])
+    hits = index.search_reranked("izin", 2, "dense")
+    assert keys(hits)[0] == ("6098", "342")
+    assert len(hits) == 2

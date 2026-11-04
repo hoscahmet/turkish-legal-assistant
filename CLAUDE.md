@@ -16,7 +16,7 @@ Question answering system over Turkish legislation.
   6502 Tüketicinin Korunması Hakkında Kanun, 6098 TBK (kira bölümü) (tamamlandı)
 - Faz 2: LLM API, structured output, tool calling (tamamlandı)
 - Faz 3: Qdrant, BGE-M3 embedding, hybrid search, reranker,
-  golden dataset ile Recall@k / MRR ölçümü
+  golden dataset ile Recall@k / MRR ölçümü (tamamlandı; en iyi: dense, MRR 0.77)
 - Faz 4: LangGraph agent
 - Faz 5: MCP server
 - Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis
