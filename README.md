@@ -21,6 +21,8 @@ graph TD;
     respond --> END([end]);
 ```
 
+- Phase 5: an MCP server (`mcp_server.py`) exposes `search_articles`, `get_article` and `list_laws` as read-only tools, so any MCP client (Claude Desktop, Claude Code, IDEs) can search the laws with its own model. No LLM key is needed on the server side.
+
 ## Retrieval results
 
 | Retriever | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR |
@@ -62,3 +64,26 @@ uv run pytest
 | POST | `/ask` | Ask a question, e.g. `{"question": "Yıllık izin kaç gündür?", "top_k": 3}` |
 
 Answers and law texts are in Turkish.
+
+## MCP server
+
+Runs over stdio. Add it to Claude Code:
+
+```bash
+claude mcp add turkish-legal -- uv run --directory /path/to/turkish-legal-assistant python -m turkish_legal_assistant.mcp_server
+```
+
+or to Claude Desktop's `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "turkish-legal": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/turkish-legal-assistant", "python", "-m", "turkish_legal_assistant.mcp_server"]
+    }
+  }
+}
+```
+
+The first search loads BGE-M3 (~8 s, ~4 GB RAM). Without the embedding cache it falls back to keyword search.
