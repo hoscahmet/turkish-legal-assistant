@@ -4,6 +4,7 @@ Two providers run the same loop: Gemini (free tier, default) and Claude. Pick wi
 """
 
 import json
+import logging
 import os
 from functools import cache
 
@@ -11,10 +12,13 @@ import anthropic
 from google import genai
 from google.genai import types
 
+from . import vectors
 from .data import find_article
 from .ingest import LAWS
-from .models import AskResponse, LegalAnswer
+from .models import Article, AskResponse, LegalAnswer
 from .search import search
+
+log = logging.getLogger(__name__)
 
 CLAUDE_MODEL = "claude-opus-5-5"
 # Free-tier models get overloaded at peak times; override with GEMINI_MODEL to switch.
@@ -34,15 +38,15 @@ TOOLS = [
     {
         "name": "search_articles",
         "description": (
-            f"Keyword search over articles of these laws: {_law_list} (only the lease section, "
-            "articles 299-378, of 6098). Returns matching articles with their full text. "
-            "Matching is by exact Turkish words, so try synonyms or word forms if results are poor."
+            f"Semantic search over articles of these laws: {_law_list} (only the lease section, "
+            "articles 299-378, of 6098). Returns the most relevant articles with their full text. "
+            "If results look off-topic, rephrase with legal terms (e.g. 'işveren' for 'patron')."
         ),
         "strict": True,
         "input_schema": {
             "type": "object",
             "properties": {
-                "query": {"type": "string", "description": "Turkish keywords."},
+                "query": {"type": "string", "description": "What to look for, in Turkish."},
                 "law_number": {"type": "string", "enum": list(LAWS), "description": "Restrict to one law."},
             },
             "required": ["query"],
@@ -88,13 +92,23 @@ def get_gemini_client() -> genai.Client:
     return genai.Client()
 
 
+def retrieve(query: str, top_k: int, law_number: str | None = None) -> list[Article]:
+    """Dense BGE-M3 search, the best retriever on the golden set (MRR 0.77 vs 0.30 for keywords)."""
+    try:
+        index = vectors.get_index()
+    except FileNotFoundError as e:
+        log.warning("%s; falling back to keyword search", e)
+        return [r.article for r in search(query, top_k, law_number)]
+    return [a for a, _ in index.search(query, top_k, "dense", law_number)]
+
+
 def run_tool(name: str, args: dict, top_k: int) -> tuple[str, bool]:
     """Execute a tool call; returns (result text, is_error)."""
     if name == "search_articles":
-        hits = search(args["query"], top_k, args.get("law_number"))
+        hits = retrieve(args["query"], top_k, args.get("law_number"))
         if not hits:
             return "No matching articles. Try different keywords.", False
-        return json.dumps([h.article.model_dump(exclude={"source_url"}) for h in hits], ensure_ascii=False), False
+        return json.dumps([a.model_dump(exclude={"source_url"}) for a in hits], ensure_ascii=False), False
     if name == "get_article":
         article = find_article(args["law_number"], args["article_number"])
         if article is None:

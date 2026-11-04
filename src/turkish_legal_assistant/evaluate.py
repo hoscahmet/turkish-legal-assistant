@@ -46,7 +46,21 @@ def keyword_retriever(query: str, k: int) -> list[ArticleKey]:
     return [(r.article.law_number, r.article.article_number) for r in search(query, k)]
 
 
-RETRIEVERS: dict[str, Retriever] = {"keyword": keyword_retriever}
+def vector_retriever(mode: str) -> Retriever:
+    def retrieve(query: str, k: int) -> list[ArticleKey]:
+        from .vectors import get_index  # loads BGE-M3 only when a vector retriever runs
+
+        return [(a.law_number, a.article_number) for a, _ in get_index().search(query, k, mode)]
+
+    return retrieve
+
+
+RETRIEVERS: dict[str, Retriever] = {
+    "keyword": keyword_retriever,
+    "dense": vector_retriever("dense"),
+    "sparse": vector_retriever("sparse"),
+    "hybrid": vector_retriever("hybrid"),
+}
 
 
 def main() -> None:

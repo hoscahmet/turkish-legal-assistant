@@ -11,3 +11,5 @@ wheels/
 
 # Raw HTML cache from mevzuat.gov.tr (regenerate with the ingest script)
 data/raw/
+# Embedding cache (rebuild with: uv run python -m turkish_legal_assistant.vectors)
+data/embeddings_*

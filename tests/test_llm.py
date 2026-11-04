@@ -161,3 +161,17 @@ def test_provider_is_chosen_by_env(monkeypatch, fake_gemini, fake_claude):
     assert llm.answer("soru").answer == "Gemini cevabı."
     monkeypatch.setenv("LLM_PROVIDER", "claude")
     assert llm.answer("soru").answer == "Claude cevabı."
+
+
+def test_retrieve_uses_dense_index_when_available(monkeypatch):
+    article = llm.find_article("6098", "342")
+    calls = []
+
+    class FakeIndex:
+        def search(self, query, k, mode, law_number):
+            calls.append(mode)
+            return [(article, 0.9)]
+
+    monkeypatch.setattr(llm.vectors, "get_index", lambda: FakeIndex())
+    assert llm.retrieve("depozito", 3) == [article]
+    assert calls == ["dense"]
