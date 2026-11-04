@@ -14,7 +14,7 @@ Question answering system over Turkish legislation.
 - Faz 1: mevzuat.gov.tr'den kanun metinlerini çekmek, madde bazlı
   chunking ve metadata. Kanunlar: 4857 İş Kanunu, 6698 KVKK,
   6502 Tüketicinin Korunması Hakkında Kanun, 6098 TBK (kira bölümü) (tamamlandı)
-- Faz 2: LLM API, structured output, tool calling
+- Faz 2: LLM API, structured output, tool calling (tamamlandı)
 - Faz 3: Qdrant, BGE-M3 embedding, hybrid search, reranker,
   golden dataset ile Recall@k / MRR ölçümü
 - Faz 4: LangGraph agent
@@ -26,5 +26,6 @@ Question answering system over Turkish legislation.
 ## Commands
 - Install: `uv sync`
 - Ingest laws: `uv run python -m turkish_legal_assistant.ingest` (writes `data/articles.json`; delete `data/raw/` to re-download)
+- LLM: `/ask` calls Claude (`llm.py`); needs `ANTHROPIC_API_KEY`. Tests use a fake client, never the real API.
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
 - Test: `uv run pytest`

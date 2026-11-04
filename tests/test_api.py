@@ -1,6 +1,10 @@
+import anthropic
+import httpx2
 from fastapi.testclient import TestClient
 
+from turkish_legal_assistant import llm
 from turkish_legal_assistant.main import app
+from turkish_legal_assistant.models import AskResponse
 
 client = TestClient(app)
 
@@ -31,25 +35,21 @@ def test_get_article_not_found():
     assert client.get("/laws/4857/articles/9999").status_code == 404
 
 
-def test_ask_finds_relevant_article():
-    r = client.post("/ask", json={"question": "Yıllık İZİN süresi kaç gündür?"})
+def test_ask_uses_llm(monkeypatch):
+    fake = AskResponse(question="soru", answer="Cevap.", sources=[])
+    monkeypatch.setattr(llm, "answer", lambda question, top_k: fake)
+    r = client.post("/ask", json={"question": "Yıllık izin kaç gündür?"})
     assert r.status_code == 200
-    body = r.json()
-    top = body["sources"][0]["article"]
-    assert (top["law_number"], top["article_number"]) == ("4857", "53")
-    assert "İş Kanunu madde 53" in body["answer"]
+    assert r.json()["answer"] == "Cevap."
 
 
-def test_ask_uppercase_turkish_matches():
-    # "KİRA" only matches "kira" if İ/I are lowercased the Turkish way.
-    r = client.post("/ask", json={"question": "KİRACI KİRA BEDELİNİ ÖDEMEZSE"})
-    assert r.json()["sources"][0]["article"]["law_number"] == "6098"
+def test_ask_without_api_key_returns_503(monkeypatch):
+    def fail(question, top_k):
+        request = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+        raise anthropic.AuthenticationError("invalid x-api-key", response=httpx2.Response(401, request=request), body=None)
 
-
-def test_ask_no_match():
-    r = client.post("/ask", json={"question": "uzay gemisi"})
-    assert r.json()["sources"] == []
-    assert r.json()["answer"] == "Sorunuzla ilgili bir madde bulunamadı."
+    monkeypatch.setattr(llm, "answer", fail)
+    assert client.post("/ask", json={"question": "Yıllık izin?"}).status_code == 503
 
 
 def test_ask_validates_input():

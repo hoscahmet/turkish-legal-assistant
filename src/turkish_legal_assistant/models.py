@@ -30,4 +30,16 @@ class SearchResult(BaseModel):
 class AskResponse(BaseModel):
     question: str
     answer: str
-    sources: list[SearchResult]
+    sources: list[Article]
+
+
+class Citation(BaseModel):
+    law_number: str
+    article_number: str
+
+
+class LegalAnswer(BaseModel):
+    """The JSON shape Claude must return (structured output)."""
+
+    answer: str = Field(description="Answer to the user's question, in Turkish.")
+    citations: list[Citation] = Field(description="Articles the answer is based on.")
