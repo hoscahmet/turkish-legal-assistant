@@ -17,7 +17,8 @@ from .models import AskResponse, LegalAnswer
 from .search import search
 
 CLAUDE_MODEL = "claude-opus-5-5"
-GEMINI_MODEL = "gemini-3.8-flash"  # has a free tier
+# Free-tier models get overloaded at peak times; override with GEMINI_MODEL to switch.
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite")
 MAX_TURNS = 6  # cap tool-calling rounds so a confused model cannot loop (and bill) forever
 REFUSAL_ANSWER = "Bu soruya cevap veremiyorum."
 

@@ -39,8 +39,8 @@ def ask(req: AskRequest) -> AskResponse:
     except anthropic.RateLimitError:
         raise HTTPException(status_code=503, detail="LLM rate limit reached, try again later")
     except genai_errors.APIError as e:
-        # The free tier has per-minute and per-day request limits.
-        status = 503 if e.code == 429 else 502
+        # 429: free-tier request limits; 503: model overloaded. Both are temporary.
+        status = 503 if e.code in (429, 503) else 502
         raise HTTPException(status_code=status, detail=f"Gemini request failed: {e.message}")
     except (anthropic.APIError, llm.LLMError) as e:
         raise HTTPException(status_code=502, detail=f"LLM request failed: {e}")
