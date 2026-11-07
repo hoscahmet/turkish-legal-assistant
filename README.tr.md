@@ -44,13 +44,13 @@ Her cevap modelin hafızasından değil, kanun metninin kendisinden gelir. Var o
 
 ```mermaid
 flowchart LR
-    Q([❓ Soru]) --> A{🤖 Agent}
-    A -- arama --> S[🔎 Anlamsal arama<br/>BGE-M3 + Qdrant]
-    S --> D[(📚 348 madde)]
+    Q(["❓ Soru"]) --> A{"🤖 Agent"}
+    A -- arama --> S["🔎 Anlamsal arama<br/>BGE-M3 + Qdrant"]
+    S --> D[("📚 348 madde")]
     D --> A
-    A -- bilgi yeterli --> R[✍️ Cevap<br/>JSON + atıflar]
-    R --> G[🛡️ Atıf kontrolü]
-    G --> OUT([✅ Cevap + kaynaklar])
+    A -- bilgi yeterli --> R["✍ Cevap<br/>JSON + atıflar"]
+    R --> G["🛡 Atıf kontrolü"]
+    G --> OUT(["✅ Cevap + kaynaklar"])
 
     classDef blue fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
     classDef green fill:#dcfce7,stroke:#15803d,color:#14532d

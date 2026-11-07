@@ -45,13 +45,13 @@ Every answer comes from the law text itself, not from the model's memory. Citati
 
 ```mermaid
 flowchart LR
-    Q([❓ Question]) --> A{🤖 Agent}
-    A -- search --> S[🔎 Dense search<br/>BGE-M3 + Qdrant]
-    S --> D[(📚 348 articles)]
+    Q(["❓ Question"]) --> A{"🤖 Agent"}
+    A -- search --> S["🔎 Dense search<br/>BGE-M3 + Qdrant"]
+    S --> D[("📚 348 articles")]
     D --> A
-    A -- enough info --> R[✍️ Answer<br/>JSON + citations]
-    R --> G[🛡️ Citation check]
-    G --> OUT([✅ Answer + sources])
+    A -- enough info --> R["✍ Answer<br/>JSON + citations"]
+    R --> G["🛡 Citation check"]
+    G --> OUT(["✅ Answer + sources"])
 
     classDef blue fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
     classDef green fill:#dcfce7,stroke:#15803d,color:#14532d
