@@ -30,6 +30,9 @@ dev = [
     "pytest>=9.2.0",
 ]
 finetune = [
+    "bitsandbytes>=0.50.2",
+    "peft>=0.21.2",
+    "trl>=1.17.1",
     "vllm>=0.22.1",
 ]
 

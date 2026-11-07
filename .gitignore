@@ -14,3 +14,6 @@ data/raw/
 # Embedding cache (rebuild with: uv run python -m turkish_legal_assistant.vectors)
 data/embeddings_*
 .DS_Store
+
+# Trained LoRA adapters (rebuild with: uv run python -m turkish_legal_assistant.finetune)
+models/

@@ -26,7 +26,9 @@ Question answering system over Turkish legislation.
     Claude/Gemini çıktısıyla eğitim yok (kullanım şartları)
   - Öğrenci kanunu değil, RAG cevap adımını öğrenir: soru + bulunan maddeler -> LegalAnswer JSON
   - Yapıldı: veri üretimi (data/finetune/: train 460, eval 53; eval kaynak maddeleri train'de yok).
-    Sırada: QLoRA eğitimi, öğretmen/Gemini ile karşılaştırma, vLLM servis ve LLM_PROVIDER=local
+  - Yapıldı: QLoRA eğitimi (finetune.py, 3 epoch, 23 dk, adaptör models/ altında, gitignored).
+    Eval loss 0.499 / 0.479 / 0.493: 3. epoch hafif overfit, gerekirse 2 epoch'a in.
+    Sırada: öğrenci/öğretmen/Gemini karşılaştırması (eval split), vLLM servis ve LLM_PROVIDER=local
   - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
   - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
@@ -42,4 +44,5 @@ Question answering system over Turkish legislation.
 - MCP server (stdio): `uv run python -m turkish_legal_assistant.mcp_server` (mcp 2.x: `MCPServer`, not `FastMCP`; tests use the in-process `Client(server)`)
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
 - Fine-tuning data (GPU): `uv run python -m turkish_legal_assistant.finetune_data questions|retrieve|answers` (run in order; `--limit N` for a trial; ~25 min total)
+- QLoRA training (GPU): `uv run python -m turkish_legal_assistant.finetune` (~25 min, writes `models/qwen3-1.7b-legal-lora/`)
 - Test: `uv run pytest`
