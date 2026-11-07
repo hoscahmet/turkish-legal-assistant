@@ -96,6 +96,24 @@ Doğru maddesi bilinen 39 günlük Türkçe soru üzerinde ölçüldü.
 - Hybrid birleştirme ve reranker bu veride işe *yaramadı*. Reranker uzun ve genel maddeleri asıl cevabın önüne geçirme eğiliminde.
 - 39 soruda 0.05'lik MRR farkı yaklaşık iki soruya denk geliyor; küçük farklar kesin sonuç sayılmaz.
 
+## 🧪 Testler
+
+**97 test, hepsi yaklaşık bir saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
+
+| Alan | Test | Neyi doğruluyor |
+|---|:---:|---|
+| 📥 Veri çekme | 7 | Kanunlar doğru madde sınırlarından bölünüyor, metadata, 4 kanunun hepsi var, tekrar yok, TBK'da yalnızca kira bölümü var |
+| 🔎 Arama | 11 | Dense anlama göre, sparse ortak kelimeye göre sıralıyor, hybrid ikisini birleştiriyor, kanun filtresi, reranker, Türkçe `İ`/`ı` küçültme |
+| 📊 Ölçüm | 42 | Recall@k ve MRR hesabı, 39 test sorusunun her biri gerçekten var olan bir maddeyi gösteriyor |
+| 🤖 Agent | 8 | Önce arıyor sonra cevaplıyor, olmayan madde modele bildiriliyor, araç döngüsü sınırlı, sağlayıcı ayarları |
+| 🌐 API | 13 | Bütün uç noktalar, girdi doğrulama, LLM hatalarının HTTP kodlarına çevrilmesi, Türkçe ret mesajı |
+| 🔌 MCP sunucusu | 6 | Araçlar salt okunur, kanun filtresi, hatalı girdi ve olmayan madde araç hatası olarak dönüyor |
+| 🧑‍🏫 Fine-tuning verisi | 10 | Soru ve cevap ayrıştırma, verilmeyen maddeye atıf yapan cevaplar atılıyor, üç GPU aşaması dosyalar üzerinden veri aktarıyor |
+
+```bash
+uv run pytest
+```
+
 ## 🚀 Hızlı başlangıç
 
 ```bash
@@ -160,10 +178,12 @@ src/turkish_legal_assistant/
 ├── agent.py         # LangGraph agent
 ├── main.py          # FastAPI uygulaması
 ├── mcp_server.py    # MCP sunucusu
-└── evaluate.py      # Recall@k / MRR
+├── evaluate.py      # Recall@k / MRR
+└── finetune_data.py # öğretmen modelle eğitim verisi üretimi (Faz 6)
 data/
 ├── articles.json    # 348 madde
 └── golden.json      # 39 test sorusu
+tests/               # 97 pytest testi, GPU ya da API anahtarı gerekmez
 ```
 
 ---

@@ -97,6 +97,24 @@ Measured on 39 everyday Turkish questions with known correct articles.
 - Hybrid fusion and the reranker did *not* help on this data. The reranker tends to push long, general articles above the specific answer.
 - With 39 questions, a 0.05 MRR gap is about two questions, so small differences are not conclusive.
 
+## 🧪 Tests
+
+**97 tests, all passing in about one second.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
+
+| Area | Tests | What they check |
+|---|:---:|---|
+| 📥 Ingest & data | 7 | Laws split at the right article boundaries, metadata, all 4 laws present, no duplicates, TBK holds only the lease section |
+| 🔎 Search | 11 | Dense ranks by meaning, sparse by shared words, hybrid fuses both, law filter, reranker, Turkish `İ`/`ı` lowercasing |
+| 📊 Evaluation | 42 | Recall@k and MRR math, and every one of the 39 golden questions points to an article that exists |
+| 🤖 Agent | 8 | Searches then answers, unknown articles reported back to the model, tool loop capped, provider settings |
+| 🌐 API | 13 | Every endpoint, input validation, LLM errors mapped to HTTP codes, Turkish refusal message |
+| 🔌 MCP server | 6 | Tools are read-only, law filter, invalid input and missing articles become tool errors |
+| 🧑‍🏫 Fine-tuning data | 10 | Question and answer parsing, citations to articles not given are dropped, the three GPU stages round-trip through files |
+
+```bash
+uv run pytest
+```
+
 ## 🚀 Quick start
 
 ```bash
@@ -161,10 +179,12 @@ src/turkish_legal_assistant/
 ├── agent.py         # LangGraph agent
 ├── main.py          # FastAPI app
 ├── mcp_server.py    # MCP server
-└── evaluate.py      # Recall@k / MRR
+├── evaluate.py      # Recall@k / MRR
+└── finetune_data.py # teacher-generated training data (Phase 6)
 data/
 ├── articles.json    # 348 articles
 └── golden.json      # 39 test questions
+tests/               # 97 pytest tests, no GPU or API key needed
 ```
 
 ---
