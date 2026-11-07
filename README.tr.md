@@ -170,7 +170,7 @@ data/
 
 <div align="center">
 
-⚠️ **Bu proje genel bilgi verir, hukuki tavsiye değildir.** Kendi durumunuz için bir avukata danışın.
+⚠️ **Bu proje genel bilgi verir, hukuki tavsiye değildir.**
 
 Kod: [MIT Lisansı](LICENSE) · Kanun metinleri: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
 
