@@ -14,6 +14,7 @@
 ![BGE-M3](https://img.shields.io/badge/BGE--M3-embeddings-FFD21E?logo=huggingface&logoColor=black)
 ![MCP](https://img.shields.io/badge/MCP-server-8A2BE2)
 ![uv](https://img.shields.io/badge/uv-package_manager-DE5FE9)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 </div>
 
@@ -172,6 +173,6 @@ data/
 
 ⚠️ **This project gives general information, not legal advice.** For your own case, consult a lawyer.
 
-Law texts: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
+Code: [MIT License](LICENSE) · Law texts: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
 
 </div>

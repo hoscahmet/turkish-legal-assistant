@@ -14,6 +14,7 @@
 ![BGE-M3](https://img.shields.io/badge/BGE--M3-embeddings-FFD21E?logo=huggingface&logoColor=black)
 ![MCP](https://img.shields.io/badge/MCP-server-8A2BE2)
 ![uv](https://img.shields.io/badge/uv-package_manager-DE5FE9)
+[![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-green)](LICENSE)
 
 </div>
 
@@ -171,6 +172,6 @@ data/
 
 ⚠️ **Bu proje genel bilgi verir, hukuki tavsiye değildir.** Kendi durumunuz için bir avukata danışın.
 
-Kanun metinleri: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
+Kod: [MIT Lisansı](LICENSE) · Kanun metinleri: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
 
 </div>
