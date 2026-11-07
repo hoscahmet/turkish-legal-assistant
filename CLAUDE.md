@@ -3,6 +3,7 @@
 Question answering system over Turkish legislation.
 
 ## Kurallar
+- Kullanıcıyla sohbet (açıklamalar, ara notlar) Türkçe. Kullanıcı öğreniyor: her değişikliği kısaca açıkla.
 - Kod, isimler, yorumlar, testler, README ve commit mesajları İngilizce.
 - Kanun metinleri, test soruları ve son kullanıcıya verilen cevaplar Türkçe.
 - Paket yönetimi uv ile. Her yeni özellik için pytest testi yazılır.
@@ -19,7 +20,14 @@ Question answering system over Turkish legislation.
   golden dataset ile Recall@k / MRR ölçümü (tamamlandı; en iyi: dense, MRR 0.77)
 - Faz 4: LangGraph agent (tamamlandı)
 - Faz 5: MCP server (tamamlandı)
-- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis
+- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis (devam ediyor, dal: phase-6/finetune)
+  - Donanım: Windows PC, RTX 4070 Ti 12 GB (~11 GB boş), WSL2 Ubuntu, RAM 11 GB (.wslconfig), CUDA 13.3
+  - Öğretmen: Qwen/Qwen3-8B-AWQ (vLLM), öğrenci: Qwen/Qwen3-1.7B (QLoRA). İkisi de Apache 2.0;
+    Claude/Gemini çıktısıyla eğitim yok (kullanım şartları)
+  - Öğrenci kanunu değil, RAG cevap adımını öğrenir: soru + bulunan maddeler -> LegalAnswer JSON
+  - Yapıldı: finetune_data.py (veri üretimi, sahte öğretmenle test). Sırada: GPU'da veri üretimi,
+    QLoRA eğitimi, öğretmen/Gemini ile karşılaştırma, vLLM servis ve LLM_PROVIDER=local
+  - BGE-M3 ve vLLM aynı anda GPU'ya sığmayabilir: sırayla çalıştır
 - Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
 - Faz 8: Docker Compose, demo arayüz, README
 
