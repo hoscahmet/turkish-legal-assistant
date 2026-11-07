@@ -1,0 +1,545 @@
+{"source": "4857/1", "split": "eval", "question": "Çalışanlar ve işverenlerin hakları neye göre belirlenir?", "context": ["4857/2", "4857/1", "4857/5", "4857/30", "4857/36"]}
+{"source": "4857/2", "split": "train", "question": "İşverenim bir başka şirkete işçilerini gönderdiğinde o işçilerin hakları nasıl olur?", "context": ["4857/6", "4857/2", "4857/5", "4857/23", "4857/7"]}
+{"source": "4857/2", "split": "train", "question": "İşyerinde çalışanlar işveren vekiliyle çalışıyorsa o işverenin sorumluluğu ne olur?", "context": ["4857/2", "4857/6", "4857/1", "4857/3", "4857/23"]}
+{"source": "4857/3", "split": "train", "question": "İşyerimi kapatmak istiyorum, bunun için ne yapmam gerekir?", "context": ["4857/3", "4857/29", "4857/24", "4857/25", "4857/79"]}
+{"source": "4857/3", "split": "train", "question": "İşyerimi başka bir şirkete devrettiğimde ne gibi belgeler vermem gerekir?", "context": ["4857/3", "4857/28", "4857/6", "4857/52", "6098/323"]}
+{"source": "4857/5", "split": "train", "question": "Eğer bir işveren beni cinsiyet nedeniyle farklı muamele ederse ne yapabilirim?", "context": ["4857/5", "4857/22", "4857/24", "4857/30", "6698/6"]}
+{"source": "4857/6", "split": "train", "question": "İşyerim devredildi, iş sözleşmem ne olur?", "context": ["4857/6", "4857/8", "4857/31", "4857/22", "4857/3"]}
+{"source": "4857/6", "split": "train", "question": "Devir olunca işçinin borcu ödenmez mi?", "context": ["4857/6", "4857/34", "6098/323", "4857/35", "6098/334"]}
+{"source": "4857/7", "split": "train", "question": "Geçici iş olarak çalıştım ama altı aydan sonra yeniden alınamadı, bunun nedeni ne?", "context": ["4857/7", "4857/21", "4857/18", "4857/Geçici 10", "4857/Geçici 7"]}
+{"source": "4857/7", "split": "train", "question": "Geçici işe alınan biri, işten ayrıldıktan sonra ne kadar süreyle yeniden alınamaz?", "context": ["4857/Geçici 10", "4857/7", "4857/Geçici 8", "4857/31", "4857/21"]}
+{"source": "4857/8", "split": "train", "question": "İşveren bana bir aydan uzun süreli sözleşme yaparsa ne yapmalı?", "context": ["4857/8", "4857/14", "4857/25", "4857/11", "4857/17"]}
+{"source": "4857/8", "split": "train", "question": "İşveren bana yazılı sözleşme vermeyi unutsa ne olur?", "context": ["4857/8", "4857/22", "4857/23", "4857/25", "4857/31"]}
+{"source": "4857/9", "split": "train", "question": "İş sözleşmesi ne kadar sürebilir? Mesela 6 ayda biten bir sözleşme varsa, sonra ne olur?", "context": ["4857/8", "4857/15", "4857/17", "4857/11", "4857/10"]}
+{"source": "4857/10", "split": "train", "question": "İş sözleşmem 30 gün sürdü, bu durumda ne yapmam gerekir?", "context": ["4857/15", "4857/10", "4857/17", "4857/8", "4857/31"]}
+{"source": "4857/10", "split": "train", "question": "İş sözleşmemin süresi 30 günden fazla olursa, işverenin bana ne gibi hakları vardır?", "context": ["4857/25", "4857/Geçici 10", "4857/22", "4857/24", "4857/64"]}
+{"source": "4857/11", "split": "eval", "question": "Bir işe belirli bir süre için başlamak istiyorum, bunun için ne yapmalıyım?", "context": ["4857/21", "4857/42", "4857/15", "4857/53", "4857/64"]}
+{"source": "4857/11", "split": "eval", "question": "Belirli süreli bir iş sözleşmesiyle çalışmak istiyorum, ama birden fazla süreyle yapabilir miyim?", "context": ["4857/11", "4857/9", "4857/12", "4857/13", "4857/15"]}
+{"source": "4857/12", "split": "train", "question": "Belirli süreli sözleşmeli çalışırken emsal işçiye göre daha az maaş alıyorum, bunun sebebi ne olabilir?", "context": ["4857/13", "4857/12", "4857/11", "4857/53", "4857/17"]}
+{"source": "4857/12", "split": "train", "question": "Belirli süreli sözleşmeli çalışırken kıdem hakediyorum mu yoksa emsal işçi gibi kıdem hesaplanıyor mu?", "context": ["4857/12", "4857/13", "4857/112", "4857/18", "4857/Ek 3"]}
+{"source": "4857/13", "split": "train", "question": "İkinci bölümde ne tür iş sözleşmeleri bahsediliyor?", "context": ["4857/9", "4857/8", "4857/2", "4857/16", "4857/11"]}
+{"source": "4857/13", "split": "train", "question": "Kısmî süreli çalışmak istiyorum, bunun için ne yapmam gerekir?", "context": ["4857/13", "4857/64", "4857/42", "4857/12", "4857/9"]}
+{"source": "4857/14", "split": "train", "question": "İş veren bana dört gün önce haber vermek zorunda mı?", "context": ["4857/3", "4857/27", "4857/17", "4857/14", "4857/64"]}
+{"source": "4857/14", "split": "train", "question": "İşçi çalışamazsa ücret alır mı?", "context": ["4857/48", "4857/40", "4857/34", "4857/55", "4857/47"]}
+{"source": "4857/15", "split": "train", "question": "İşe başlamadan önce iki ay deneme süresi olabilir mi?", "context": ["4857/15", "4857/53", "4857/21", "4857/31", "4857/74"]}
+{"source": "4857/15", "split": "train", "question": "İşveren, deneme süresince işçiyi tazminatsız feshedebilir mi?", "context": ["4857/15", "4857/21", "4857/Geçici 10", "4857/25", "4857/22"]}
+{"source": "4857/16", "split": "train", "question": "Takım sözleşmesiyle işe başlayıp ücret alamadım, ne yapmalıyım?", "context": ["4857/16", "4857/21", "4857/34", "4857/31", "4857/Geçici 11"]}
+{"source": "4857/17", "split": "train", "question": "İşveren bana bildirim süresi vermek zorundan mı?", "context": ["4857/3", "4857/17", "4857/27", "4857/25", "4857/29"]}
+{"source": "4857/17", "split": "train", "question": "İşveren bana işi feshetmek istiyorsa ne yapmalı?", "context": ["4857/25", "4857/24", "4857/22", "4857/19", "4857/20"]}
+{"source": "4857/18", "split": "train", "question": "İşveren bana işten çıkarabiliyor mu?", "context": ["4857/25", "4857/22", "4857/24", "4857/29", "4857/18"]}
+{"source": "4857/18", "split": "train", "question": "İşten çıkarken bana neden belirtebilir?", "context": ["4857/29", "4857/25", "4857/28", "4857/24", "4857/18"]}
+{"source": "4857/19", "split": "train", "question": "İşe devam etmek zorunda mıyız?", "context": ["4857/21", "4857/42", "4857/25", "4857/64", "4857/7"]}
+{"source": "4857/19", "split": "train", "question": "İşveren bana neden fesih edebilir?", "context": ["4857/25", "4857/24", "4857/19", "4857/21", "4857/22"]}
+{"source": "4857/20", "split": "train", "question": "İşsiz kaldım, ne yapmalıyım?", "context": ["4857/21", "4857/20", "4857/7", "4857/31", "4857/3"]}
+{"source": "4857/20", "split": "train", "question": "İşveren beni fesih etti, ama sebep doğru değil diyorum, ne yapabilirim?", "context": ["4857/20", "4857/19", "4857/25", "4857/24", "4857/21"]}
+{"source": "4857/21", "split": "eval", "question": "İşime geri dönmeme rağmen ücret alamadım, ne yapmalıyım?", "context": ["4857/21", "4857/58", "4857/34", "4857/102", "4857/38"]}
+{"source": "4857/21", "split": "eval", "question": "İşveren bana feshi geçersiz saymış, ama hâlâ işe başlatmadı, ne olur?", "context": ["4857/21", "4857/20", "4857/31", "4857/18", "4857/25"]}
+{"source": "4857/22", "split": "train", "question": "İşveren bana yeni bir çalışma saatleri düzenlemesi getirebilir mi?", "context": ["4857/64", "4857/22", "4857/27", "4857/67", "4857/76"]}
+{"source": "4857/22", "split": "train", "question": "İşçinin çalışma koşullarında yapılan değişiklikleri kabul etmek zorunda mıyım?", "context": ["4857/22", "4857/5", "4857/23", "4857/76", "4857/42"]}
+{"source": "4857/23", "split": "train", "question": "Yeni işe girdikten sonra eski işverenden sorumlu olur muyum?", "context": ["4857/23", "4857/6", "4857/30", "4857/2", "4857/21"]}
+{"source": "4857/23", "split": "train", "question": "Eski işyerinden ayrıldıktan sonra yeni işyeri bana zarar verirse onlarla da sorumlu olur muyum?", "context": ["4857/23", "4857/6", "4857/3", "6098/308", "6098/334"]}
+{"source": "4857/24", "split": "train", "question": "İşçinin işten ayrılmak için hangi sebepler var?", "context": ["4857/25", "4857/24", "4857/18", "4857/29", "4857/28"]}
+{"source": "4857/24", "split": "train", "question": "İşveren bana cinsel taciz etse işten ayrılmamıza izin verir mi?", "context": ["4857/5", "4857/25", "4857/24", "4857/29", "4857/22"]}
+{"source": "4857/25", "split": "train", "question": "İşveren bana neden hemen fesih edebilir?", "context": ["4857/25", "4857/24", "4857/19", "4857/21", "4857/26"]}
+{"source": "4857/25", "split": "train", "question": "İşveren bana kendi isteğiyle işten çıkarabilir mi?", "context": ["4857/25", "4857/24", "4857/22", "4857/5", "4857/29"]}
+{"source": "4857/26", "split": "train", "question": "İşveren bana kötü davranıyorsa ne yapmalıyım?", "context": ["4857/5", "4857/3", "4857/96", "4857/22", "4857/75"]}
+{"source": "4857/26", "split": "train", "question": "İşçi olarak işten kovulduğumda tazminat alabilirim mi?", "context": ["4857/28", "4857/21", "4857/31", "4857/112", "4857/38"]}
+{"source": "4857/27", "split": "train", "question": "İşten ayrılmadan önce işverenden yeni bir iş bulmak için izin almak zorundamıyım?", "context": ["4857/27", "4857/28", "4857/56", "4857/25", "4857/23"]}
+{"source": "4857/27", "split": "train", "question": "İş arama izni süresince işveren bana ücret öder mi?", "context": ["4857/27", "4857/57", "4857/56", "4857/59", "4857/46"]}
+{"source": "4857/28", "split": "train", "question": "Yeni işe aldığım şirket bana eski işverenden bir belge istedi, neyin olması gerekir?", "context": ["4857/28", "4857/3", "4857/52", "4857/30", "4857/75"]}
+{"source": "4857/29", "split": "train", "question": "İşveren bana işten çıkaracağını söylüyor, bu durumda ne yapmalıyım?", "context": ["4857/29", "4857/25", "4857/22", "4857/3", "4857/24"]}
+{"source": "4857/29", "split": "train", "question": "İşten çıkarıldığımızda maaşlarımızdan bir kısmını geri alabilir miyiz?", "context": ["4857/35", "4857/58", "4857/38", "4857/28", "4857/31"]}
+{"source": "4857/30", "split": "train", "question": "İşverenler engelli işçileri neden zorunlu tutuyor?", "context": ["4857/30", "4857/101", "4857/Ek 1", "4857/5", "4857/2"]}
+{"source": "4857/30", "split": "train", "question": "Engelli birini işe almak için ne yapmam gerekir?", "context": ["4857/30", "4857/Ek 1", "4857/101", "4857/5", "4857/90"]}
+{"source": "4857/31", "split": "eval", "question": "İşten ayrıldıktan sonra iki ay içinde başka bir işe girmek istiyorsam, işveren bana başka bir iş bulmak zorunda mı?", "context": ["4857/27", "4857/31", "4857/21", "4857/23", "4857/7"]}
+{"source": "4857/32", "split": "train", "question": "İşe başladım ama ücretimi neden banka hesabıma yatırmadılar?", "context": ["4857/21", "4857/34", "4857/32", "4857/102", "4857/98"]}
+{"source": "4857/32", "split": "train", "question": "Ücretim ne zaman ödenir?", "context": ["4857/32", "4857/34", "4857/57", "6502/37", "6502/44"]}
+{"source": "4857/34", "split": "train", "question": "Ücretim gününde ödenmese, ben işe gitmemek için ne yapabilirim?", "context": ["4857/34", "4857/64", "4857/21", "4857/48", "4857/38"]}
+{"source": "4857/34", "split": "train", "question": "Ücretim gününde ödenmezse, işveren yeni bir işçiyi alamaz mı?", "context": ["4857/34", "4857/23", "4857/38", "4857/21", "4857/47"]}
+{"source": "4857/35", "split": "train", "question": "İkinci aylık ücretimin dörtte birini kim alabilir?", "context": ["4857/35", "4857/32", "4857/40", "4857/38", "4857/Ek 2"]}
+{"source": "4857/35", "split": "train", "question": "Eğer bir aile üyesini bakmak zorunda kalıyorsam, o paranın bir kısmı saklı mı olur?", "context": ["4857/35", "4857/37", "4857/75", "6098/337", "6502/6"]}
+{"source": "4857/36", "split": "train", "question": "İşverenler, alt işverenlerin işçilerinin ücretlerini ödediklerinden emin olmak için ne yapmalı?", "context": ["4857/36", "4857/51", "4857/3", "4857/2", "4857/112"]}
+{"source": "4857/37", "split": "train", "question": "İşveren bana ne zaman ücret hesabı vermek zorundadır?", "context": ["4857/37", "4857/57", "4857/32", "4857/56", "4857/51"]}
+{"source": "4857/37", "split": "train", "question": "Ücret hesabında bana ne gibi bilgiler yazılmalı?", "context": ["4857/37", "4857/32", "4857/51", "4857/57", "4857/52"]}
+{"source": "4857/38", "split": "train", "question": "İşveren bana neden tazminat kesebilir?", "context": ["4857/38", "4857/25", "4857/21", "4857/Ek 3", "4857/24"]}
+{"source": "4857/38", "split": "train", "question": "İşverenim bir ayda bana ne kadar tazminat kesebilir?", "context": ["4857/38", "4857/21", "4857/Geçici 10", "4857/112", "4857/Ek 3"]}
+{"source": "4857/39", "split": "train", "question": "Asgari ücret ne zaman belirlenir?", "context": ["4857/39", "4857/Geçici 3", "4857/32", "4857/102", "4857/Geçici 12"]}
+{"source": "4857/39", "split": "train", "question": "Her yıl asgari ücret artar mı?", "context": ["4857/39", "4857/Geçici 3", "4857/32", "4857/57", "4857/102"]}
+{"source": "4857/40", "split": "train", "question": "Eğer iş verenin nedeni zorlayıcı sebeplerse, işçinin ne kadar ücret alacağı nasıl belirlenir?", "context": ["4857/42", "4857/43", "4857/41", "4857/40", "4857/57"]}
+{"source": "4857/41", "split": "train", "question": "Hafta sonunda biraz fazla çalışmak istiyorum, bu mümkün mü?", "context": ["4857/41", "4857/64", "4857/63", "4857/42", "4857/43"]}
+{"source": "4857/41", "split": "train", "question": "Fazla çalıştığım saatlerde daha fazla ücret alırım mı?", "context": ["4857/41", "4857/43", "4857/42", "4857/104", "4857/63"]}
+{"source": "4857/42", "split": "eval", "question": "İşçi olarak gece çalışmak zorunlu hale geldiğinde, dinlenme süresi ne olur?", "context": ["4857/69", "4857/76", "4857/68", "4857/63", "4857/104"]}
+{"source": "4857/42", "split": "eval", "question": "Arızalı makineler için gece çalışmak zorunlu olursa, bu durumda ücret nasıl hesaplanır?", "context": ["4857/42", "4857/104", "4857/57", "4857/43", "4857/41"]}
+{"source": "4857/43", "split": "train", "question": "Ne yapmam gerekir ki fazla çalışmam gerekmesin?", "context": ["4857/42", "4857/64", "4857/68", "4857/41", "4857/74"]}
+{"source": "4857/43", "split": "train", "question": "Fazla çalıştım ama ücretim nasıl olur?", "context": ["4857/41", "4857/42", "4857/43", "4857/32", "4857/57"]}
+{"source": "4857/44", "split": "train", "question": "Bir bayramda çalışmak istiyorum ama izin almak zorundayım mı?", "context": ["4857/44", "4857/56", "4857/64", "4857/55", "4857/47"]}
+{"source": "4857/44", "split": "train", "question": "Bayramda çalışırsam ücretimin aynı günkü gibi ödendiğini söylüyor mu?", "context": ["4857/44", "4857/47", "4857/49", "4857/50", "4857/32"]}
+{"source": "4857/45", "split": "train", "question": "İş sözleşmesinde yazılı olmayan haklar varsa o da bizim için geçerli mi?", "context": ["4857/45", "4857/8", "4857/11", "4857/22", "4857/2"]}
+{"source": "4857/46", "split": "train", "question": "Hafta tatili almak için ne kadar saat çalışmalıyım?", "context": ["4857/46", "4857/63", "4857/64", "4857/41", "4857/76"]}
+{"source": "4857/46", "split": "train", "question": "Hafta tatili gününe çalıştım ama ücret alamadım, ne yapmalıyım?", "context": ["4857/46", "4857/47", "4857/44", "4857/49", "4857/50"]}
+{"source": "4857/47", "split": "train", "question": "Bu iş yerinde bayramda çalışmadığım günlerde ücret alırım mı?", "context": ["4857/44", "4857/47", "4857/50", "4857/46", "4857/49"]}
+{"source": "4857/47", "split": "train", "question": "Bayramda çalışırsam ek ücret alırım mı?", "context": ["4857/44", "4857/47", "4857/50", "4857/49", "4857/43"]}
+{"source": "4857/48", "split": "train", "question": "Bir hafta tatili sırasında geçici iş göremezlik ödeneği alırım mı?", "context": ["4857/48", "4857/46", "4857/47", "4857/7", "4857/49"]}
+{"source": "4857/48", "split": "train", "question": "İki ay hastalandım, bu sürede alacağım geçici iş göremezlik ödeneğinden bir kısım mı kesilir?", "context": ["4857/48", "4857/Geçici 10", "4857/31", "4857/38", "4857/21"]}
+{"source": "4857/49", "split": "train", "question": "İşe gitmek zorunda kaldığımda ücretimin ne kadar olur?", "context": ["4857/32", "4857/57", "4857/49", "4857/102", "4857/99"]}
+{"source": "4857/49", "split": "train", "question": "İzinliyken işten gidersem tatile ait ücretimin ne kadar olacağını nasıl hesaplarım?", "context": ["4857/49", "4857/57", "4857/46", "4857/47", "4857/56"]}
+{"source": "4857/50", "split": "train", "question": "Ne yapmalıyım, hafta sonu çalıştım ama ücret alamadım?", "context": ["4857/46", "4857/34", "4857/40", "4857/48", "4857/41"]}
+{"source": "4857/51", "split": "train", "question": "İşveren, müşterilerden aldığında servis karşılığı olarak aldığı paraları çalışanlara nasıl ve ne zaman ödemek zorunda?", "context": ["4857/51", "4857/37", "4857/32", "4857/57", "4857/47"]}
+{"source": "4857/52", "split": "eval", "question": "Bu belgeyi işveren ne zaman vermek zorundadır?", "context": ["4857/3", "4857/28", "4857/52", "4857/56", "4857/27"]}
+{"source": "4857/52", "split": "eval", "question": "İşveren bu belgeyi kimin eline vermeli?", "context": ["4857/52", "4857/28", "4857/75", "4857/3", "4857/2"]}
+{"source": "4857/53", "split": "train", "question": "İkinci iş yerinde ne kadar izin alabilirim?", "context": ["4857/Ek 2", "4857/27", "4857/74", "4857/56", "4857/53"]}
+{"source": "4857/53", "split": "train", "question": "Yıllık izin süresi ne kadar olmalı?", "context": ["4857/53", "4857/56", "4857/54", "4857/Ek 3", "4857/60"]}
+{"source": "4857/54", "split": "train", "question": "Yıllık izin hakkını kazanmak için ne kadar süre çalışması gerekir?", "context": ["4857/54", "4857/53", "4857/56", "4857/55", "4857/Ek 3"]}
+{"source": "4857/54", "split": "train", "question": "Çalışma süresi farklı işyerlerinde geçtiyse o süreler birleştirilir mi?", "context": ["4857/54", "4857/63", "4857/76", "4857/7", "4857/64"]}
+{"source": "4857/55", "split": "train", "question": "İşinden uzun süre uzaklaştım, bu süre yıllık izin hesabında mı sayılır?", "context": ["4857/55", "4857/Ek 3", "4857/56", "4857/54", "4857/53"]}
+{"source": "4857/55", "split": "train", "question": "Kadın çalışıyorum ve doğumdan önce sonraki günlerim yıllık izin olarak mı hesaplanır?", "context": ["4857/74", "4857/55", "4857/54", "4857/Ek 2", "4857/56"]}
+{"source": "4857/56", "split": "train", "question": "Yıllık izinim var ama işveren bana sadece 3 gün verdi, bu normal mi?", "context": ["4857/56", "4857/53", "4857/55", "4857/Ek 3", "4857/Ek 2"]}
+{"source": "4857/56", "split": "train", "question": "Yıllık izinimde bayram günleri sayılır mı yoksa sayılmaz mı?", "context": ["4857/56", "4857/55", "4857/44", "4857/47", "4857/54"]}
+{"source": "4857/57", "split": "train", "question": "İzinim için ne kadar ücret alırım?", "context": ["4857/57", "4857/103", "4857/27", "4857/Ek 2", "4857/59"]}
+{"source": "4857/58", "split": "train", "question": "İzinim varken başka bir işte çalıştım, o zaman ücretim geri alınabilir mi?", "context": ["4857/58", "4857/106", "4857/21", "4857/55", "4857/28"]}
+{"source": "4857/58", "split": "train", "question": "İzin süresinde başka bir işte çalışmak yasal mı?", "context": ["4857/64", "4857/55", "4857/42", "4857/74", "4857/58"]}
+{"source": "4857/59", "split": "train", "question": "İşçilikten ayrıldığında yıllık izin kullanamadığım günler için ücret alabilirim mi?", "context": ["4857/56", "4857/57", "4857/55", "4857/53", "4857/54"]}
+{"source": "4857/59", "split": "train", "question": "İşveren beni fesih etti, o zaman yeni bir iş arama izni almak zorundamıyım?", "context": ["4857/27", "4857/20", "4857/21", "4857/31", "4857/25"]}
+{"source": "4857/60", "split": "train", "question": "Bu yönetmelik sayesinde işverenler yıllık izinleri nasıl kullanmamızı sağlar mı?", "context": ["4857/60", "4857/56", "4857/54", "4857/53", "4857/57"]}
+{"source": "4857/60", "split": "train", "question": "Yıllık izinlerimizi kullanırken işverenin bize ne gibi bilgiler vermesi gerekir?", "context": ["4857/56", "4857/54", "4857/60", "4857/57", "4857/53"]}
+{"source": "4857/61", "split": "train", "question": "İşten ayrıldıktan sonra sağlık sigortası primlerim ne olur?", "context": ["4857/61", "4857/112", "4857/30", "4857/32", "4857/31"]}
+{"source": "4857/62", "split": "eval", "question": "Bir işe başlamadan önce ücretimden indirim yapılabilir mi?", "context": ["4857/62", "4857/38", "4857/53", "6098/307", "4857/57"]}
+{"source": "4857/62", "split": "eval", "question": "İşverenim beni işe alırken ücretimi azaltabilir mi?", "context": ["4857/38", "4857/62", "4857/22", "4857/Geçici 12", "4857/102"]}
+{"source": "4857/63", "split": "train", "question": "Haftada ne kadar süre çalışabiliriz?", "context": ["4857/63", "4857/64", "4857/41", "4857/14", "4857/76"]}
+{"source": "4857/63", "split": "train", "question": "Çalışma saatlerini nasıl ayarlayabiliriz?", "context": ["4857/69", "4857/67", "4857/76", "4857/63", "4857/64"]}
+{"source": "4857/64", "split": "train", "question": "İşimden 3 ay izin almak istiyorum, bu durumda ne olur?", "context": ["4857/Ek 2", "4857/Geçici 10", "4857/53", "4857/74", "4857/56"]}
+{"source": "4857/64", "split": "train", "question": "İşyeri 6 ay süreyle kapanacak, bu durumda benim için ne yapılabilir?", "context": ["4857/3", "4857/18", "4857/Geçici 10", "4857/21", "4857/6"]}
+{"source": "4857/66", "split": "train", "question": "İşe gitmek için işyerinden işe kadar yolda geçen zaman işe dahil mi sayılır?", "context": ["4857/66", "4857/2", "4857/55", "4857/111", "4857/14"]}
+{"source": "4857/66", "split": "train", "question": "Çocuk emziren bir kadın çalışırken süt vermek için geçen zaman iş süresine dahil mi sayılır?", "context": ["4857/74", "4857/66", "4857/55", "4857/Ek 2", "4857/13"]}
+{"source": "4857/67", "split": "train", "question": "Bu işyerinde ne zaman işe başlamam gerekiyor?", "context": ["4857/3", "4857/21", "4857/71", "4857/53", "4857/18"]}
+{"source": "4857/67", "split": "train", "question": "İşin bitiş saatleri ne zaman olabilir?", "context": ["4857/67", "4857/69", "4857/64", "4857/76", "4857/63"]}
+{"source": "4857/68", "split": "train", "question": "Çalışma süresi uzadıkça dinlenme süresi ne kadar olur?", "context": ["4857/68", "4857/63", "4857/76", "4857/64", "4857/53"]}
+{"source": "4857/69", "split": "train", "question": "Gece çalışmak için ne kadar saat çalışabilirim?", "context": ["4857/69", "4857/73", "4857/104", "4857/41", "4857/63"]}
+{"source": "4857/69", "split": "train", "question": "Gece çalışırken fazla ücret alırım mı?", "context": ["4857/41", "4857/69", "4857/104", "4857/43", "4857/42"]}
+{"source": "4857/70", "split": "train", "question": "Bu yönetmelikle ilgili olarak işverenlerin çalışanlara ne gibi görevler vermesi yasak?", "context": ["4857/96", "4857/4", "4857/104", "4857/1", "4857/73"]}
+{"source": "4857/70", "split": "train", "question": "İşyerinde sabah veya akşam çalışmadan önce veya sonra yapılan temizlik işlerinde çalışanlar ne gibi haklara sahip olur?", "context": ["4857/70", "4857/45", "4857/67", "4857/1", "4857/5"]}
+{"source": "4857/71", "split": "train", "question": "Bir çocuğum var, on dört yaşındaymış. O çocuk okula gitmeye devam ediyor. O çocuğun hafif bir işte çalışması mümkün mü?", "context": ["4857/71", "4857/72", "4857/73", "4857/4", "4857/87"]}
+{"source": "4857/71", "split": "train", "question": "Kızım on beş yaşındaymış. O bir işte çalışabilir mi?", "context": ["4857/71", "4857/73", "4857/72", "4857/55", "4857/4"]}
+{"source": "4857/72", "split": "train", "question": "Altında çalışacak işlerde 18 yaşını tamamamış kadınlar çalışabilir mi?", "context": ["4857/72", "4857/73", "4857/71", "4857/4", "4857/74"]}
+{"source": "4857/73", "split": "eval", "question": "Gece saatleriyle ilgili çalıştırma yasası ne zaman uygulanır?", "context": ["4857/69", "4857/73", "4857/104", "4857/76", "4857/67"]}
+{"source": "4857/73", "split": "eval", "question": "Kadınlar gece çalıştırıldığında hangi kurumun onayını almak gerekir?", "context": ["4857/73", "4857/69", "4857/72", "4857/104", "4857/76"]}
+{"source": "4857/74", "split": "train", "question": "İkinci çocuğumu doğurdu, bu durumda ne yapmalıyım?", "context": ["4857/74", "6098/359", "4857/88", "4857/Ek 2", "6098/350"]}
+{"source": "4857/74", "split": "train", "question": "Doğumdan sonra işte çalışamam diye bir şey var mı?", "context": ["4857/74", "4857/71", "4857/55", "4857/73", "4857/4"]}
+{"source": "4857/75", "split": "train", "question": "İşveren bana ne tür belgeleri saklaması gerekiyor?", "context": ["4857/75", "4857/28", "4857/3", "4857/52", "6698/6"]}
+{"source": "4857/75", "split": "train", "question": "İşveren bana ait kişisel bilgileri kimlerle paylaşabilir?", "context": ["4857/75", "6698/11", "6698/3", "4857/3", "6698/6"]}
+{"source": "4857/76", "split": "train", "question": "Bu yönetmelik sayesinde işverenler iş saatlerini nasıl düzenleyebilir?", "context": ["4857/76", "4857/70", "4857/104", "4857/67", "4857/69"]}
+{"source": "4857/76", "split": "train", "question": "İşçilerin gece çalışmasıyla ilgili özel kurallar nelerdir?", "context": ["4857/73", "4857/69", "4857/104", "4857/76", "4857/43"]}
+{"source": "4857/90", "split": "train", "question": "Türkiye İş Kurumu, iş arayanlara uygun iş bulmada yardımcı olur mu?", "context": ["4857/90", "4857/2", "4857/27", "4857/114", "4857/30"]}
+{"source": "4857/90", "split": "train", "question": "İş verenlerle iş arayanlar arasında köprü kurmak için özel bürolar var mı?", "context": ["4857/90", "4857/114", "4857/7", "4857/2", "4857/30"]}
+{"source": "4857/91", "split": "train", "question": "İşçi olarak, iş yerinde yapılan denetimler ne zaman yapılır?", "context": ["4857/91", "4857/92", "4857/96", "4857/3", "4857/64"]}
+{"source": "4857/91", "split": "train", "question": "İşçi olarak, bana ait olan alacaklarla ilgili ne yapmam gerekir?", "context": ["4857/35", "4857/36", "6098/319", "4857/37", "6098/364"]}
+{"source": "4857/92", "split": "train", "question": "İş müfettişleri ne zaman işyerine gidebilir?", "context": ["4857/92", "4857/3", "4857/97", "4857/96", "4857/93"]}
+{"source": "4857/92", "split": "train", "question": "İşverenler ve işçiler iş müfettişlerine ne yapmak zorundadır?", "context": ["4857/96", "4857/93", "4857/92", "4857/3", "4857/91"]}
+{"source": "4857/93", "split": "train", "question": "İş müfettişleri işyerini kontrol etmeye giderlerken bizim işimizi bozma hakkına sahip mi?", "context": ["4857/96", "4857/92", "4857/93", "4857/97", "4857/91"]}
+{"source": "4857/93", "split": "train", "question": "İş müfettişleri bize ait özel bilgileri saklamak zorundan mı geçer?", "context": ["4857/93", "4857/75", "4857/96", "6698/6", "6698/5"]}
+{"source": "4857/94", "split": "train", "question": "İşçi bir dilekçe yazarsa, o dilekçeye ek olarak başka belgeler de gerekebilir mi?", "context": ["4857/28", "4857/75", "4857/94", "4857/3", "4857/20"]}
+{"source": "4857/96", "split": "train", "question": "İşçi, işverenin kendi hakkına zarar vermesi için bilgi vermekten kaçınabilir mi?", "context": ["4857/5", "4857/96", "4857/75", "6698/11", "6698/28"]}
+{"source": "4857/97", "split": "eval", "question": "İşçi denetimi için zabıta ne yapar?", "context": ["4857/97", "4857/91", "4857/96", "4857/92", "4857/107"]}
+{"source": "4857/97", "split": "eval", "question": "İş yerlerinde denetim yaparken zabıta ne kadar yardımcı olur?", "context": ["4857/97", "4857/96", "4857/91", "4857/107", "4857/92"]}
+{"source": "4857/98", "split": "train", "question": "İşyerimi bildirmem gerekiyor mu?", "context": ["4857/3", "4857/98", "4857/75", "4857/27", "4857/52"]}
+{"source": "4857/98", "split": "train", "question": "İşverenimden dolayı ceza kesilir mi?", "context": ["4857/38", "4857/18", "4857/99", "4857/5", "4857/100"]}
+{"source": "4857/99", "split": "train", "question": "İşçi olarak işe başlamadan önce çalışma belgesi alamadım, para cezası alınacak mı?", "context": ["4857/106", "4857/99", "4857/28", "4857/21", "4857/30"]}
+{"source": "4857/99", "split": "train", "question": "İşveren bana çalışma belgesi vermedi, bu yüzden para cezası mı verilir?", "context": ["4857/106", "4857/99", "4857/102", "4857/28", "4857/98"]}
+{"source": "4857/100", "split": "train", "question": "İşten çıkarıldığında işverenden ne tür bir para cezası alınabilir?", "context": ["4857/100", "4857/99", "4857/38", "4857/102", "4857/106"]}
+{"source": "4857/101", "split": "train", "question": "Bir engelli kişiyi işe almak zorunlu mu?", "context": ["4857/30", "4857/101", "4857/Ek 1", "4857/5", "4857/2"]}
+{"source": "4857/101", "split": "train", "question": "Eski hükümlüleri işe almak zorunlu mu?", "context": ["4857/30", "4857/101", "4857/7", "4857/21", "4857/42"]}
+{"source": "4857/102", "split": "train", "question": "İşçi ücretlerini zamanında ödememek ne kadar ceza kesilir?", "context": ["4857/102", "4857/38", "4857/104", "4857/99", "4857/103"]}
+{"source": "4857/102", "split": "train", "question": "Ücret kesintisi yaparken belge vermemek cezaya neden olur?", "context": ["4857/38", "4857/28", "4857/37", "4857/102", "4857/99"]}
+{"source": "4857/103", "split": "train", "question": "Yıllık izin alırken ücretin eksik ödenmesi durumunda işveren ne yapmak zorunda kalır?", "context": ["4857/56", "4857/57", "4857/103", "4857/54", "4857/60"]}
+{"source": "4857/104", "split": "train", "question": "Gece saatlerinde çocukları çalıştırmanın yasalara göre ne gibi sonuçları olabilir?", "context": ["4857/73", "4857/104", "4857/71", "4857/69", "4857/72"]}
+{"source": "4857/106", "split": "train", "question": "İşverenimiz işe alımını yanlış yapsa ne olur?", "context": ["4857/21", "4857/99", "4857/23", "4857/30", "4857/2"]}
+{"source": "4857/106", "split": "train", "question": "İşverenimiz izin almadan işe başlarsa ceza alır mı?", "context": ["4857/106", "4857/56", "4857/21", "4857/74", "4857/42"]}
+{"source": "4857/107", "split": "train", "question": "İş müfettişleri ne yapamazsa ceza alırlar mı?", "context": ["4857/107", "4857/96", "4857/93", "4857/92", "4857/97"]}
+{"source": "4857/108", "split": "eval", "question": "İşverenim bir ilde birden fazla işyeri var, bu durumda idari para cezası nasıl verilir?", "context": ["4857/108", "4857/98", "4857/106", "4857/99", "4857/100"]}
+{"source": "4857/108", "split": "eval", "question": "İdari para cezası alındığında bu tutar neye göre belirlenir?", "context": ["4857/108", "4857/102", "6502/88", "4857/99", "4857/103"]}
+{"source": "4857/109", "split": "train", "question": "İşveren bana elektronik bir bildirim gönderdiğinde bunun geçerli olup olmadığını nasıl anlarım?", "context": ["4857/109", "4857/3", "4857/98", "4857/17", "4857/20"]}
+{"source": "4857/109", "split": "train", "question": "İş sözleşmesini fes edecek bir bildirim geldi ama yazıya çevrilmedi, bu durumda ne olur?", "context": ["4857/20", "4857/109", "4857/19", "4857/22", "4857/17"]}
+{"source": "4857/110", "split": "train", "question": "Bir konut kapıcılığı işi almak istiyorum, bu işin çalışma saatleri ne olur?", "context": ["4857/110", "4857/69", "4857/67", "6502/44", "4857/73"]}
+{"source": "4857/110", "split": "train", "question": "Konut kapıcıları yıllık izin alabilir miyiz?", "context": ["4857/110", "4857/53", "4857/56", "6098/347", "6098/355"]}
+{"source": "4857/111", "split": "train", "question": "Bu işin sanayi işi mi sayılır yoksa ticaret mi?", "context": ["4857/111", "4857/4", "6502/61", "6502/79", "4857/72"]}
+{"source": "4857/111", "split": "train", "question": "Bu işin tarım ya da orman işleri kapsamında mı sayılır?", "context": ["4857/111", "4857/4", "4857/72", "4857/66", "6098/376"]}
+{"source": "4857/112", "split": "train", "question": "İşe başladım ama işten ayrıldım, kıdem tazminatım ne olur?", "context": ["4857/112", "4857/Geçici 4", "4857/Geçici 6", "4857/Ek 3", "4857/21"]}
+{"source": "4857/112", "split": "train", "question": "Alt işverende çalıştım, sonra başka bir kamu kurumunda da çalıştım, kıdem tazminatım nasıl hesaplanır?", "context": ["4857/112", "4857/Geçici 11", "4857/Geçici 4", "4857/Geçici 12", "4857/Geçici 6"]}
+{"source": "4857/113", "split": "train", "question": "Eğer işveren işçinin ücretini azaltmak isterseniz, bu durumda ne gibi kurallar geçerli olur?", "context": ["4857/38", "4857/62", "4857/22", "4857/102", "4857/36"]}
+{"source": "4857/114", "split": "train", "question": "İşyerindeki sorunları çözmek için bu kuruldan nasıl faydalanabilirim?", "context": ["4857/114", "6698/21", "6502/66", "4857/115", "6698/23"]}
+{"source": "4857/115", "split": "train", "question": "İşyerinde 50'den fazla işçi varsa, işverenin kantin açması gerekir mi?", "context": ["4857/115", "4857/51", "4857/29", "4857/18", "4857/30"]}
+{"source": "4857/116", "split": "train", "question": "Basın mesleğinde çalışan biri, işten kovulduğunda ne yapmalı?", "context": ["4857/20", "4857/31", "4857/28", "4857/21", "4857/29"]}
+{"source": "4857/117", "split": "train", "question": "İşe başlamadan önce ne kadar süre içinde işten ayrılmam gerekiyor?", "context": ["4857/31", "4857/25", "4857/21", "4857/17", "4857/Geçici 10"]}
+{"source": "4857/117", "split": "train", "question": "İşten ayrıldığımda ücretlerim ne zaman ödenir?", "context": ["4857/32", "4857/59", "4857/57", "4857/38", "4857/17"]}
+{"source": "4857/118", "split": "eval", "question": "İşe başlamadan önce işverenin bana ne tür sağlık kontrolü yapması gerekir?", "context": ["4857/30", "4857/25", "4857/3", "4857/24", "4857/21"]}
+{"source": "4857/118", "split": "eval", "question": "İşten çıkarıldığında ne gibi haklarım vardır?", "context": ["4857/31", "4857/28", "4857/24", "4857/25", "4857/26"]}
+{"source": "4857/119", "split": "train", "question": "Yönetmelikler ne zaman çıkarılacak?", "context": ["4857/119", "6502/84", "4857/76", "6698/31", "6698/32"]}
+{"source": "4857/120", "split": "train", "question": "Eski iş kanununun bazı kısımları artık geçerli değil mi?", "context": ["4857/120", "4857/Geçici 12", "4857/30", "4857/4", "4857/117"]}
+{"source": "4857/Ek 1", "split": "train", "question": "Engelli bir kişi korumalı işyerinde çalışıyorsa, işverenin ona ne kadar maaş ödenmesi gerekir?", "context": ["4857/Ek 1", "4857/30", "4857/101", "4857/61", "4857/99"]}
+{"source": "4857/Ek 2", "split": "train", "question": "İkinci çocuğumu doğurdu, onun için ne kadar izin alabilirim?", "context": ["4857/Ek 2", "4857/74", "4857/55", "4857/56", "4857/53"]}
+{"source": "4857/Ek 2", "split": "train", "question": "Anne ya da babam öldü, bu yüzden ücretli izin alabilirim mi?", "context": ["4857/Ek 2", "4857/56", "4857/57", "4857/53", "4857/60"]}
+{"source": "4857/Ek 3", "split": "train", "question": "İkinci işten ayrıldıktan sonra para alamıyorum, ne yapmalıyım?", "context": ["4857/28", "4857/31", "4857/21", "4857/27", "4857/7"]}
+{"source": "4857/Ek 3", "split": "train", "question": "İşten çıkarken verilen tazminatın ne zaman ödenmesi gerekir?", "context": ["4857/Ek 3", "4857/112", "4857/21", "4857/17", "4857/28"]}
+{"source": "4857/Geçici 1", "split": "train", "question": "Eski iş kanunu'nun bazı maddeleri artık geçerli olmuyor mu?", "context": ["4857/120", "4857/Geçici 12", "4857/30", "4857/4", "4857/117"]}
+{"source": "4857/Geçici 3", "split": "train", "question": "Eğer yeni asgari ücret belirlenmeden önceki kararlar geçerliyse, bizler o ücreti alacağız mı?", "context": ["4857/Geçici 3", "4857/39", "4857/Geçici 12", "4857/102", "4857/32"]}
+{"source": "4857/Geçici 4", "split": "train", "question": "İkinci işsizlik maaşımı ne zaman başlar?", "context": ["4857/21", "4857/Geçici 4", "4857/31", "4857/Geçici 12", "4857/17"]}
+{"source": "4857/Geçici 4", "split": "train", "question": "Eski işimde çalışırken kazandığım kıdem tazminatım ne zaman verilir?", "context": ["4857/112", "4857/Geçici 4", "4857/Geçici 11", "4857/Geçici 6", "4857/Ek 3"]}
+{"source": "4857/Geçici 5", "split": "train", "question": "Eğer ücretlerimiz artarsa, bu oranlar neye göre değişiyor?", "context": ["4857/57", "4857/32", "4857/49", "4857/99", "4857/43"]}
+{"source": "4857/Geçici 6", "split": "eval", "question": "İşsiz kaldığımızda ne kadar para alırız?", "context": ["4857/32", "4857/48", "4857/40", "4857/21", "4857/46"]}
+{"source": "4857/Geçici 6", "split": "eval", "question": "İşten ayrıldığımızda kıdem tazminatı almak için ne yapmalıyız?", "context": ["4857/112", "4857/Geçici 6", "4857/Geçici 4", "4857/Geçici 11", "4857/18"]}
+{"source": "4857/Geçici 7", "split": "train", "question": "Cumhurbaşkanlığına ait bir kararla, geçici iş ilişkileri ne zaman sona erer?", "context": ["4857/7", "4857/Geçici 10", "4857/Geçici 7", "4857/Geçici 8", "4857/Geçici 12"]}
+{"source": "4857/Geçici 7", "split": "train", "question": "İşçinin başka bir işverene geçmesiyle kurulan geçici iş ilişkisi, ne zaman sona erer?", "context": ["4857/7", "4857/Geçici 7", "4857/Geçici 10", "4857/3", "4857/Geçici 8"]}
+{"source": "4857/Geçici 8", "split": "train", "question": "İkinci işten ayrıldıktan sonra yıllık izin ücretim ve tazminatım ne zaman ödenir?", "context": ["4857/Ek 3", "4857/Geçici 8", "4857/57", "4857/59", "4857/56"]}
+{"source": "4857/Geçici 8", "split": "train", "question": "İlk işteki yıllık izin ücretim ve tazminatımın zaman aşım süresi ne kadar?", "context": ["4857/Ek 3", "4857/53", "4857/Geçici 8", "4857/Ek 2", "4857/56"]}
+{"source": "4857/Geçici 9", "split": "train", "question": "İşçi olarak, alt işverenden alacağım borcun alt işverene geri verilmesi olur mu?", "context": ["4857/6", "6098/322", "4857/36", "4857/Geçici 12", "6098/323"]}
+{"source": "4857/Geçici 9", "split": "train", "question": "Alt işverenin borcunu tahsil ettiğimizde o borcun bizimle ilgisi olur mu?", "context": ["4857/36", "4857/2", "4857/6", "4857/Geçici 9", "4857/Geçici 12"]}
+{"source": "4857/Geçici 10", "split": "train", "question": "İşveren bana ücretsiz izne ayırabilir mi?", "context": ["4857/56", "4857/27", "4857/Ek 2", "4857/46", "4857/Geçici 10"]}
+{"source": "4857/Geçici 10", "split": "train", "question": "İşveren bana haksız bir şekilde işi feshedebilir mi?", "context": ["4857/25", "4857/24", "4857/22", "4857/Geçici 10", "4857/21"]}
+{"source": "4857/Geçici 11", "split": "train", "question": "İşsiz kaldım ve kıdem tazminatım olmalı diye düşünüyorum, ne yapmalıyım?", "context": ["4857/112", "4857/Geçici 6", "4857/Geçici 4", "4857/Geçici 11", "4857/21"]}
+{"source": "4857/Geçici 11", "split": "train", "question": "Kıdem tazminatımı alamadım, ne yapabilirim?", "context": ["4857/112", "4857/Geçici 11", "4857/Geçici 4", "4857/Geçici 6", "4857/Ek 3"]}
+{"source": "4857/Geçici 12", "split": "train", "question": "Alt işverenlerin çalışanlarına kıdem tazminatı ödediği zaman, kamu kurumları alt işverene rücua edebilir mi?", "context": ["4857/112", "4857/Geçici 12", "4857/Geçici 11", "4857/36", "4857/Geçici 4"]}
+{"source": "4857/Geçici 12", "split": "train", "question": "Kamu kurumu alt işverene rücua ederken, alt işverenin alacağı miktar azalır mı?", "context": ["4857/Geçici 12", "4857/112", "4857/Geçici 9", "4857/36", "4857/38"]}
+{"source": "4857/122", "split": "train", "question": "Yürütme yetkisi kimin elinde?", "context": ["4857/122", "4857/91", "4857/92", "6502/84", "4857/70"]}
+{"source": "6698/1", "split": "train", "question": "Birinin bana ait özel bilgilerini işleyip, benim izni olmadan bana zarar vermesi mümkün mü?", "context": ["6698/5", "6698/11", "6698/8", "6698/28", "6698/6"]}
+{"source": "6698/2", "split": "eval", "question": "Kimin verileri işlenebilir?", "context": ["6698/5", "6698/11", "6698/6", "6698/4", "6698/2"]}
+{"source": "6698/2", "split": "eval", "question": "Veri işleme ne zaman yasal olur?", "context": ["6698/5", "6698/3", "6698/6", "6698/12", "6698/4"]}
+{"source": "6698/3", "split": "train", "question": "Bir kişinin verileri kimsenin bilmesin diye ne yapmalı?", "context": ["6698/5", "6698/7", "6698/8", "6698/11", "6698/3"]}
+{"source": "6698/3", "split": "train", "question": "Veri sorumlusu ne yapmak zorundadır?", "context": ["6698/12", "6698/10", "6698/16", "6698/13", "6698/11"]}
+{"source": "6698/4", "split": "train", "question": "Veri işleme işlemi ne zaman yasaya uygun olur?", "context": ["6698/9", "6698/5", "6698/Geçici 1", "6698/3", "6698/4"]}
+{"source": "6698/4", "split": "train", "question": "Bir kişiye ait bilgiler nasıl kullanılmalı?", "context": ["6698/4", "6698/3", "6698/5", "6698/11", "6698/8"]}
+{"source": "6698/5", "split": "train", "question": "Bir kişi, kendi verilerinin işlenmesine karşı çıkmadığında, başka biri onların verisini işleyebilir mi?", "context": ["6698/5", "6698/11", "6698/6", "6698/8", "6698/4"]}
+{"source": "6698/6", "split": "train", "question": "Bu verileri kim kullanabilir?", "context": ["6698/11", "6698/3", "6698/2", "6698/5", "6698/8"]}
+{"source": "6698/6", "split": "train", "question": "Kime ve ne amaçla bu verilerin kullanılması yasak?", "context": ["6698/6", "6698/28", "6698/5", "6698/3", "6698/8"]}
+{"source": "6698/7", "split": "train", "question": "Veri sorumlusu bana verdiğim bilgileri ne zaman silmeli?", "context": ["6698/13", "6698/Geçici 1", "6698/12", "6698/7", "6698/11"]}
+{"source": "6698/7", "split": "train", "question": "Bilgilerim silindiğinde onları tekrar geri alabilirmiyim?", "context": ["6698/7", "6698/11", "6698/8", "6698/13", "6698/4"]}
+{"source": "6698/8", "split": "train", "question": "Verdiğim verilerin başka kişilere veya kurumlara aktarılması için ne gibi şartlar var?", "context": ["6698/8", "6698/9", "6698/5", "6698/3", "6698/28"]}
+{"source": "6698/8", "split": "train", "question": "Verdiğim bilgilerin başka bir yerde kullanılmak isteniyorsa, bana haber verilmesi gerekir mi?", "context": ["6698/8", "6698/11", "6698/5", "6698/9", "6698/12"]}
+{"source": "6698/9", "split": "train", "question": "Veri sorumlusu, verdiğim verileri neden yurt dışına gönderebilir?", "context": ["6698/9", "6698/12", "6698/11", "6698/8", "6698/10"]}
+{"source": "6698/9", "split": "train", "question": "Veri dışarı gönderilecekse, benim hakkımda ne gibi kontroller yapılır?", "context": ["6698/9", "6698/11", "6698/12", "6698/16", "6698/15"]}
+{"source": "6698/10", "split": "train", "question": "Eğer bir şirketin bana veri topladığını düşünürsem, onlar bana ne gibi bilgiler vermek zorundadır?", "context": ["6698/10", "6698/12", "6698/11", "6698/5", "6698/16"]}
+{"source": "6698/10", "split": "train", "question": "Bir şirket bana veri topladığında, bana sadece isim ve soyadım mı vermek zorundadır?", "context": ["6698/3", "6698/16", "6698/10", "6698/9", "6698/6"]}
+{"source": "6698/11", "split": "train", "question": "Bir şirketin benim verimliliğim hakkında ne tür veri topladığını öğrenmek istiyorum, ne yapabilirim?", "context": ["6698/11", "6698/13", "6698/15", "6698/20", "6698/10"]}
+{"source": "6698/11", "split": "train", "question": "Verdiğim kişisel bilgiler yanlış işlenmişse ne yapmalıyım?", "context": ["6698/11", "6698/12", "6698/4", "6698/8", "6698/5"]}
+{"source": "6698/12", "split": "eval", "question": "Veri sorumlusu ne yapmak zorundadır?", "context": ["6698/12", "6698/10", "6698/16", "6698/13", "6698/11"]}
+{"source": "6698/12", "split": "eval", "question": "Kişisel verileri başkasına verebilir miyiz?", "context": ["6698/8", "6698/11", "6698/5", "6698/12", "6698/6"]}
+{"source": "6698/13", "split": "train", "question": "Veri sorumlusu benim talebimi en geç 30 gün içinde cevaplamalı mı?", "context": ["6698/13", "6698/14", "6698/15", "6698/Geçici 1", "6698/12"]}
+{"source": "6698/14", "split": "train", "question": "Veri sorumlusu cevap vermezse ne olur?", "context": ["6698/13", "6698/12", "6698/14", "6698/15", "6698/18"]}
+{"source": "6698/15", "split": "train", "question": "Şikâyetimle ilgili cevap almak ne kadar sürer?", "context": ["6698/14", "6698/13", "6698/15", "6098/315", "6502/10"]}
+{"source": "6698/16", "split": "train", "question": "Veri sorumluları siciline kayıt olmak zorundamıyım?", "context": ["6698/16", "6698/13", "6698/12", "6698/Geçici 1", "6698/15"]}
+{"source": "6698/16", "split": "train", "question": "Veri sorumluları siciline kayıt olurken ne gibi bilgiler vermem gerekir?", "context": ["6698/16", "6698/Geçici 1", "6698/12", "6698/13", "6698/10"]}
+{"source": "6698/17", "split": "train", "question": "Birinin verilerimi yanlış kullanması durumunda ne olur?", "context": ["6698/12", "6698/11", "6698/5", "6698/28", "6698/8"]}
+{"source": "6698/17", "split": "train", "question": "Verilerimi silmeyen ya da anonim hale getirmeyen kişiye ne ceza verilir?", "context": ["6698/17", "6698/7", "6698/18", "6698/3", "6698/28"]}
+{"source": "6698/18", "split": "train", "question": "Veri sorumlusu yanlış işlem yaparsa para cezası alabilir mi?", "context": ["6698/12", "6698/18", "6698/13", "6698/11", "6698/16"]}
+{"source": "6698/19", "split": "train", "question": "Kurumun ne zaman kuruldu?", "context": ["6698/19", "6698/20", "6698/21", "6698/25", "6698/22"]}
+{"source": "6698/19", "split": "train", "question": "Kurumun başkanı kim tarafından belirlenir?", "context": ["6698/24", "6698/25", "6698/21", "6698/23", "6502/63"]}
+{"source": "6698/20", "split": "train", "question": "Kurum, sadece kendi alanındaki işlerle ilgilenir mi yoksa diğer kurumlarla da iş birliği yapar mı?", "context": ["4857/2", "6698/20", "4857/114", "6698/25", "4857/1"]}
+{"source": "6698/21", "split": "train", "question": "Kurulda görev yaparken başka bir işe girebilir miyiz?", "context": ["6698/21", "6698/23", "4857/Geçici 12", "6698/27", "4857/7"]}
+{"source": "6698/21", "split": "train", "question": "Kurulda görev yaparken başka bir kurumda çalışmak mümkün mü?", "context": ["6698/21", "6698/27", "4857/Geçici 12", "4857/7", "6698/23"]}
+{"source": "6698/22", "split": "eval", "question": "Birisi bana veri sorumluluğu getiriyor diyor, ne yapmalıyım?", "context": ["6698/12", "6698/10", "6698/11", "6698/13", "6698/16"]}
+{"source": "6698/22", "split": "eval", "question": "Veri sorumlusu ne yapmalı, ne yapamaz?", "context": ["6698/12", "6698/10", "6698/11", "6698/16", "6698/22"]}
+{"source": "6698/23", "split": "train", "question": "Kurul toplantısına kimler katılamaz?", "context": ["6698/23", "6698/21", "6698/27", "6502/63", "6698/15"]}
+{"source": "6698/23", "split": "train", "question": "Kurul üyeleri toplantıda ne yapamazlar?", "context": ["6698/23", "6698/21", "6698/27", "6502/63", "6698/15"]}
+{"source": "6698/24", "split": "train", "question": "Kurum başkanının işlerini kim yürütür?", "context": ["6698/24", "6698/25", "6698/27", "6698/23", "6698/33"]}
+{"source": "6698/24", "split": "train", "question": "Kurum başkanı kime rapor verir?", "context": ["6698/24", "6698/25", "6698/27", "6698/Geçici 1", "4857/3"]}
+{"source": "6698/25", "split": "train", "question": "Bireylerin verilerini korumak için ne gibi kurumlar kurulur?", "context": ["6698/22", "6698/20", "6698/19", "6698/1", "6698/12"]}
+{"source": "6698/26", "split": "train", "question": "Veri sorumlusu olarak ne yapmam gerekir?", "context": ["6698/12", "6698/10", "6698/16", "6698/13", "6698/11"]}
+{"source": "6698/27", "split": "train", "question": "Kurulda çalışanlar emeklilik hakkımızı nasıl kullanırız?", "context": ["6698/27", "6698/21", "6698/23", "4857/54", "4857/Geçici 6"]}
+{"source": "6698/27", "split": "train", "question": "Kurumda geçici olarak çalıştığımız zaman maaşımız nasıl hesaplanır?", "context": ["4857/48", "6698/27", "4857/39", "4857/112", "4857/32"]}
+{"source": "6698/28", "split": "train", "question": "Veri sorumlusu, bana ne gibi bilgileri vermek zorundadır?", "context": ["6698/12", "6698/10", "6698/13", "6698/16", "6698/11"]}
+{"source": "6698/29", "split": "train", "question": "Kurumların gelirleri nereden geliyor?", "context": ["6698/29", "4857/51", "6698/27", "6502/82", "4857/37"]}
+{"source": "6698/30", "split": "train", "question": "İlk kez sağlık hizmetlerinde kişisel verileri işlerken hangi şartlar geçerliydi?", "context": ["6698/6", "6698/5", "6698/4", "6698/3", "6698/30"]}
+{"source": "6698/31", "split": "train", "question": "Kurumlar ne yapmak zorundadır ki verilerim korunsun?", "context": ["6698/12", "6698/22", "6698/20", "6698/11", "6698/1"]}
+{"source": "6698/Geçici 1", "split": "eval", "question": "İşime başladığım zaman kişisel verilerim nasıl korunur?", "context": ["6698/6", "6698/4", "6698/12", "6698/1", "6698/5"]}
+{"source": "6698/Geçici 2", "split": "train", "question": "Bu metinde belirtilen şartlar nelerdir?", "context": ["4857/4", "4857/1", "6502/4", "6502/48", "6502/5"]}
+{"source": "6698/Geçici 3", "split": "train", "question": "Bir hâkimlikte bir şeyi sormak istedim, o zaman ne olur?", "context": ["6502/69", "6502/68", "6698/15", "6502/77/A", "6502/73"]}
+{"source": "6698/Geçici 3", "split": "train", "question": "Bir şeyi 1 Eylül 2024 tarihine kadar sormam gerekir mi?", "context": ["6698/Geçici 3", "6698/13", "6502/45", "6698/14", "6502/44"]}
+{"source": "6698/32", "split": "train", "question": "Veri işleme kuralları ne zaman uygulanmaya başlar?", "context": ["6698/Geçici 1", "6698/4", "6698/32", "6698/3", "6698/16"]}
+{"source": "6698/33", "split": "train", "question": "Kişisel verileri koruma kurumu'nda ne tür pozisyonlar var?", "context": ["6698/26", "6698/33", "6698/19", "6698/20", "6698/24"]}
+{"source": "6502/1", "split": "train", "question": "Tüketici olarak alışveriş yaparken ne tür korumaları bekleyebilirim?", "context": ["6502/57/A", "6502/76", "6502/3", "6502/1", "6502/4"]}
+{"source": "6502/2", "split": "train", "question": "Kullanıcının alışveriş yaparken hakları ne olur?", "context": ["6502/11", "6502/15", "6502/18", "6502/24", "6502/76"]}
+{"source": "6502/3", "split": "train", "question": "Bir ürün alırken benimle aynı durumda olan diğer tüketiciyle ne gibi farklar olabilir?", "context": ["6502/83", "6502/79", "6502/76", "6502/47", "6502/48"]}
+{"source": "6502/4", "split": "train", "question": "Anlaşma içindeki bazı şartlar eksik olsa bile, anlaşmanın geçerli olmaz mı?", "context": ["6502/5", "6502/73/A", "6502/4", "6502/17", "6502/Geçici 2"]}
+{"source": "6502/5", "split": "train", "question": "Bu tür bir sözleşmede neyin haksız sayıldığını nasıl anlarım?", "context": ["6502/5", "6502/48", "6098/378", "6098/334", "6098/306"]}
+{"source": "6502/5", "split": "train", "question": "Bir sözleşmede yer alan şartlar ne zaman geçersiz olur?", "context": ["6502/5", "6098/367", "4857/Geçici 10", "6502/17", "6098/334"]}
+{"source": "6502/6", "split": "eval", "question": "Eğer bir ürünün satılamayacağını belirtmemişse, bana sattırmamızın yasal bir sebebi olabilir mi?", "context": ["6502/6", "6502/9", "6502/74", "6502/80", "6502/62"]}
+{"source": "6502/7", "split": "train", "question": "Eğer bir ürün sipariş vermeden gelsin, o ürünün ücretini ödemem gerekiyor mu?", "context": ["6502/7", "6502/73/A", "6502/27", "6502/20", "6502/21"]}
+{"source": "6502/8", "split": "train", "question": "Bu malı aldım ama kullanamıyorum, ne yapmalıyım?", "context": ["6502/8", "6502/12", "6502/11", "6502/74", "6502/10"]}
+{"source": "6502/8", "split": "train", "question": "Alınan malın kullanamaz hale gelmesi durumunda para iade edilebilir mi?", "context": ["6502/11", "6502/15", "6502/8", "6502/74", "6502/12"]}
+{"source": "6502/9", "split": "train", "question": "Satıcıya verdiğim ürünü biraz bozuk buldum, o zaman ne olur?", "context": ["6502/74", "6502/11", "6502/8", "6502/10", "6502/76"]}
+{"source": "6502/9", "split": "train", "question": "Ürünün tanıtımında belirtmedikleri bir şey varsa, benim için sorumlu olur mu?", "context": ["6502/55", "6502/9", "6502/14", "6502/58", "6502/10"]}
+{"source": "6502/10", "split": "train", "question": "Ürünün üzerinde ayıplı olduğu yazıyorsa, o ürünü almadan önce onu kontrol etmem gerekir mi?", "context": ["6502/11", "6502/10", "6502/74", "6502/8", "6502/15"]}
+{"source": "6502/11", "split": "train", "question": "Tüketici hakları kanunları, malı alıp sonra zayıf bulduğumda ne yapabilirim?", "context": ["6502/74", "6502/11", "6502/68", "6502/8", "6502/15"]}
+{"source": "6502/11", "split": "train", "question": "Malı alıp sonra zayıf bulursam, indirim isteyebilir miyim?", "context": ["6098/363", "6502/11", "6098/307", "6502/19", "6502/74"]}
+{"source": "6502/12", "split": "train", "question": "Eğer ev veya tatil için aldığım malda sorun varsa ne kadar süre içinde dava açabilirim?", "context": ["6502/12", "6502/50", "6502/45", "6502/10", "6502/43"]}
+{"source": "6502/13", "split": "train", "question": "Bu hizmeti aldım ama içeriğiyle ilgili bir şey yazmamıştı, ne yapmalıyım?", "context": ["6502/14", "6502/13", "6502/4", "6502/9", "6502/7"]}
+{"source": "6502/13", "split": "train", "question": "Alınan hizmetin özelliklerini taşımadığı için para iade etmem gerekiyor mu?", "context": ["6502/13", "6502/15", "6502/11", "6098/372", "6502/7"]}
+{"source": "6502/14", "split": "train", "question": "Bir hizmet alırken reklamda yapılan açıklamaların hizmetin ne kadar iyi olduğunu göstermesi gerekir mi?", "context": ["6502/61", "6502/14", "6502/53", "6502/9", "6502/55"]}
+{"source": "6502/14", "split": "train", "question": "Hizmet alırken yapılan açıklamaların hizmetin kalitesini nasıl etkilediğini bilmem gerekir mi?", "context": ["6502/14", "6502/58", "6502/9", "6502/4", "6502/13"]}
+{"source": "6502/15", "split": "train", "question": "Eğer hizmeti yeniden yapmasayalar ne olur?", "context": ["6502/15", "6502/13", "6098/355", "6098/334", "6502/58"]}
+{"source": "6502/15", "split": "train", "question": "Eğer hizmeti ücretsiz onarım verseler, ne kadar sürede yapmalı?", "context": ["6502/58", "6502/15", "6502/16", "4857/Geçici 10", "6098/361"]}
+{"source": "6502/16", "split": "eval", "question": "Eğer bir hizmetin kötü tarafı sonradan fark edilirse, ne kadar zaman içinde şikayet etmeliyiz?", "context": ["6502/16", "6502/10", "6502/58", "6502/12", "6698/14"]}
+{"source": "6502/17", "split": "train", "question": "Taksitle aldığım şeyi kullanmaya başladım ama sonra ödeme yapamayacağım, o zaman ne olur?", "context": ["6502/20", "6502/18", "6502/21", "6502/19", "6502/17"]}
+{"source": "6502/17", "split": "train", "question": "Taksitlerim var ama bir aylık geç kaldı, bu durumda taksitleri ödemem gerekiyor mu?", "context": ["6502/20", "6502/27", "6502/37", "6502/21", "6502/28"]}
+{"source": "6502/18", "split": "train", "question": "Eğer ürünüzü 7 gün içinde iade etmek isterseniz, satıcıdan ne yapmanız gerekir?", "context": ["6502/45", "6502/7", "6502/74", "6502/56", "6502/58"]}
+{"source": "6502/19", "split": "train", "question": "Taksitlerin bir kısmı ödenemiyorsa, satıcı ne yapabilir?", "context": ["6502/20", "6502/17", "6502/19", "6502/21", "6502/18"]}
+{"source": "6502/20", "split": "train", "question": "Bir taksit ödemek yerine tüm borcumu bir kerede ödeyebilir miyim?", "context": ["6502/27", "6502/20", "6502/37", "6502/28", "6502/21"]}
+{"source": "6502/20", "split": "train", "question": "Taksitlerimden birini ödediğimde faizlerden indirim olur mu?", "context": ["6502/20", "6502/19", "6502/37", "6502/28", "6502/27"]}
+{"source": "6502/21", "split": "train", "question": "Taksitle aldığım ürünü daha sonra geri verebilir miyim?", "context": ["6502/20", "6502/19", "6502/21", "6502/18", "6502/17"]}
+{"source": "6502/22", "split": "train", "question": "Tüketici kredisi alırken neyin geçerli olması gerekir?", "context": ["6502/22", "6502/25", "6502/31", "6502/30", "6502/24"]}
+{"source": "6502/22", "split": "train", "question": "Kredi kartı kullanarak alışveriş yaptım ama faiz oranı çok yüksek, bu normal mı?", "context": ["6502/26", "6502/36", "6502/25", "6502/22", "6502/37"]}
+{"source": "6502/23", "split": "train", "question": "Bu krediyi almadan önce bana ne gibi bilgiler verilmek zorundadır?", "context": ["6502/23", "6502/33", "6502/31", "6502/22", "6502/27"]}
+{"source": "6502/23", "split": "train", "question": "Kredi almadan önce bana kredi şartlarını açıklayacak bir form vermek zorundalar mı?", "context": ["6502/23", "6502/33", "6502/26", "6502/22", "6502/27"]}
+{"source": "6502/24", "split": "train", "question": "Tüketici kredisi aldım, kaç gün içinde geri ödeyebilirim?", "context": ["6502/24", "6502/28", "6502/26", "6502/45", "6502/27"]}
+{"source": "6502/24", "split": "train", "question": "Kredi alırken cayma hakkım var mı?", "context": ["6502/24", "6502/43", "6502/18", "6502/49", "6502/22"]}
+{"source": "6502/25", "split": "train", "question": "Kredi alırken faiz oranı ne kadar olabilir?", "context": ["6502/36", "6502/25", "6502/26", "6502/22", "6502/37"]}
+{"source": "6502/25", "split": "train", "question": "Kredi alırsam faizsiz olarak kullanabilirim mi?", "context": ["6502/25", "6502/26", "6502/36", "6502/22", "6502/24"]}
+{"source": "6502/26", "split": "eval", "question": "Bir ay sonra faiz oranı artarsa beni haber vermem gerekir mi?", "context": ["6502/26", "6502/36", "6502/37", "6502/24", "6502/25"]}
+{"source": "6502/26", "split": "eval", "question": "Eğer faiz oranı artarsa, ödemelerimde değişiklik olur mu?", "context": ["6502/26", "6502/36", "6502/25", "6502/37", "6502/22"]}
+{"source": "6502/27", "split": "train", "question": "Eğer taksitimi erken ödersem, banka bana faizi indirimli olarak öder mi?", "context": ["6502/37", "6502/27", "6502/20", "6502/36", "6502/21"]}
+{"source": "6502/28", "split": "train", "question": "Kredi aldım ve bir iki taksit ödemeyi unuttum, bu durumda ne olur?", "context": ["6502/28", "6502/27", "6502/20", "6502/19", "6502/34"]}
+{"source": "6502/28", "split": "train", "question": "Kredi veren bana önceden haber vermeden doğrudan taksitleri alabilir mi?", "context": ["6502/27", "6502/20", "6502/37", "6502/23", "6502/28"]}
+{"source": "6502/29", "split": "train", "question": "Kredi alırken sigorta yaptırılması zorunlu mu, yoksa isteğe bağlı mı?", "context": ["6502/29", "6502/38", "6502/42", "6502/23", "6502/35"]}
+{"source": "6502/30", "split": "train", "question": "Krediyle alacağım ürünün verilmesi gerekiyorsa, kredi almadan önce ne yapmalıyım?", "context": ["6502/23", "6502/27", "6502/33", "6502/20", "6502/37"]}
+{"source": "6502/30", "split": "train", "question": "Krediyle aldığım ürünün teslimatı geciktiyse, kredi ödeme planım nasıl değişir?", "context": ["6502/26", "6502/27", "6502/22", "6502/37", "6502/24"]}
+{"source": "6502/31", "split": "train", "question": "Kredi kartı kullanırken herhangi bir ücret alınması durumu nasıl olur?", "context": ["6502/31", "6502/22", "6502/26", "6502/24", "6502/28"]}
+{"source": "6502/32", "split": "train", "question": "Konut için kredi almak istiyorum, bu durumda ne yapmam gerekir?", "context": ["6502/32", "6502/38", "6502/35", "6502/42", "6502/33"]}
+{"source": "6502/33", "split": "train", "question": "Bir ev kredisi almak istiyorum, o zaman ne gibi bilgileri vermek zorundadır?", "context": ["6502/33", "6502/23", "6502/35", "6502/38", "6502/39"]}
+{"source": "6502/33", "split": "train", "question": "Ev kredisi alırken bana hangi bilgileri açıkça söylüyorlar?", "context": ["6502/33", "6502/23", "6502/39", "6502/35", "6502/38"]}
+{"source": "6502/34", "split": "train", "question": "Eğer taksitlerimi geç ödediğim için evimi kaybedebilir miyim?", "context": ["6502/37", "6502/34", "6502/27", "6502/20", "6098/342"]}
+{"source": "6502/34", "split": "train", "question": "Evimi satmaları için ne yapmam gerekir?", "context": ["6502/41", "6502/40", "6502/42", "6502/44", "6502/43"]}
+{"source": "6502/35", "split": "train", "question": "Eğer evim verilmemişse, kredi şirketi ne yapmak zorundadır?", "context": ["6098/342", "6502/35", "6502/33", "6502/34", "6502/37"]}
+{"source": "6502/36", "split": "eval", "question": "Bir konut kredisi alırken faiz oranını nasıl belirlerler?", "context": ["6502/36", "6502/25", "6502/26", "6502/37", "6502/35"]}
+{"source": "6502/36", "split": "eval", "question": "Kira tutarının fazla olması durumunda faiz olarak sayılıyor mu?", "context": ["6502/36", "6098/344", "6098/345", "6098/302", "6098/346"]}
+{"source": "6502/37", "split": "train", "question": "Erken ödeme yaparsak banka bana para iade etmek zorunda mı?", "context": ["6502/27", "6502/37", "6502/45", "6502/20", "6502/44"]}
+{"source": "6502/38", "split": "train", "question": "Bir konut kredisi alırken sigorta yaptırma zorunluluğu var mı?", "context": ["6502/38", "6502/29", "6502/42", "6502/35", "6502/32"]}
+{"source": "6502/38", "split": "train", "question": "Kredi ile birlikte sigorta yaptırmam gerekiyor mu?", "context": ["6502/29", "6502/38", "6502/42", "6502/23", "6502/31"]}
+{"source": "6502/39", "split": "train", "question": "Konut kredisi alırken bankanın sana ait bir hesap açması gerekiyor mu?", "context": ["6502/39", "6502/35", "6502/38", "6502/32", "6502/31"]}
+{"source": "6502/40", "split": "train", "question": "Bir konut almak istiyorum, ama önceden ödeme yapmak zorunda mıyım?", "context": ["6502/40", "6502/37", "6502/42", "6502/44", "6502/41"]}
+{"source": "6502/40", "split": "train", "question": "Ön ödeme yaparken evim hâlâ satıcının elinde mi kalacak?", "context": ["6502/44", "6502/40", "6502/45", "6502/41", "6502/42"]}
+{"source": "6502/41", "split": "train", "question": "Bir ev satışı yaparken neyin şart olduğunu bilmem gerekir?", "context": ["6502/41", "6502/42", "6502/40", "6502/6", "6502/44"]}
+{"source": "6502/41", "split": "train", "question": "Satıcı, evin satışını承诺 etmeden bana para alabilir mi?", "context": ["6502/40", "6502/41", "6502/45", "6502/42", "6502/44"]}
+{"source": "6502/42", "split": "train", "question": "Bir konut alırken ödememden sonra satıcının kapanması durumunda ne olur?", "context": ["6502/43", "6502/45", "6502/34", "6502/41", "6502/42"]}
+{"source": "6502/42", "split": "train", "question": "Alacağım konutun bitmeden satıcının kapanması durumunda beni nasıl korurlar?", "context": ["6502/42", "6502/34", "6502/43", "6502/41", "6502/45"]}
+{"source": "6502/43", "split": "train", "question": "Konut alırken ödediğim para geri verilebilir mi?", "context": ["6502/45", "6502/43", "6502/34", "6502/37", "6502/44"]}
+{"source": "6502/44", "split": "train", "question": "Bir konut almak istiyorum, ama ne zaman oturabiliriz?", "context": ["6502/44", "6502/45", "6098/351", "6502/43", "6098/355"]}
+{"source": "6502/44", "split": "train", "question": "Kira sözleşmesi yaparken önceden ödeme yapmak zorunda mıyız?", "context": ["6098/362", "6098/314", "6098/313", "6502/40", "6098/324"]}
+{"source": "6502/45", "split": "train", "question": "Bir konut almak istedim, ama sonra vazgeçmek istedim, bu mümkün mü?", "context": ["6502/45", "6502/43", "6502/40", "6502/34", "6502/38"]}
+{"source": "6502/45", "split": "train", "question": "Eğer bir konut sözleşmesinden dönüyorum, satıcıya para ödemem gerekir mi?", "context": ["6502/45", "6502/43", "6502/44", "6502/40", "6502/41"]}
+{"source": "6502/46", "split": "eval", "question": "Bir konut almak istiyorum, ama bu konuda ne bilmem gerekir?", "context": ["6502/33", "6502/42", "6502/40", "6502/32", "6502/44"]}
+{"source": "6502/46", "split": "eval", "question": "Alışveriş yaparken bir şeyi geri verebilir miyim?", "context": ["6502/11", "6502/45", "6098/372", "6502/15", "6502/74"]}
+{"source": "6502/47", "split": "train", "question": "Satıcı veya sağlayıcının iş yerinden başka yerde bana bir sözleşme sunarsa, o sözleşmenin geçerli olabilmesi için ne yapması gerekir?", "context": ["6502/47", "6502/48", "6502/17", "6502/52", "4857/Geçici 7"]}
+{"source": "6502/47", "split": "train", "question": "İş yerinden başka yerde yapılan sözleşmelerde cayma hakkım var mı ve ne kadar sürer?", "context": ["6502/47", "6502/48", "6502/49", "4857/Geçici 10", "4857/7"]}
+{"source": "6502/47/A", "split": "train", "question": "Tüketiciler, doğrudan satış yapan şirketlerden aldıkları ürünleri 30 gün içinde iade edebilir mi?", "context": ["6502/47/A", "6502/45", "6502/43", "6502/58", "6502/24"]}
+{"source": "6502/47/A", "split": "train", "question": "Doğrudan satış yapan bir şirkette çalışanlar, tüketicilere nasıl bilgi vermek zorundadır?", "context": ["6502/47/A", "6502/9", "6502/55", "6502/23", "6502/58"]}
+{"source": "6502/48", "split": "train", "question": "Ticari internet sitesinden ürün alırken ne kadar süre içinde iade etme hakkım var?", "context": ["6502/45", "6502/11", "6502/15", "6502/18", "6502/57/A"]}
+{"source": "6502/48", "split": "train", "question": "Uzaktan alışveriş yaparken ödeme yapmadan önce hangi bilgileri vermem gerekiyor?", "context": ["6502/23", "6502/48", "6502/49", "6502/4", "6502/40"]}
+{"source": "6502/49", "split": "train", "question": "İnternetten bir kredi almak istiyorum, bu kredide cayma hakkı var mı?", "context": ["6502/24", "6502/43", "6502/18", "6502/49", "6502/22"]}
+{"source": "6502/49", "split": "train", "question": "İnternetten bir sigorta alırsam, onu geri verebilir miyim?", "context": ["6502/29", "6502/38", "6502/45", "6502/51", "6502/57"]}
+{"source": "6502/50", "split": "train", "question": "Tatil için bir konaklama sözleşmesi imzaladım, bu sözleşmeden sonra cayabilir miyim?", "context": ["6502/50", "6502/48", "6502/49", "6502/51", "6502/43"]}
+{"source": "6502/50", "split": "train", "question": "Tatil için bir konaklama sözleşmesi imzaladım, ama sonra caymak istedim, para iade edilir mi?", "context": ["6502/50", "6502/51", "6502/45", "6502/43", "6502/49"]}
+{"source": "6502/51", "split": "train", "question": "Bir paket tur sözleşmesi imzaladım, ama turun başlamadan önce iptal edildi, ne yapmalıyım?", "context": ["6502/51", "6502/50", "6502/45", "6502/Geçici 3", "6502/28"]}
+{"source": "6502/51", "split": "train", "question": "Paket tur sözleşmesinde belirtilen hizmetlerden biri değişti, bu durumda para iade etme hakkım var mı?", "context": ["6502/51", "6502/15", "6502/50", "6502/11", "6502/45"]}
+{"source": "6502/52", "split": "train", "question": "Abonelik sözleşmesi ne demek?", "context": ["6502/52", "6502/48", "6502/49", "6502/30", "6502/50"]}
+{"source": "6502/52", "split": "train", "question": "Abonelik sözleşmesini istem dışı feshedebilir miyim?", "context": ["6502/52", "4857/25", "6098/378", "4857/24", "6098/369"]}
+{"source": "6502/53", "split": "train", "question": "Promosyonlarda bilet alarak bir ürün almak istiyorum, ama bu ürünün fiyatı artabilir mi?", "context": ["6502/53", "6502/26", "6502/54", "6502/80", "6502/82"]}
+{"source": "6502/54", "split": "train", "question": "Bu mağazada ürünün fiyatı neye göre belirlenir?", "context": ["6502/54", "6098/357", "6502/6", "6502/88", "6502/9"]}
+{"source": "6502/54", "split": "train", "question": "Ürünün indirimli fiyatı ne zaman görünecek?", "context": ["6502/54", "6502/10", "6502/19", "6502/11", "6502/57/A"]}
+{"source": "6502/55", "split": "eval", "question": "Bu kılavuz ve etiket olmadan satılan ürünler ne olur?", "context": ["6502/55", "6502/54", "6502/6", "6502/79", "6502/10"]}
+{"source": "6502/55", "split": "eval", "question": "Ürünlerin üzerinde Türkçe yazı olmalı mı?", "context": ["6502/55", "6502/79", "6502/54", "6502/57/A", "6502/6"]}
+{"source": "6502/57", "split": "train", "question": "Ürünümün garantisini nasıl öğrenebilirim?", "context": ["6502/56", "6502/57/A", "6502/57", "6502/58", "6502/10"]}
+{"source": "6502/57/A", "split": "train", "question": "Yenilenmiş bir telefon alırsam ne kadar süre garantiye girer?", "context": ["6502/57/A", "6502/56", "6502/58", "6502/45", "6502/12"]}
+{"source": "6502/57/A", "split": "train", "question": "Yenilenmiş ürün alırken neye dikkat etmem gerekiyor?", "context": ["6502/57/A", "6502/76", "6502/79", "6502/11", "6502/58"]}
+{"source": "6502/58", "split": "train", "question": "Bir ürün alıp onarımlı olması gereken bir durumla karşılaştım, bu durumda ne yapmalıyım?", "context": ["6502/11", "6502/58", "6502/74", "6502/15", "6502/57/A"]}
+{"source": "6502/58", "split": "train", "question": "Ürünümün tamir süresi ne kadar olmalı?", "context": ["6502/58", "6502/56", "6502/12", "6502/57/A", "6502/10"]}
+{"source": "6502/59", "split": "train", "question": "Tüketici bilgilendirme için radyo ve televizyonlarda ne zaman programlar yayınlanır?", "context": ["6502/59", "6502/53", "6502/65", "6502/55", "6502/63"]}
+{"source": "6502/59", "split": "train", "question": "Tüketici bilgilendirmesi için her ay en az kaç dakika program gösterilmek zorundadır?", "context": ["6502/59", "6502/53", "6502/55", "6502/65", "6502/77"]}
+{"source": "6502/60", "split": "train", "question": "Tüketici ödüllerini almak için hangi şartlar gerekiyor?", "context": ["6502/60", "6502/68", "6502/73/A", "6502/53", "6502/57/A"]}
+{"source": "6502/61", "split": "train", "question": "Reklam yaparken her zaman doğru bilgi vermek zorunda mıyız?", "context": ["6502/61", "6502/14", "6502/9", "6502/23", "6502/65"]}
+{"source": "6502/62", "split": "train", "question": "Bir şirketin bana aldatıcı bilgi vermesiyle ilgili ne yapabilirim?", "context": ["6502/74", "6502/61", "6502/11", "6502/62", "6502/48"]}
+{"source": "6502/63", "split": "train", "question": "Reklam verenlerin birlikte çalışması gereken kurul var mı?", "context": ["6502/63", "6502/65", "6502/61", "6502/82", "6502/64"]}
+{"source": "6502/63", "split": "train", "question": "Tüketici haklarını korumak için ne tür denetimler yapılır?", "context": ["6502/75", "6502/76", "6502/3", "6502/64", "6502/73"]}
+{"source": "6502/64", "split": "eval", "question": "Tüketici konseyine kimler gidebilir ve ne kadar kişi olabilir?", "context": ["6502/64", "6502/65", "6502/68", "6502/66", "6502/70"]}
+{"source": "6502/65", "split": "train", "question": "Reklam konseyi ne zaman toplanır?", "context": ["6502/65", "6502/63", "6502/82", "6502/64", "6502/78"]}
+{"source": "6502/65", "split": "train", "question": "Reklam konseyinde kamu kurumlarından gelen temsilciler ne kadar olabilir?", "context": ["6502/65", "6502/63", "6502/82", "6502/64", "6502/61"]}
+{"source": "6502/66", "split": "train", "question": "Tüketici hakem heyeti ne zaman kurulur?", "context": ["6502/70", "6502/66", "6502/68", "6502/72", "6502/69"]}
+{"source": "6502/67", "split": "train", "question": "Bir tüketici hakem heyeti'nde çalışan raportörler nereden seçilir?", "context": ["6502/67", "6502/72", "6502/66", "6502/71", "6502/70"]}
+{"source": "6502/67", "split": "train", "question": "Tüketici hakem heyeti'nde raportörler ne iş yapar?", "context": ["6502/67", "6502/71", "6502/66", "6502/72", "6502/70"]}
+{"source": "6502/68", "split": "train", "question": "İşimden dolayı para alamadım, bu durumda ne yapmalıyım?", "context": ["4857/34", "4857/40", "4857/21", "4857/32", "4857/102"]}
+{"source": "6502/68", "split": "train", "question": "Ücret alamadığım için bir hakem heyetine başvurabilirim miyim?", "context": ["6502/68", "6502/70", "6502/69", "6502/71", "4857/21"]}
+{"source": "6502/69", "split": "train", "question": "Tüketici hakem heyeti bana ait belgeleri isteyebilir mi?", "context": ["6502/69", "6502/68", "6502/70", "6502/71", "6502/66"]}
+{"source": "6502/69", "split": "train", "question": "Tüketici hakem heyeti bana ait bilgileri nasıl alır?", "context": ["6502/69", "6502/70", "6502/71", "6502/68", "6502/66"]}
+{"source": "6502/70", "split": "train", "question": "Tüketici hakem heyeti ne zaman karar verir?", "context": ["6502/70", "6502/68", "6502/66", "6502/69", "6502/71"]}
+{"source": "6502/70", "split": "train", "question": "Tüketici hakem heyeti kararına karşı ne yapabilirim?", "context": ["6502/70", "6502/68", "6502/69", "6502/73", "6502/66"]}
+{"source": "6502/71", "split": "train", "question": "Tüketici hakem heyeti üyesi olmak istiyorum, bu süreçte ne gibi masraflarla karşılaşabilirim?", "context": ["6502/68", "6502/70", "6502/71", "6502/82", "6502/66"]}
+{"source": "6502/72", "split": "train", "question": "Tüketici hakem heyeti ne zaman kurulur?", "context": ["6502/70", "6502/66", "6502/68", "6502/72", "6502/69"]}
+{"source": "6502/72", "split": "train", "question": "Tüketici hakem heyetinde kimler görev alır?", "context": ["6502/66", "6502/70", "6502/67", "6502/68", "6502/71"]}
+{"source": "6502/73", "split": "train", "question": "Tüketici mahkemesinde dava açmak için hangi yerde bulunmam gerekiyor?", "context": ["6502/73", "6502/68", "6502/73/A", "6502/66", "6502/47"]}
+{"source": "6502/73", "split": "train", "question": "Tüketici mahkemesinde açılan davalarda harçlar nasıl alınır?", "context": ["6502/73", "6502/82", "6502/68", "6502/70", "6502/73/A"]}
+{"source": "6502/73/A", "split": "eval", "question": "Tüketici mahkemesinde dava açmak istiyorum, ama önce arabulucuya gitmek zorunda mıyım?", "context": ["6502/73/A", "6502/Geçici 2", "6502/73", "6502/68", "6502/66"]}
+{"source": "6502/73/A", "split": "eval", "question": "Arabulucuya gitmekten sonra dava açamaz mıyım?", "context": ["6502/73/A", "6502/Geçici 2", "4857/20", "6098/304", "6098/353"]}
+{"source": "6502/74", "split": "train", "question": "Eğer bir ürün bana zarar veriyorsa, o ürünü nasıl geri alabilirim?", "context": ["6502/11", "6502/74", "6502/79", "6502/15", "6502/57/A"]}
+{"source": "6502/75", "split": "train", "question": "Denetim yaparken bana sormak isteyenler, hangi belgeleri göstermem gerektiğini sorabilir mi?", "context": ["6502/75", "6698/15", "4857/94", "6502/69", "4857/93"]}
+{"source": "6502/76", "split": "train", "question": "Alınan bir ürünün bozuk ya da tamir edilmesi gereken bir durumda, tüketici ne yapmalı?", "context": ["6502/58", "6502/76", "6502/11", "6502/74", "6502/57/A"]}
+{"source": "6502/77", "split": "train", "question": "İkinci kira sözleşmesini vermeden önce neden para cezası kesilir?", "context": ["6098/355", "6098/346", "6098/337", "6098/362", "6098/316"]}
+{"source": "6502/77", "split": "train", "question": "Tüketici hakları ihlal edildiğinde ne tür cezalar uygulanır?", "context": ["6502/77", "6502/88", "6502/73", "6502/76", "6502/77/A"]}
+{"source": "6502/77/A", "split": "train", "question": "Uzlaşma yapmak istiyorum, ama ne zaman ve nasıl yapabilirim?", "context": ["6502/77/A", "6098/306", "6098/378", "4857/20", "6502/48"]}
+{"source": "6502/78", "split": "train", "question": "İşlem tebliğinden sonra bir ay içinde cezayı ödemem gerekiyor mu?", "context": ["6502/78", "6502/77/A", "4857/21", "6502/28", "6502/88"]}
+{"source": "6502/78", "split": "train", "question": "Idari yargıda dava açmak için ne kadar süre veriliyor?", "context": ["6098/353", "6502/78", "6098/345", "6098/315", "6502/77/A"]}
+{"source": "6502/79", "split": "train", "question": "Bir ürün, kahve gibi bir içecek gibi görünse bile, aslında tüketicinin sağlığına zarar vermemesi halinde satılabilir mi?", "context": ["6502/79", "6502/6", "6502/76", "6502/8", "6502/74"]}
+{"source": "6502/80", "split": "train", "question": "Piramit satış sistemiyle ilgili olarak ne tür yasalar var?", "context": ["6502/80", "6502/47/A", "6502/6", "6502/42", "6502/54"]}
+{"source": "6502/81", "split": "train", "question": "Test ve muayene sonucu yanlış çıkarsa, o zaman kim sorumluluk alır?", "context": ["6502/81", "6502/75", "4857/96", "6502/56", "6502/58"]}
+{"source": "6502/82", "split": "eval", "question": "Tüketici korunması için yapılan çalışmalara ödenek veriliyor mu?", "context": ["6502/82", "6502/60", "6502/64", "6502/1", "6502/88"]}
+{"source": "6502/83", "split": "train", "question": "Eğer tüketiciyle yapılan işlem başka bir kanunla düzenlenmişse, bu durum tüketici işlemini etkiler mi?", "context": ["6502/83", "6502/Geçici 3", "6502/Geçici 1", "6502/76", "6502/2"]}
+{"source": "6502/84", "split": "train", "question": "Bir yönetici olmak istiyorum, o zaman ne yapmam gerekir?", "context": ["6698/Geçici 2", "6698/25", "4857/2", "6698/24", "4857/16"]}
+{"source": "6502/84", "split": "train", "question": "Bakanlık ne tür kararlar alabilir?", "context": ["6502/84", "4857/122", "6502/66", "6502/75", "6502/78"]}
+{"source": "6502/85", "split": "train", "question": "İşte listede olanlar başka bir bakanlıkta çalışmayı hak mı ediyor?", "context": ["4857/4", "6698/33", "6502/85", "4857/30", "4857/122"]}
+{"source": "6502/86", "split": "train", "question": "Eski tüketici koruma kanunu artık kullanılamaz mı?", "context": ["6502/86", "6502/Geçici 1", "6502/Geçici 3", "6502/68", "6502/76"]}
+{"source": "6502/Geçici 1", "split": "train", "question": "Eğer bir zaman önce yapılan bir sözleşme varsa, o sözleşmenin hâlâ geçerli mi?", "context": ["6502/Geçici 3", "6502/52", "4857/Geçici 7", "6502/50", "4857/11"]}
+{"source": "6502/Geçici 2", "split": "train", "question": "Eğer arabuluculuğa gidersem, o zaman dava açamam mı?", "context": ["6502/73/A", "6502/Geçici 2", "4857/20", "6502/68", "6502/73"]}
+{"source": "6502/Geçici 3", "split": "train", "question": "Devre tatil sözleşmesi yaparken ne gibi kurallar var?", "context": ["6502/50", "6502/Geçici 3", "6502/51", "6502/48", "4857/45"]}
+{"source": "6502/87", "split": "train", "question": "Yürürlük tarihi ne zaman olacak?", "context": ["6502/87", "6698/32", "4857/121", "6098/367", "6502/12"]}
+{"source": "6502/88", "split": "train", "question": "İdari para cezaları ne zaman uygulanır?", "context": ["4857/108", "4857/102", "6502/77/A", "6502/78", "6502/88"]}
+{"source": "6098/299", "split": "eval", "question": "Kiraya verdiğim evde hasar olsa nasıl olur?", "context": ["6098/308", "6098/373", "6098/377", "6098/337", "6098/332"]}
+{"source": "6098/300", "split": "train", "question": "Bir kira sözleşmesi ne kadar sürebilir?", "context": ["6098/347", "6098/300", "6098/367", "6098/315", "6098/327"]}
+{"source": "6098/300", "split": "train", "question": "Kira sözleşmesi bittikten sonra evden ayrılmam için ne yapmalıyım?", "context": ["6098/352", "6098/316", "6098/330", "6098/351", "6098/347"]}
+{"source": "6098/301", "split": "train", "question": "Kiraya ev veren, evi kiralandığı tarihte bozuk olmamış şekilde vermek zorunda mı?", "context": ["6098/301", "6098/335", "6098/334", "6098/361", "6098/316"]}
+{"source": "6098/301", "split": "train", "question": "Kiracıya evi bozuk vermek istiyorsa, bunu yapabilir mi?", "context": ["6098/306", "6098/305", "6098/321", "6098/335", "6098/307"]}
+{"source": "6098/302", "split": "train", "question": "Eğer kira sözleşmesinde başka bir şey yazılmasa, benim evin vergilerini ödemem gerekir mi?", "context": ["6098/346", "6098/324", "6098/343", "6098/302", "6098/349"]}
+{"source": "6098/302", "split": "train", "question": "Kira veren kişi, benim evim için zorunlu sigorta ve vergileri ödemek zorunda mı?", "context": ["6098/302", "6098/317", "6098/313", "6098/316", "6098/324"]}
+{"source": "6098/303", "split": "train", "question": "Kira ödedikten sonra elektrik faturasını ödememi gerektiriyor mu?", "context": ["6098/341", "6098/362", "6098/324", "6098/346", "6098/372"]}
+{"source": "6098/303", "split": "train", "question": "Kiralanan evin çatı ve duvarlarını onarmak için benim de para ödemem gerekir mi?", "context": ["6098/341", "6098/317", "6098/350", "6098/361", "6098/346"]}
+{"source": "6098/304", "split": "train", "question": "Kira veren, evi teslim ettiğinde ciddi bir sorun varsa, buna ne yapabilirim?", "context": ["6098/335", "6098/304", "6098/373", "6098/306", "6098/318"]}
+{"source": "6098/304", "split": "train", "question": "Kira veren, evi teslim ettiğinde küçük bir sorun varsa, o sorunun sonradan kötüleşmesiyle ilgili ne yapabilirim?", "context": ["6098/335", "6098/304", "6098/306", "6098/305", "6098/373"]}
+{"source": "6098/305", "split": "train", "question": "Kiraladığım evde bir sorun çıktı, ne yapmalıyım?", "context": ["6098/306", "6098/335", "6098/305", "6098/304", "6098/373"]}
+{"source": "6098/305", "split": "train", "question": "Kira sözleşmesinde belirtilen durumlarda fesih hakkı var mı?", "context": ["6098/330", "6098/378", "6098/328", "6098/331", "6098/369"]}
+{"source": "6098/306", "split": "train", "question": "Kira konutumda bir sorun var, onu nasıl düzeltmem gerekir?", "context": ["6098/306", "6098/305", "6098/335", "6098/307", "6098/365"]}
+{"source": "6098/306", "split": "train", "question": "Kira sözleşmesini feshetmem için ne yapmam gerekir?", "context": ["6098/330", "6098/306", "6098/331", "6098/328", "6098/369"]}
+{"source": "6098/307", "split": "train", "question": "Eğer evimde bir problem varsa, o zaman kira parasını azaltabilir miyim?", "context": ["6098/307", "6098/363", "6098/306", "6098/305", "6098/342"]}
+{"source": "6098/308", "split": "train", "question": "Kiralanan evde bir sorun çıktı, benim için onu düzeltecek mi?", "context": ["6098/306", "6098/305", "6098/335", "6098/307", "6098/304"]}
+{"source": "6098/308", "split": "train", "question": "Kiraya verenin hata yapmadığını ispatlamadığı için ben zararlı oluyorum mu?", "context": ["6098/308", "6098/335", "6098/377", "6098/318", "6098/306"]}
+{"source": "6098/309", "split": "eval", "question": "Kira sözleşmesi yaparken birinin hakkı olmayan bir şey söylediğinde benim sorumlu olur muyum?", "context": ["6098/309", "6098/377", "6098/316", "6098/308", "6098/318"]}
+{"source": "6098/309", "split": "eval", "question": "Eğer kiracı benimle ilgili yanlış bir şey söylüyorsa, benim sorumlu olmam gerekir mi?", "context": ["6098/335", "6098/377", "6098/309", "6098/318", "6098/304"]}
+{"source": "6098/310", "split": "train", "question": "Eğer evimi kiraya verdim ve sonra başka biri evi alsa, o kişi de kiraya mı alabilir?", "context": ["6098/322", "6098/311", "6098/366", "6098/337", "6098/310"]}
+{"source": "6098/310", "split": "train", "question": "Eğer evim kira sözleşmesiyle kiralandıysa, evi kimse satın alsa o da kiracı olur mu?", "context": ["6098/310", "6098/311", "6098/321", "6098/366", "6098/322"]}
+{"source": "6098/311", "split": "train", "question": "Eğer biri evimi kiraya verir ve sonra başka biri de o evde hakkı olduğunu söylerse, ne olur?", "context": ["6098/337", "6098/311", "6098/322", "6098/309", "6098/336"]}
+{"source": "6098/311", "split": "train", "question": "Eğer kiracının hakkı olan evde başka birinin hakkı varsa, o durumda kira sözleşmesi nasıl etkilenir?", "context": ["6098/311", "6098/310", "6098/322", "6098/320", "6098/323"]}
+{"source": "6098/312", "split": "train", "question": "Eğer kira sözleşmesinde tapu siciline şerh hakkı yazılırsa, o zaman kiracı ne yapmalı?", "context": ["6098/312", "6098/316", "6098/320", "6098/319", "6098/334"]}
+{"source": "6098/313", "split": "train", "question": "Ben kira ödememi unutmuşsam ne olur?", "context": ["6098/335", "6098/373", "6098/362", "6098/334", "6098/372"]}
+{"source": "6098/313", "split": "train", "question": "Kira ücretini ödemem gereken gün belli mi?", "context": ["6098/362", "6098/314", "6098/315", "6098/345", "6098/301"]}
+{"source": "6098/314", "split": "train", "question": "Eğer kira süresi biterse, o zaman kira ücretini ne zaman ödemem gerekiyor?", "context": ["6098/362", "6098/314", "6098/315", "6098/352", "6098/347"]}
+{"source": "6098/315", "split": "train", "question": "Kira taksiti geç ödeme yaparsak, sahile ne yapmam gerekir?", "context": ["6098/362", "6098/318", "6098/314", "6098/375", "6098/372"]}
+{"source": "6098/316", "split": "train", "question": "Kira sözleşmesine uygun şekilde kullanmam gerekiyor mu?", "context": ["6098/316", "6098/350", "6098/334", "6098/299", "6098/364"]}
+{"source": "6098/316", "split": "train", "question": "Kira sözleşmesini bozma hakkım var mı?", "context": ["6098/316", "6098/330", "6098/306", "6098/351", "6098/352"]}
+{"source": "6098/317", "split": "train", "question": "Kira ödemem gerekiyor mu?", "context": ["6098/313", "6098/324", "6098/341", "6098/346", "6098/350"]}
+{"source": "6098/317", "split": "train", "question": "Temizlik ve bakım için para ödemem gerekir mi?", "context": ["6098/317", "6098/365", "4857/37", "4857/70", "4857/32"]}
+{"source": "6098/318", "split": "train", "question": "Kira sözleşmesi yaparken kiracı ne yapmalı?", "context": ["6098/316", "6098/320", "6098/362", "6098/299", "6098/321"]}
+{"source": "6098/318", "split": "train", "question": "Kiraya verilen evde zarar olursa kim sorumludur?", "context": ["6098/377", "6098/308", "6098/309", "6098/335", "6098/304"]}
+{"source": "6098/319", "split": "eval", "question": "Kiralanan evde bir problem var, bunu nasıl düzeltebilirim?", "context": ["6098/306", "6098/305", "6098/335", "6098/307", "6098/304"]}
+{"source": "6098/319", "split": "eval", "question": "Kiracı, kiraya verenin evi gözetlemesini isteyebilir mi?", "context": ["6098/335", "6098/321", "6098/316", "6098/320", "6098/319"]}
+{"source": "6098/320", "split": "train", "question": "Birinci kira sözleşmesi yaparken bana evde bir şey değiştirilebilir mi?", "context": ["6098/321", "6098/320", "6098/343", "6098/310", "6098/350"]}
+{"source": "6098/320", "split": "train", "question": "Eğer bana evde bir şey değiştirilirse, o zaman kira ücretim azalacak mı?", "context": ["6098/307", "6098/363", "6098/320", "6098/321", "6098/344"]}
+{"source": "6098/321", "split": "train", "question": "Bir gün kira sözleşmesiyle ilgili bir şey öğrenmek istedim, bana ne söylendi?", "context": ["6098/299", "6098/300", "6098/321", "6098/335", "6098/347"]}
+{"source": "6098/321", "split": "train", "question": "Kira sözleşmesinde kiracı tarafından yapılan değişikliklerle ilgili ne gibi haklar var?", "context": ["6098/320", "6098/321", "6098/311", "6098/343", "6098/322"]}
+{"source": "6098/322", "split": "train", "question": "Eğer evimi başka birine kiraya veriyorsam, o zaman kiraya verene zarar vermiş olur muyum?", "context": ["6098/308", "6098/337", "6098/336", "6098/377", "6098/309"]}
+{"source": "6098/323", "split": "train", "question": "Kira sözleşmesini başkasına devredebilir miyim?", "context": ["6098/323", "6098/322", "6098/321", "6098/366", "6098/311"]}
+{"source": "6098/323", "split": "train", "question": "Kira sözleşmesi bitmeden önce başka birine devrettiğimde sorumlu olur muyum?", "context": ["6098/323", "6098/334", "6098/322", "6098/301", "6098/335"]}
+{"source": "6098/324", "split": "train", "question": "Kira ödedim ama evi kullanamadım, o zaman kira parası azaltılır mı?", "context": ["6098/307", "6098/363", "6098/324", "6098/352", "6098/344"]}
+{"source": "6098/324", "split": "train", "question": "Eğer evi kullanamadım ama kira ödedim, o zaman para iade edilir mi?", "context": ["6098/372", "6098/334", "6098/373", "6098/342", "6098/325"]}
+{"source": "6098/325", "split": "train", "question": "Kira sözleşmesi bittiğinde, benim evim başka kimseye verilebilir mi?", "context": ["6098/355", "6098/323", "6098/351", "6098/322", "6098/352"]}
+{"source": "6098/325", "split": "train", "question": "Eğer başka biri evi kiraya verirse, benim kira borcum hâlâ geçerli mi?", "context": ["6098/325", "6098/334", "6098/355", "6098/323", "6098/301"]}
+{"source": "6098/326", "split": "train", "question": "Kiracı kira borcunu öderken başka bir borcunu da ödemek istiyorsa bu mümkün mü?", "context": ["6098/313", "6098/314", "6098/302", "6098/352", "6098/346"]}
+{"source": "6098/327", "split": "train", "question": "Eğer kira sözleşmesinde bir süre belirtilmemişse, kira süresi ne olur?", "context": ["6098/300", "6098/347", "6098/315", "6098/327", "6098/367"]}
+{"source": "6098/327", "split": "train", "question": "Eğer kira sözleşmesi bitmeden yeni bir anlaşmayla devam edersek, o zaman kira süresi nasıl belirlenir?", "context": ["6098/347", "6098/367", "6098/344", "6098/300", "6098/327"]}
+{"source": "6098/328", "split": "train", "question": "Bu kira sözleşmesiyle birlikte evimizi terk etmek istiyorsak ne yapmalıyız?", "context": ["6098/316", "6098/352", "6098/330", "6098/342", "6098/349"]}
+{"source": "6098/328", "split": "train", "question": "Eğer kira sözleşmesinde fesih bildirim süresi belirtilmemişse, biz ne kadar süreyle fesih bildirimde bulunabiliriz?", "context": ["6098/368", "6098/328", "6098/330", "6098/329", "4857/17"]}
+{"source": "6098/329", "split": "eval", "question": "Eğer kira sözleşmesini fesetmek istiyorsam, ne kadar süre veriyor?", "context": ["6098/330", "6098/315", "6098/329", "6098/328", "6098/347"]}
+{"source": "6098/330", "split": "train", "question": "Kira sözleşmesini feshetmek için ne kadar süre vermem gerekir?", "context": ["6098/330", "6098/315", "6098/329", "6098/368", "6098/328"]}
+{"source": "6098/330", "split": "train", "question": "Kiracı kira sözleşmesini feshetmek istiyorsa ne yapmalı?", "context": ["6098/330", "6098/306", "6098/349", "6098/316", "6098/331"]}
+{"source": "6098/331", "split": "train", "question": "Eğer evde sakıncalı bir şey olursa kirayı feshedebilir miyim?", "context": ["6098/306", "6098/378", "6098/305", "6098/369", "6098/316"]}
+{"source": "6098/331", "split": "train", "question": "Kirayı feshetmek için ne gibi sebepler gerekiyor?", "context": ["6098/369", "6098/378", "6098/331", "6098/330", "6098/306"]}
+{"source": "6098/332", "split": "train", "question": "Eğer evimden iflas edersem, kiracı olarak ne olur?", "context": ["6098/332", "6098/370", "6098/342", "6098/316", "6098/335"]}
+{"source": "6098/332", "split": "train", "question": "Eğer kira bedellerini ödememi sağlarsam, kira sözleşmesi nasıl feshedilir?", "context": ["6098/330", "6098/329", "6098/315", "6098/331", "6098/369"]}
+{"source": "6098/333", "split": "train", "question": "Eğer benim evimden biri ölsün, o zaman mirasçılar kira sözleşmesini feshedebilir mi?", "context": ["6098/333", "6098/371", "6098/356", "6098/330", "6098/332"]}
+{"source": "6098/333", "split": "train", "question": "Eğer benim evimden biri ölsün, mirasçılar kira sözleşmesini feshetmek için ne yapmalı?", "context": ["6098/333", "6098/371", "6098/330", "6098/349", "6098/356"]}
+{"source": "6098/334", "split": "train", "question": "Kirayı bitirdiğimde evi oradaki gibi geri vermem gerekir mi?", "context": ["6098/372", "6098/334", "6098/373", "6098/375", "6098/325"]}
+{"source": "6098/334", "split": "train", "question": "Kiracı olarak evde yaşarken yaşanan hasarlar için sorumlu olmam gerekir mi?", "context": ["6098/377", "6098/308", "6098/309", "6098/316", "6098/335"]}
+{"source": "6098/335", "split": "train", "question": "Kiraya veren, evi teslim etmeden önce neler yapmak zorunda?", "context": ["6098/335", "6098/360", "6098/301", "6098/316", "6098/372"]}
+{"source": "6098/335", "split": "train", "question": "Kiraya veren, evde bir sorun bulursa kiracıya ne yapmak gerekir?", "context": ["6098/335", "6098/318", "6098/316", "6098/319", "6098/304"]}
+{"source": "6098/336", "split": "train", "question": "Bir yıl önce kira ödedim ama hâlâ kira borcum var, bu durumda ne olur?", "context": ["6098/325", "6098/372", "6098/362", "6098/335", "6098/318"]}
+{"source": "6098/336", "split": "train", "question": "Kiraya verenin hapis hakkı nedir ve bana nasıl uygulanır?", "context": ["6098/336", "6098/337", "6098/316", "6098/309", "6098/320"]}
+{"source": "6098/337", "split": "train", "question": "Eğer kiracı kiraladığı evde başka birinin eşyası varsa, o eşya üzerindeki hapis hakkı nasıl olur?", "context": ["6098/336", "6098/337", "6098/338", "6098/309", "6098/311"]}
+{"source": "6098/338", "split": "train", "question": "Eğer evden eşyalarımı almak istiyorsam ne olur?", "context": ["6098/338", "6098/337", "6098/373", "6502/12", "6098/375"]}
+{"source": "6098/338", "split": "train", "question": "Kiracı, taşınmak istediği eşyaları götürmek istiyorsa ne yapmalı?", "context": ["6098/338", "6098/360", "6098/373", "6098/337", "6098/372"]}
+{"source": "6098/339", "split": "eval", "question": "Kira sözleşmesinde kiracıya bırakılan eşyalarla ilgili ne gibi haklar var?", "context": ["6098/337", "6098/373", "6098/372", "6098/301", "6098/375"]}
+{"source": "6098/340", "split": "train", "question": "Bir işyeri kiraladım, ancak kiracının başka bir borcundan dolayı sorumlu olmamı istiyorlar, bu ne anlama gelir?", "context": ["6098/309", "6098/364", "6098/323", "6098/308", "6098/319"]}
+{"source": "6098/340", "split": "train", "question": "Evimi kiraya verdim, ancak kiracı başka bir konuda bana zarar verebilecekmiş gibi duruyor, bu durumda ne olur?", "context": ["6098/306", "6098/305", "6098/308", "6098/335", "6098/304"]}
+{"source": "6098/341", "split": "train", "question": "Bir konut kira sözleşmesinde ısıtma ve aydınlatma giderlerini ödemem gerekiyor mu?", "context": ["6098/341", "6098/349", "6098/346", "6098/362", "6098/317"]}
+{"source": "6098/341", "split": "train", "question": "Kira sözleşmesinde belirtilmemişse su giderlerini nasıl hesaplayacağız?", "context": ["6098/341", "6098/317", "6098/362", "6098/344", "6098/324"]}
+{"source": "6098/342", "split": "train", "question": "Bir kira sözleşmesinde bana güvence vermem gerekiyor mu?", "context": ["6098/342", "6098/332", "6098/316", "6098/321", "6098/336"]}
+{"source": "6098/342", "split": "train", "question": "Eğer para veya kıymetli evrakla güvence veriyorsam, bu parayı nerede saklamam gerekir?", "context": ["6098/342", "4857/35", "6098/338", "6098/332", "6502/4"]}
+{"source": "6098/343", "split": "train", "question": "Kiracıya kira ücretini azaltmak için ne yapabilirim?", "context": ["6098/307", "6098/306", "6098/363", "6098/305", "6098/316"]}
+{"source": "6098/344", "split": "train", "question": "Bu kira sözleşmesinde kira bedeli ne kadar olabilir?", "context": ["6098/299", "6098/344", "6098/345", "6098/342", "6098/300"]}
+{"source": "6098/344", "split": "train", "question": "Kira bedeli artabilir mi yoksa sabit kalır mı?", "context": ["6098/345", "6098/344", "6098/321", "6098/343", "6502/36"]}
+{"source": "6098/345", "split": "train", "question": "Kira ücretini artırmak isteyen ev sahibi, ne zaman bana bildirimde bulunmalı?", "context": ["6098/345", "6098/353", "6098/335", "6098/347", "6098/315"]}
+{"source": "6098/345", "split": "train", "question": "Eğer kira ücreti artacaksa, mahkemeye dava açmadan önce ne yapmam gerekir?", "context": ["6098/345", "6098/353", "6098/341", "6098/316", "6098/351"]}
+{"source": "6098/346", "split": "train", "question": "Kira bedeli geç ödeme olursa, sonra ödenen kira bedelleri daha önceki gibi hesaplanır mı?", "context": ["6098/344", "6098/362", "6098/346", "6098/314", "6098/325"]}
+{"source": "6098/347", "split": "train", "question": "Kira sözleşmesi bittikten sonra evden ayrılmak istiyorsak ne yapmalıyız?", "context": ["6098/352", "6098/316", "6098/351", "6098/330", "6098/347"]}
+{"source": "6098/348", "split": "train", "question": "Bir kira sözleşmesi sona erdiğinde, bildirim nasıl verilmeli?", "context": ["6098/347", "6098/335", "6098/330", "6098/351", "6098/352"]}
+{"source": "6098/348", "split": "train", "question": "Kira sözleşmesini fesetmek istiyorum, ama nasıl yapabilirim?", "context": ["6098/330", "6098/306", "6098/378", "6098/328", "6098/331"]}
+{"source": "6098/349", "split": "eval", "question": "Eşim olmadan evi feshetmem mümkün mü?", "context": ["6098/349", "6098/378", "4857/25", "4857/24", "6098/331"]}
+{"source": "6098/349", "split": "eval", "question": "Eşim de evi kiraya verene bildirimde bulunursa, ona da fesih bildirimi gelmesi gerekir mi?", "context": ["6098/349", "6098/368", "6098/348", "6098/330", "6098/328"]}
+{"source": "6098/350", "split": "train", "question": "Kira sözleşmesi sona erdiğinde bana ne yapmam gerekir?", "context": ["6098/351", "6098/347", "6098/352", "6098/362", "6098/334"]}
+{"source": "6098/350", "split": "train", "question": "Kira sözleşmesi sona ermeden önce evi kullanamam olursa ne olur?", "context": ["6098/351", "6098/352", "6098/347", "6098/355", "6098/334"]}
+{"source": "6098/351", "split": "train", "question": "Kira sözleşmesi altı ay sonra bittiğinde, ben yeni malikim oluyorum, o zaman ne yapmalıyım?", "context": ["6098/351", "6098/355", "6098/350", "6098/347", "6098/352"]}
+{"source": "6098/351", "split": "train", "question": "Kira sözleşmesi bitmeden önce, benim için konut gereksinimim varsa, kira süresini sona erdirmem için ne yapmalıyım?", "context": ["6098/351", "6098/347", "6098/352", "6098/350", "6098/355"]}
+{"source": "6098/352", "split": "train", "question": "Kira tarihinde bir ay geçti ama hâlâ boşaltmadım, bu durumda ne olur?", "context": ["6098/352", "6098/315", "6098/355", "6098/347", "6098/330"]}
+{"source": "6098/352", "split": "train", "question": "Kira ücretini ödemem nedeniyle kiracıya ihtar gönderdim, ama bir ay geçti, artık ne yapabilirim?", "context": ["6098/352", "6098/315", "6098/318", "6098/335", "6098/316"]}
+{"source": "6098/353", "split": "train", "question": "Bir kira yılı içinde dava açma süresi ne kadar uzar?", "context": ["6098/353", "6098/345", "6098/347", "6098/355", "6098/351"]}
+{"source": "6098/353", "split": "train", "question": "Eğer kiracıya dava açacağını yazılı olarak bildirirse, dava süresi uzar mı?", "context": ["6098/353", "6098/345", "6098/315", "6098/347", "6098/352"]}
+{"source": "6098/354", "split": "train", "question": "Kiracıya karşı dava açılırsa, kira sözleşmesi kesinlikle sona erer mi?", "context": ["6098/352", "6098/354", "6098/347", "6098/345", "6098/325"]}
+{"source": "6098/355", "split": "train", "question": "Bir evi boşalttım, ama yeni kira veremem mi?", "context": ["6098/355", "6098/321", "6098/352", "6098/323", "6098/347"]}
+{"source": "6098/355", "split": "train", "question": "Yeni inşa edilecek bir evde eski kiracıya öncelik veriliyor mu?", "context": ["6098/355", "6098/321", "6098/316", "6098/320", "6098/301"]}
+{"source": "6098/356", "split": "train", "question": "Eğer biri bana ev kiralarıysa ve o kişi ölsün, ben hâlâ o evde yaşayabilir miyim?", "context": ["6098/356", "6098/371", "6098/333", "6098/347", "6098/355"]}
+{"source": "6098/356", "split": "train", "question": "Eğer biri bana ev kiralarıysa ve o kişi ölsün, ben hâlâ o evde yaşayabilir miyim?", "context": ["6098/356", "6098/371", "6098/333", "6098/347", "6098/355"]}
+{"source": "6098/357", "split": "train", "question": "Bu kira sözleşmesinde kiracıya verilen ürünün bir kısmı neye göre belirlenir?", "context": ["6098/357", "6098/360", "6098/358", "6098/364", "6098/366"]}
+{"source": "6098/357", "split": "train", "question": "Kira ücreti neye göre hesaplanır, belli bir oran var mı?", "context": ["6098/344", "6098/345", "6502/36", "6098/313", "6098/324"]}
+{"source": "6098/358", "split": "train", "question": "Bu kira sözleşmesi için özel bir kural var mı?", "context": ["6098/300", "6098/299", "6098/316", "6098/344", "6098/321"]}
+{"source": "6098/358", "split": "train", "question": "Kira sözleşmesiyle ilgili genel kurallar ne zaman geçerli olur?", "context": ["6098/344", "6098/347", "6098/328", "6098/301", "6098/300"]}
+{"source": "6098/359", "split": "eval", "question": "Eğer kira sözleşmesinde kiracının ve kiraya verenin eşyalarının değerini birlikte belirlemeleri gerekiyorsa, bu nasıl yapılır?", "context": ["6098/373", "6098/321", "6098/316", "6098/320", "6098/344"]}
+{"source": "6098/360", "split": "train", "question": "Kira sözleşmesi yaparken kiracıya ne tür bir durumda ev vermeliyim?", "context": ["6098/301", "6098/316", "6098/335", "6098/332", "6098/360"]}
+{"source": "6098/360", "split": "train", "question": "Kiraya verenin evi kiracıya verirken ne gibi sorumlulukları olur?", "context": ["6098/335", "6098/316", "6098/309", "6098/301", "6098/360"]}
+{"source": "6098/361", "split": "train", "question": "Kiramızda birinci katta su sızıntısı vardı, onarımla ilgili ne yapmalıyız?", "context": ["6098/341", "6098/306", "6098/305", "6098/307", "6098/319"]}
+{"source": "6098/361", "split": "train", "question": "Kiracı, kiraya verenin onarımları yapması gerektiğini biliyormuş mu?", "context": ["6098/361", "6098/365", "6098/335", "6098/319", "6098/318"]}
+{"source": "6098/362", "split": "train", "question": "Kira ücretini ne zaman ödemem gerekir?", "context": ["6098/362", "6098/314", "6098/315", "6098/345", "6098/351"]}
+{"source": "6098/362", "split": "train", "question": "Kira ücretini vermeden önce bana kaç gün süre verilir?", "context": ["6098/315", "6098/362", "6098/316", "6098/342", "6098/355"]}
+{"source": "6098/363", "split": "train", "question": "Eğer kiracı, tarımsal arazi kiralamışsa ve doğal bir felaket olursa, kira bedeli azaltılabilir mi?", "context": ["6098/363", "6098/374", "6098/332", "6098/307", "6098/305"]}
+{"source": "6098/364", "split": "train", "question": "Kira sözleşmesi yaparken ne yapmam gerekir?", "context": ["6098/316", "6098/299", "6098/320", "6098/362", "6098/350"]}
+{"source": "6098/364", "split": "train", "question": "Kiralanan şeyi bozmadan kullanmam gerekir mi?", "context": ["6098/364", "6098/365", "6098/334", "6098/306", "6098/337"]}
+{"source": "6098/365", "split": "train", "question": "Kira için verdiğim evin duvarlarını bozuk olursa ne yapmalıyım?", "context": ["6098/335", "6098/306", "6098/373", "6098/316", "6098/305"]}
+{"source": "6098/365", "split": "train", "question": "Kiralanan evde küçük bir çatlak var, onarımla ilgili ne yapmalıyım?", "context": ["6098/319", "6098/306", "6098/305", "6098/365", "6098/341"]}
+{"source": "6098/366", "split": "train", "question": "Bu kira sözleşmesiyle kiralamış olduğum evi başka birine de kiralamam gerekiyor mu?", "context": ["6098/355", "6098/322", "6098/323", "6098/366", "6098/316"]}
+{"source": "6098/366", "split": "train", "question": "Eğer evin bazı yerlerini kiraya verebilirim mi, örneğin garajı veya çatı?", "context": ["6098/339", "6098/347", "6098/322", "6098/350", "6098/316"]}
+{"source": "6098/367", "split": "train", "question": "Eğer kira sözleşmesi bittiğinde yeniden anlaşmazsak, oturumumuzun otomatik olarak uzatıldığını mı söylüyor?", "context": ["6098/347", "6098/367", "6098/327", "6098/353", "6098/300"]}
+{"source": "6098/367", "split": "train", "question": "Kira sözleşmesi bittikten sonra, bir daha uzatmak istiyorsak, ne yapmamız gerekir?", "context": ["6098/347", "6098/351", "6098/350", "6098/353", "6098/367"]}
+{"source": "6098/368", "split": "train", "question": "Bir kira sözleşmesi sona erdiğinde, ne kadar süreyle fesih bildirimi vermem gerekir?", "context": ["6098/330", "6098/368", "6098/328", "6098/329", "6098/347"]}
+{"source": "6098/368", "split": "train", "question": "Tarım için kiraya verilen araziye kira sözleşmesi sona erdiğinde, fesih bildirimi ne kadar süreyle verilmeli?", "context": ["6098/368", "6098/330", "6098/329", "6098/328", "4857/17"]}
+{"source": "6098/369", "split": "eval", "question": "Bir kira sözleşmesini feshetmek istiyorum, ama neden feshedebilirim?", "context": ["6098/378", "6098/369", "6098/330", "6098/331", "6098/306"]}
+{"source": "6098/369", "split": "eval", "question": "Kira sözleşmesini feshettikten sonra ne olur?", "context": ["6098/330", "6098/328", "6098/329", "6098/371", "6098/333"]}
+{"source": "6098/370", "split": "train", "question": "Eğer ben iflas edersem, kira sözleşmem otomatik olarak sona erer mi?", "context": ["6098/370", "6098/332", "6098/367", "6098/327", "6098/347"]}
+{"source": "6098/370", "split": "train", "question": "Eğer ben iflas edersem, evimi boşaltmam gerekir mi?", "context": ["6098/332", "6098/370", "6502/34", "6098/342", "6098/349"]}
+{"source": "6098/371", "split": "train", "question": "Eğer kiracım ölsede, evi kim kullanabilir?", "context": ["6098/356", "6098/333", "6098/322", "6098/371", "6098/316"]}
+{"source": "6098/371", "split": "train", "question": "Eğer ben ölsüm, kiracılar evi feshetme hakkına mı sahip olur?", "context": ["6098/333", "6098/371", "6098/330", "6098/332", "6098/349"]}
+{"source": "6098/372", "split": "train", "question": "Kira bitince evi ve içindeki eşyaları nasıl temiz ve bozuk olmamış şekilde geri vermem gerekir?", "context": ["6098/372", "6098/373", "6098/335", "6098/334", "6098/375"]}
+{"source": "6098/372", "split": "train", "question": "Kira süresince evde bozukluklar oldu ama benim hata değildi, o zaman tazminat ödemem gerekir mi?", "context": ["6098/372", "6098/377", "6098/308", "6098/373", "6098/334"]}
+{"source": "6098/373", "split": "train", "question": "Kira bittiğinde kiracı, kiralanan evde kalmış eşyaları nasıl iade etmeli?", "context": ["6098/372", "6098/373", "6098/375", "6098/335", "6098/338"]}
+{"source": "6098/373", "split": "train", "question": "Kira bittiğinde eşyaların değer kaybı varsa kiracıdan ne istenebilir?", "context": ["6098/373", "6098/372", "6098/307", "6098/365", "6098/332"]}
+{"source": "6098/374", "split": "train", "question": "Bu kira sözleşmesi bittiğinde, benim tarladaki ürünümü alamamam mı olur?", "context": ["6098/374", "6098/376", "6098/375", "6098/363", "6098/334"]}
+{"source": "6098/374", "split": "train", "question": "Kira bittiğinde yapılan tarım giderlerinden para alabilirim mi?", "context": ["6098/374", "6098/376", "6098/363", "6098/375", "6098/362"]}
+{"source": "6098/375", "split": "train", "question": "Kiraladığım arazide son yılın samanlarını ve gübrelerini bırakmam gerekiyor mu?", "context": ["6098/375", "6098/374", "6098/376", "6098/355", "6098/363"]}
+{"source": "6098/375", "split": "train", "question": "Eğer fazla saman ve gübre bırakırsam tazminat alabilirim mi?", "context": ["6098/375", "4857/Geçici 11", "6098/374", "4857/21", "4857/111"]}
+{"source": "6098/376", "split": "train", "question": "Bu kurala göre, kiralanan hayvanların ürettiği ürünleri ben mi alırım?", "context": ["6098/376", "6098/357", "6098/374", "6098/377", "6098/375"]}
+{"source": "6098/376", "split": "train", "question": "Eğer birlikte oturarak hayvanları beslersen, benim payıma ne olur?", "context": ["6098/376", "6098/375", "6098/377", "6098/359", "4857/115"]}
+{"source": "6098/377", "split": "train", "question": "Kiraladığım evde bir hayvanım oldu, o hayvan zarar gördü, bana ait olmasa da sorumlu olur muyum?", "context": ["6098/377", "6098/376", "6098/308", "6098/309", "6098/337"]}
+{"source": "6098/377", "split": "train", "question": "Kiraladığım evde bir hayvan hastalandı, bunu hemen kiraya verene bildirmem gerekir mi?", "context": ["6098/377", "6098/335", "6098/318", "6098/376", "6098/316"]}
+{"source": "6098/378", "split": "train", "question": "Eğer evde kira veriyorsak, biri istifa edebilir mi?", "context": ["6098/332", "6098/352", "6098/316", "6098/306", "6098/347"]}
+{"source": "6098/378", "split": "train", "question": "Kira sözleşmesini biri istifa ederken ne zaman uygun olur?", "context": ["6098/315", "6098/352", "6098/330", "6098/370", "6098/332"]}

@@ -25,9 +25,11 @@ Question answering system over Turkish legislation.
   - Öğretmen: Qwen/Qwen3-8B-AWQ (vLLM), öğrenci: Qwen/Qwen3-1.7B (QLoRA). İkisi de Apache 2.0;
     Claude/Gemini çıktısıyla eğitim yok (kullanım şartları)
   - Öğrenci kanunu değil, RAG cevap adımını öğrenir: soru + bulunan maddeler -> LegalAnswer JSON
-  - Yapıldı: finetune_data.py (veri üretimi, sahte öğretmenle test). Sırada: GPU'da veri üretimi,
-    QLoRA eğitimi, öğretmen/Gemini ile karşılaştırma, vLLM servis ve LLM_PROVIDER=local
-  - BGE-M3 ve vLLM aynı anda GPU'ya sığmayabilir: sırayla çalıştır
+  - Yapıldı: veri üretimi (data/finetune/: train 460, eval 53; eval kaynak maddeleri train'de yok).
+    Sırada: QLoRA eğitimi, öğretmen/Gemini ile karşılaştırma, vLLM servis ve LLM_PROVIDER=local
+  - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
+  - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
+  - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
 - Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
 - Faz 8: Docker Compose, demo arayüz, README
 
@@ -39,4 +41,5 @@ Question answering system over Turkish legislation.
 - Evaluate retrieval: `uv run python -m turkish_legal_assistant.evaluate` (golden set: `data/golden.json`, Turkish questions with expected articles)
 - MCP server (stdio): `uv run python -m turkish_legal_assistant.mcp_server` (mcp 2.x: `MCPServer`, not `FastMCP`; tests use the in-process `Client(server)`)
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
+- Fine-tuning data (GPU): `uv run python -m turkish_legal_assistant.finetune_data questions|retrieve|answers` (run in order; `--limit N` for a trial; ~25 min total)
 - Test: `uv run pytest`
