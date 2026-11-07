@@ -13,3 +13,4 @@ wheels/
 data/raw/
 # Embedding cache (rebuild with: uv run python -m turkish_legal_assistant.vectors)
 data/embeddings_*
+.DS_Store
