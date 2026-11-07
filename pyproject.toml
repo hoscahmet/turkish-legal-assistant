@@ -28,3 +28,10 @@ dev = [
     "httpx>=0.28.1",
     "pytest>=9.2.0",
 ]
+finetune = [
+    "vllm>=0.22.1",
+]
+
+[tool.uv]
+# vLLM is only needed to generate data and serve the fine-tuned model; Docker can skip it with --no-group finetune.
+default-groups = ["dev", "finetune"]
