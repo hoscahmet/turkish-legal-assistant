@@ -31,7 +31,8 @@ Question answering system over Turkish legislation.
   - Yapıldı: karşılaştırma (compare.py, eval split, 53 soru; hakemsiz ölçütler):
     temel 1.7B valid %21 / grounded %0; öğrenci valid %100, grounded %96, source %69, agree 0.64, 0.50 sn/soru;
     öğretmen valid %100, grounded %98, source %82, agree 0.87 (referansı kendisi yazdı), 2.38 sn/soru.
-    Öğrencide Türkçe ek hataları ("madde 5'ye") ve tekrar var. Gemini henüz koşulmadı (GEMINI_API_KEY yok).
+    gemini-3.5-flash-lite valid %100, grounded %100, source %77, agree 0.68 (6.24 sn/soru, 5 sn'si rate-limit beklemesi).
+    Öğrencide Türkçe ek hataları ("madde 5'ye") ve tekrar var.
     Sırada: vLLM servis ve LLM_PROVIDER=local
   - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
   - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
