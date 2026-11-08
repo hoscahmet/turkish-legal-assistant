@@ -6121,6 +6121,7 @@ default-groups = ["dev", "finetune"]
 dependencies = [
     { name = "fastapi" },
     { name = "flagembedding" },
+    { name = "httpx" },
     { name = "langchain" },
     { name = "langchain-anthropic" },
     { name = "langchain-google-genai" },
@@ -6146,6 +6147,7 @@ finetune = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.162.0" },
     { name = "flagembedding", specifier = ">=1.4.2" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain", specifier = ">=1.4.9" },
     { name = "langchain-anthropic", specifier = ">=1.7.10" },
     { name = "langchain-google-genai", specifier = ">=4.4.3" },

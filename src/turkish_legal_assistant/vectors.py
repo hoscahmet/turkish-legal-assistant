@@ -5,6 +5,7 @@ Build the embedding cache once (downloads BGE-M3, ~2.3 GB, on first run):
 """
 
 import json
+import os
 from functools import cache
 
 import numpy as np
@@ -29,7 +30,8 @@ Sparse = dict[int, float]  # token id -> weight
 def get_model():
     from FlagEmbedding import BGEM3FlagModel  # heavy import (torch), only when embedding is needed
 
-    return BGEM3FlagModel(MODEL_NAME, use_fp16=False)
+    # EMBED_DEVICE=cpu leaves the GPU to a local vLLM server; one query embeds in well under a second on CPU.
+    return BGEM3FlagModel(MODEL_NAME, use_fp16=False, devices=os.environ.get("EMBED_DEVICE"))
 
 
 def embed(texts: list[str]) -> tuple[np.ndarray, list[Sparse]]:

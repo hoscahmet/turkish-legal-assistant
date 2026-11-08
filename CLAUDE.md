@@ -33,7 +33,11 @@ Question answering system over Turkish legislation.
     öğretmen valid %100, grounded %98, source %82, agree 0.87 (referansı kendisi yazdı), 2.38 sn/soru.
     gemini-3.5-flash-lite valid %100, grounded %100, source %77, agree 0.68 (6.24 sn/soru, 5 sn'si rate-limit beklemesi).
     Öğrencide Türkçe ek hataları ("madde 5'ye") ve tekrar var.
-    Sırada: vLLM servis ve LLM_PROVIDER=local
+  - Yapıldı: LLM_PROVIDER=local (local.py) ve serve.py (vLLM OpenAI sunucusu, LoRA adı "legal", port 8001).
+    Öğrenci tool calling bilmez: local modda agent yok, retrieve -> eğitim prompt'u -> JSON şeması zorunlu.
+    4B bf16 servis için KV cache'e yer bırakmaz: --quantization bitsandbytes (eğitimdeki NF4 ile aynı).
+    API'yi EMBED_DEVICE=cpu ile çalıştır, BGE-M3 vLLM ile GPU'yu paylaşmasın.
+  - Devam ediyor: Qwen3-4B öğrenci (finetune.py --size 4b), sonra compare base-4b/student-4b
   - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
   - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
@@ -49,6 +53,7 @@ Question answering system over Turkish legislation.
 - MCP server (stdio): `uv run python -m turkish_legal_assistant.mcp_server` (mcp 2.x: `MCPServer`, not `FastMCP`; tests use the in-process `Client(server)`)
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
 - Fine-tuning data (GPU): `uv run python -m turkish_legal_assistant.finetune_data questions|retrieve|answers` (run in order; `--limit N` for a trial; ~25 min total)
-- QLoRA training (GPU): `uv run python -m turkish_legal_assistant.finetune` (~25 min, writes `models/qwen3-1.7b-legal-lora/`)
-- Compare models (GPU, one per process): `uv run python -m turkish_legal_assistant.compare base|student|teacher|gemini`, then `... compare report` (outputs in `data/finetune/compare/`)
+- QLoRA training (GPU): `uv run python -m turkish_legal_assistant.finetune --size 1.7b|4b` (1.7B ~25 min, writes `models/qwen3-<size>-legal-lora/`)
+- Serve the student (GPU): `uv run python -m turkish_legal_assistant.serve --size 4b`, then `LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app` (`LOCAL_LLM_URL` overrides `http://localhost:8001/v1`)
+- Compare models (GPU, one per process): `uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|teacher|gemini`, then `... compare report` (outputs in `data/finetune/compare/`)
 - Test: `uv run pytest`

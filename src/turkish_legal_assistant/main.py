@@ -7,7 +7,7 @@ from langchain_core.exceptions import (
     ModelRefusalError,
 )
 
-from . import agent
+from . import agent, local
 from .data import LAWS, find_article
 from .models import Article, AskRequest, AskResponse, Law
 
@@ -43,6 +43,10 @@ def ask(req: AskRequest) -> AskResponse:
         return AskResponse(question=req.question, answer=REFUSAL_ANSWER, sources=[])
     except (agent.LLMNotConfigured, ModelAuthenticationError) as e:
         raise HTTPException(status_code=503, detail=f"LLM is not configured: {e}")
+    except local.LocalModelUnavailable as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except local.LocalModelError as e:
+        raise HTTPException(status_code=502, detail=str(e))
     except ModelRateLimitError:
         raise HTTPException(status_code=503, detail="LLM rate limit reached, try again later")
     except ModelAPIError as e:

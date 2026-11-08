@@ -1,21 +1,28 @@
-"""QLoRA fine-tune of the student (Qwen3-1.7B) on the teacher's answers in data/finetune/.
+"""QLoRA fine-tune of a Qwen3 student (1.7B or 4B) on the teacher's answers in data/finetune/.
 
-  uv run python -m turkish_legal_assistant.finetune
+  uv run python -m turkish_legal_assistant.finetune [--size 1.7b|4b]
 
-The base model is loaded in 4 bits and frozen; only small LoRA matrices are trained, so a 1.7B model fits
+The base model is loaded in 4 bits and frozen; only small LoRA matrices are trained, so a 1.7B or 4B model fits
 in 12 GB with room for 5k-token prompts. Loss is computed on the answer only: the student should learn to
 write the LegalAnswer JSON, not to reproduce the articles in its prompt.
 The adapter is saved to models/ (gitignored); vLLM can serve it on top of the base model without merging.
 """
 
+import argparse
 import json
 from collections.abc import Callable
 from pathlib import Path
 
 from .finetune_data import OUT_DIR, Messages
 
-STUDENT = "Qwen/Qwen3-1.7B"
-ADAPTER_DIR = Path(__file__).resolve().parents[2] / "models" / "qwen3-1.7b-legal-lora"
+# Student sizes that fit a 12 GB GPU for QLoRA training and bf16 serving. 8B is the teacher itself.
+STUDENTS = {"1.7b": "Qwen/Qwen3-1.7B", "4b": "Qwen/Qwen3-4B"}
+MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
+
+
+def adapter_dir(size: str) -> Path:
+    return MODELS_DIR / f"qwen3-{size}-legal-lora"
+
 # The longest example is 5,327 tokens. Truncating would cut the answer at the end, so nothing is truncated.
 MAX_LENGTH = 5376
 
@@ -37,6 +44,11 @@ def load_split(name: str, render: Callable[[Messages], str], eos: str) -> list[d
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--size", choices=STUDENTS, default="1.7b")
+    args = parser.parse_args()
+    student, out_dir = STUDENTS[args.size], adapter_dir(args.size)
+
     # Heavy imports here, so tests can import this module without a GPU stack.
     import torch
     from datasets import Dataset
@@ -44,7 +56,7 @@ def main() -> None:
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
     from trl import SFTConfig, SFTTrainer
 
-    tokenizer = AutoTokenizer.from_pretrained(STUDENT)
+    tokenizer = AutoTokenizer.from_pretrained(student)
 
     def render(messages: Messages) -> str:
         return tokenizer.apply_chat_template(
@@ -55,7 +67,7 @@ def main() -> None:
     evaluation = Dataset.from_list(load_split("eval", render, tokenizer.eos_token))
 
     model = AutoModelForCausalLM.from_pretrained(
-        STUDENT,
+        student,
         quantization_config=BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",  # 4-bit format suited to normally distributed weights (the "Q" in QLoRA)
@@ -74,7 +86,7 @@ def main() -> None:
         task_type="CAUSAL_LM",
     )
     args = SFTConfig(
-        output_dir=str(ADAPTER_DIR),
+        output_dir=str(out_dir),
         max_length=MAX_LENGTH,
         completion_only_loss=True,
         num_train_epochs=3,
@@ -96,8 +108,8 @@ def main() -> None:
     )
     trainer.model.print_trainable_parameters()
     trainer.train()
-    trainer.save_model(str(ADAPTER_DIR))
-    print(f"Adapter saved to {ADAPTER_DIR}")
+    trainer.save_model(str(out_dir))
+    print(f"Adapter saved to {out_dir}")
 
 
 if __name__ == "__main__":

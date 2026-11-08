@@ -3,6 +3,7 @@
     START -> agent --(tool calls?)--> tools -> agent ... --(no tool calls)--> respond -> END
 
 LLM_PROVIDER picks the model: "gemini" (default, free tier) or "claude".
+LLM_PROVIDER=local skips the agent: the fine-tuned student only answers from retrieved articles (see local.py).
 """
 
 import json
@@ -20,7 +21,7 @@ from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from . import vectors
+from . import local, vectors
 from .data import find_article
 from .models import Article, AskResponse, LegalAnswer
 from .search import search
@@ -146,6 +147,8 @@ def get_graph():
 
 
 def answer(question: str, top_k: int = 5) -> AskResponse:
+    if os.environ.get("LLM_PROVIDER") == "local":
+        return local.answer(question, retrieve(question, top_k))
     config = {
         "configurable": {"top_k": top_k},
         # Each round is two steps (agent, tools); +2 for the final agent and respond steps.

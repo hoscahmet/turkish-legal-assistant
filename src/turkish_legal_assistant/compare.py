@@ -2,7 +2,7 @@
 
 Every model gets the exact prompt the student was trained on (question + retrieved articles) and must reply
 with LegalAnswer JSON. One model per process, because two vLLM models do not fit on the 12 GB GPU:
-  uv run python -m turkish_legal_assistant.compare base|student|teacher|gemini
+  uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|teacher|gemini
   uv run python -m turkish_legal_assistant.compare report
 Each run writes data/finetune/compare/<model>.jsonl; `report` scores every file found there.
 
@@ -27,7 +27,8 @@ from .finetune_data import FOREIGN_SCRIPT, OUT_DIR, Generate, Messages, read_jso
 from .models import LegalAnswer
 
 COMPARE_DIR = OUT_DIR / "compare"
-MODELS = ["base", "student", "teacher", "gemini"]
+# "base"/"student" are the 1.7B model without/with its adapter; "-4b" the same for Qwen3-4B.
+MODELS = ["base", "student", "base-4b", "student-4b", "teacher", "gemini"]
 # The articles in a prompt start lines like "[4857/53] İş Kanunu, madde 53: ..."
 ARTICLE_REF = re.compile(r"^\[(\d+)/([^\]]+)\] ", re.MULTILINE)
 CODE_FENCE = re.compile(r"^```(?:json)?\s*|\s*```$")
@@ -97,12 +98,12 @@ def run(examples: list[dict], generate: Generate) -> tuple[list[dict], float]:
 
 
 def report(examples: list[dict], results: dict[str, dict]) -> str:
-    header = f"{'model':<8} {'valid':>6} {'grounded':>9} {'source':>7} {'agree':>6} {'foreign':>8} {'sec/q':>6}"
+    header = f"{'model':<10} {'valid':>6} {'grounded':>9} {'source':>7} {'agree':>6} {'foreign':>8} {'sec/q':>6}"
     lines = [header, "-" * len(header)]
     for name, result in results.items():
         s = summarize([score(e, o["output"]) for e, o in zip(examples, result["outputs"])])
         lines.append(
-            f"{name:<8} {s['valid']:>6.0%} {s['grounded']:>9.0%} {s['source']:>7.0%} {s['agree']:>6.2f}"
+            f"{name:<10} {s['valid']:>6.0%} {s['grounded']:>9.0%} {s['source']:>7.0%} {s['agree']:>6.2f}"
             f" {s['foreign']:>8.0%} {result['seconds'] / s['n']:>6.2f}"
         )
     return "\n".join(lines)
@@ -136,14 +137,16 @@ def gemini_generate() -> Generate:
 
 
 def local_generate(name: str) -> Generate:
-    from .finetune import ADAPTER_DIR, STUDENT
+    from .finetune import STUDENTS, adapter_dir
     from .finetune_data import vllm_generate
 
     if name == "teacher":
         # As when it wrote the reference answers: thinking on, JSON enforced.
         return vllm_generate(thinking=True, json_schema=LegalAnswer.model_json_schema())
     # The student was trained with thinking off and no JSON constraint; the base model gets the same setup.
-    return vllm_generate(thinking=False, model=STUDENT, adapter=ADAPTER_DIR if name == "student" else None)
+    size = "4b" if name.endswith("-4b") else "1.7b"
+    adapter = adapter_dir(size) if name.startswith("student") else None
+    return vllm_generate(thinking=False, model=STUDENTS[size], adapter=adapter)
 
 
 def result_path(name: str, out_dir: Path = COMPARE_DIR) -> Path:
