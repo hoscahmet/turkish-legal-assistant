@@ -47,6 +47,12 @@ Question answering system over Turkish legislation.
   - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
   - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
+  - Sabah buradan devam (2026-11-09 gecesi bırakıldı), seçenekler:
+    1. 4B'yi 1 epoch ile yeniden eğit (eval loss en iyi 1. epoch'ta; ~18 dk), compare student-4b ile kıyasla
+    2. Faz 6'yı README/README.tr'ye yaz, phase-6/finetune dalını push'la ve main'e birleştir
+       (dal origin'in 12+ commit önünde, push yapılmadı)
+    3. Faz 7'ye geç: hakem model ile içerik doğruluğu (ör. TBK 344 TÜFE hatası)
+  - Kullanıcıya hatırlat: sohbete yazılan Gemini anahtarını AI Studio'dan yenilesin; anahtar hiçbir dosyada yok
 - Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
 - Faz 8: Docker Compose, demo arayüz, README
 
