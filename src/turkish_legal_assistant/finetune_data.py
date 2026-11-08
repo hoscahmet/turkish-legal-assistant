@@ -169,11 +169,16 @@ def save(splits: dict[str, list[dict]], out_dir: Path) -> None:
 
 
 def vllm_generate(
-    thinking: bool, json_schema: dict | None = None, model: str = TEACHER, adapter: Path | None = None
+    thinking: bool,
+    json_schema: dict | None = None,
+    model: str = TEACHER,
+    adapter: Path | None = None,
+    quantization: str | None = None,
 ) -> Generate:
     """Loads a model once (the teacher by default); the returned function runs a whole batch through vLLM.
 
     `adapter` is a LoRA adapter directory served on top of `model` without merging (the fine-tuned student).
+    `quantization="bitsandbytes"` loads an unquantized model in 4 bits, for models too big for the GPU in bf16.
 
     thinking=True lets Qwen3 reason in <think> before replying: slower, but without it the 8B teacher
     contradicted and embellished the articles in trial answers. The JSON schema then applies only after </think>.
@@ -192,6 +197,7 @@ def vllm_generate(
         reasoning_parser="qwen3",  # tells structured outputs where the reasoning ends
         enable_lora=adapter is not None,
         max_lora_rank=16,  # the rank finetune.py trains with
+        quantization=quantization,
     )
     lora = LoRARequest("adapter", 1, str(adapter)) if adapter else None
     params = SamplingParams(

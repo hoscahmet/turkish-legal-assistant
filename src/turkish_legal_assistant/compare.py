@@ -146,7 +146,9 @@ def local_generate(name: str) -> Generate:
     # The student was trained with thinking off and no JSON constraint; the base model gets the same setup.
     size = "4b" if name.endswith("-4b") else "1.7b"
     adapter = adapter_dir(size) if name.startswith("student") else None
-    return vllm_generate(thinking=False, model=STUDENTS[size], adapter=adapter)
+    # 4B in bf16 leaves no room for the KV cache; 4 bits, as in training and serve.py.
+    quantization = "bitsandbytes" if size == "4b" else None
+    return vllm_generate(thinking=False, model=STUDENTS[size], adapter=adapter, quantization=quantization)
 
 
 def result_path(name: str, out_dir: Path = COMPARE_DIR) -> Path:

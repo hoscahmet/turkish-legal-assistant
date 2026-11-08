@@ -49,6 +49,8 @@ def main() -> None:
     print(" ".join(command))
     # See finetune_data.vllm_generate: no nvcc in this WSL, so no FlashInfer sampler.
     os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
+    # The server picks vLLM's V2 model runner, which needs pinned CPU memory (UVA); WSL has none.
+    os.environ.setdefault("VLLM_USE_V2_MODEL_RUNNER", "0")
     os.execv(command[0], command)  # become the vLLM process, so Ctrl+C stops it directly
 
 

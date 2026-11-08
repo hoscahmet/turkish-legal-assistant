@@ -37,7 +37,13 @@ Question answering system over Turkish legislation.
     Öğrenci tool calling bilmez: local modda agent yok, retrieve -> eğitim prompt'u -> JSON şeması zorunlu.
     4B bf16 servis için KV cache'e yer bırakmaz: --quantization bitsandbytes (eğitimdeki NF4 ile aynı).
     API'yi EMBED_DEVICE=cpu ile çalıştır, BGE-M3 vLLM ile GPU'yu paylaşmasın.
-  - Devam ediyor: Qwen3-4B öğrenci (finetune.py --size 4b), sonra compare base-4b/student-4b
+  - Yapıldı: Qwen3-4B öğrenci (52 dk, eval loss 0.385 / 0.387 / 0.405; 1. epoch en iyi, 3. hafif overfit).
+    compare (4B 4-bit yüklenir): base-4b valid %100, grounded %62, source %49, agree 0.40;
+    student-4b valid %100, grounded %100, source %77, agree 0.70, 0.92 sn/soru (Gemini ile başa baş).
+    Uçtan uca /ask çalışıyor (local, 4B): ilk istek ~20 sn (BGE-M3 CPU'ya yükleniyor), sonra ~2 sn.
+    Hata örneği: kira artışı sorusunda TBK 344'teki TÜFE sınırını "belirtilmemiş" dedi (içerik doğruluğu Faz 7).
+  - WSL: vLLM sunucusu V2 model runner seçiyor, pinned memory (UVA) yok -> VLLM_USE_V2_MODEL_RUNNER=0 (serve.py)
+  - HF indirmesi xet ile takıldı; HF_HUB_DISABLE_XET=1 ile klasik HTTP çalıştı
   - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
   - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
