@@ -168,8 +168,12 @@ def save(splits: dict[str, list[dict]], out_dir: Path) -> None:
         write_jsonl(out_dir / f"{name}.jsonl", examples)
 
 
-def vllm_generate(thinking: bool, json_schema: dict | None = None) -> Generate:
-    """Loads the teacher once; the returned function runs a whole batch through vLLM.
+def vllm_generate(
+    thinking: bool, json_schema: dict | None = None, model: str = TEACHER, adapter: Path | None = None
+) -> Generate:
+    """Loads a model once (the teacher by default); the returned function runs a whole batch through vLLM.
+
+    `adapter` is a LoRA adapter directory served on top of `model` without merging (the fine-tuned student).
 
     thinking=True lets Qwen3 reason in <think> before replying: slower, but without it the 8B teacher
     contradicted and embellished the articles in trial answers. The JSON schema then applies only after </think>.
@@ -178,14 +182,18 @@ def vllm_generate(thinking: bool, json_schema: dict | None = None) -> Generate:
     # PyTorch's own top-p/top-k sampler needs no compiler and is fast enough for offline batches.
     os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
     from vllm import LLM, SamplingParams  # imported here: heavy, and only this machine's GPU stages need it
+    from vllm.lora.request import LoRARequest
     from vllm.sampling_params import StructuredOutputsParams
 
     llm = LLM(
-        TEACHER,
+        model,
         max_model_len=MAX_MODEL_LEN,
         gpu_memory_utilization=GPU_MEMORY_UTILIZATION,
         reasoning_parser="qwen3",  # tells structured outputs where the reasoning ends
+        enable_lora=adapter is not None,
+        max_lora_rank=16,  # the rank finetune.py trains with
     )
+    lora = LoRARequest("adapter", 1, str(adapter)) if adapter else None
     params = SamplingParams(
         # Qwen3's recommended settings for each mode
         temperature=0.6 if thinking else 0.7,
@@ -204,7 +212,9 @@ def vllm_generate(thinking: bool, json_schema: dict | None = None) -> Generate:
         keep = [i for i, m in enumerate(batch) if fits(m)]
         if len(keep) < len(batch):
             print(f"Skipping {len(batch) - len(keep)} prompts longer than {MAX_MODEL_LEN} tokens")
-        outputs = llm.chat([batch[i] for i in keep], params, chat_template_kwargs={"enable_thinking": thinking})
+        outputs = llm.chat(
+            [batch[i] for i in keep], params, lora_request=lora, chat_template_kwargs={"enable_thinking": thinking}
+        )
         texts = [""] * len(batch)  # skipped prompts get "", which the parsers drop
         for i, out in zip(keep, outputs):
             texts[i] = strip_thinking(out.outputs[0].text)
