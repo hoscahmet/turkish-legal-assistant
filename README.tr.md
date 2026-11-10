@@ -190,7 +190,7 @@ tests/               # 97 pytest testi, GPU ya da API anahtarı gerekmez
 
 <div align="center">
 
-⚠️ **Bu proje genel bilgi verir, hukuki tavsiye değildir.** Kendi durumunuz için bir avukata danışın.
+⚠️ **Bu proje genel bilgi verir, hukuki tavsiye değildir.**
 
 Kod: [MIT Lisansı](LICENSE) · Kanun metinleri: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
 

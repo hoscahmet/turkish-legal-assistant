@@ -191,7 +191,7 @@ tests/               # 97 pytest tests, no GPU or API key needed
 
 <div align="center">
 
-⚠️ **This project gives general information, not legal advice.** For your own case, consult a lawyer.
+⚠️ **This project gives general information, not legal advice.**
 
 Code: [MIT License](LICENSE) · Law texts: [mevzuat.gov.tr](https://www.mevzuat.gov.tr)
 
