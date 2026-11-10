@@ -77,7 +77,8 @@ This pattern is called **RAG** (Retrieval-Augmented Generation): first *find* th
 | 4 | LangGraph agent | ✅ |
 | 5 | MCP server | ✅ |
 | 6 | Fine-tune a small model with QLoRA, serve with vLLM | ✅ |
-| 7 | RAGAS, LLM-as-a-judge, Langfuse, CI regression tests | ⏳ |
+| 7 | LLM-as-a-judge, CI quality gate | ✅ |
+| 7+ | RAGAS, Langfuse tracing | ⏳ |
 | 8 | Docker Compose, demo UI | ⏳ |
 
 ## 📊 Retrieval results
@@ -120,13 +121,51 @@ Measured on the 53 evaluation questions, every model getting the same prompt:
 *Grounded:* every citation is one of the articles given. *Right source:* cites the article the question was written from, when it was retrieved. *Agreement:* citation F1 against the teacher's answer (so the teacher scores high by construction).
 
 **Takeaways**
-- Fine-tuning turns a 4B model that cites made-up articles into one that matches Gemini on these scores, running locally.
+- Fine-tuning turns a 4B model that cites made-up articles into one that matches Gemini on these citation scores, running locally. On content it does not; see the next section.
 - One epoch gave a lower evaluation loss (0.390 vs 0.405) but not better answers, so the 3-epoch adapter is kept.
-- These scores check citations, not legal content. The student can still get a fact wrong (e.g. it missed the CPI cap on rent increases in TBK 344); judging content is Phase 7.
+- These scores check citations, not legal content. The student can still get a fact wrong (e.g. it missed the CPI cap on rent increases in TBK 344); judging content is the next section.
+
+## 🧑‍⚖️ Answer quality (LLM-as-a-judge)
+
+The citation scores above cannot tell a right answer from a wrong one that cites the right article. So a judge model reads each answer with the articles it was given, splits it into claims and labels every claim **supported**, **contradicted** (an article says otherwise, or the answer says the articles do not cover something they do) or **unsupported**. It also says whether the answer is **complete**: does it give the rule, number or condition the question needs?
+
+*Correct:* complete with no contradicted claim. *Faithful:* every claim supported. *Contradicted:* at least one claim the articles contradict.
+
+**Judge: Gemini 3.5 Flash** (independent of the Qwen models; stronger than the judged Flash-Lite)
+
+| Model | Correct | Complete | Faithful | Contradicted |
+|---|:---:|:---:|:---:|:---:|
+| Qwen3-4B, fine-tuned (used) | 42% | 47% | 58% | 34% |
+| Qwen3-4B, fine-tuned 1 epoch | 34% | 42% | 47% | 36% |
+| Qwen3-8B teacher | 58% | 68% | 60% | 28% |
+| Gemini 3.5 Flash-Lite | **83%** | **83%** | **100%** | **0%** |
+
+**Judge: Qwen3-8B** (local and free, but it wrote the student's training data)
+
+| Model | Correct | Complete | Faithful | Contradicted |
+|---|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, base | 9% | 9% | 19% | 2% |
+| Qwen3-1.7B, fine-tuned | 38% | 38% | 53% | 30% |
+| Qwen3-4B, base | 51% | 51% | 79% | 11% |
+| Qwen3-4B, fine-tuned (used) | 68% | 72% | 74% | 17% |
+| Qwen3-4B, fine-tuned 1 epoch | 58% | 60% | 81% | 9% |
+| Qwen3-8B teacher | 81% | 81% | 81% | 8% |
+| Gemini 3.5 Flash-Lite | 68% | 70% | 92% | 6% |
+
+**The judges disagree, so they were checked by hand.** They gave a different correct/incorrect verdict on about a third of the answers. 19 of those were checked against the article text:
+- Gemini was right in about 16. The Qwen judge passed answers that apply the military-service article to any dismissal or confuse sick pay with unemployment pay, and it sometimes labels the question itself as a claim.
+- Gemini also favours its own family a little: it passed a Flash-Lite answer making the same misapplication it failed in the student.
+
+**Takeaways**
+- Gemini 3.5 Flash is the judge to trust here; the local judge is too lenient on its own student.
+- On content, the fine-tuned 4B does **not** match Gemini: about 42% correct against 83% (some of that gap is the judge's family bias). Its main faults are applying an article to the wrong situation and leaving out key conditions such as deadlines.
+- Fine-tuning still helps a lot: both judges rank every fine-tuned model above its base model.
+
+**Quality gate.** The outputs and verdicts are committed, and `tests/test_quality.py` fails CI if the served model's citation or judge scores drop below the recorded level, or if its outputs change without being judged again.
 
 ## 🧪 Tests
 
-**119 tests, all passing in about two seconds.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
+**133 tests, all passing in about two seconds.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
 
 | Area | Tests | What they check |
 |---|:---:|---|
@@ -139,6 +178,7 @@ Measured on the 53 evaluation questions, every model getting the same prompt:
 | 🧑‍🏫 Fine-tuning data | 10 | Question and answer parsing, citations to articles not given are dropped, the three GPU stages round-trip through files |
 | 🎓 Training & comparison | 13 | Loss only on the answer, train/eval splits share no articles, every comparison score, report |
 | 🏠 Local model | 9 | Training prompt with thinking off and JSON schema, citations not given are dropped, no-tool agent path, server errors, vLLM command |
+| 🧑‍⚖️ Judge & quality gate | 14 | Invalid answers skip the judge, verdicts reused only for the same output and judge, batching, scores; the served model stays above its recorded scores |
 
 ```bash
 uv run pytest
@@ -163,6 +203,7 @@ export LLM_PROVIDER=claude ANTHROPIC_API_KEY=...   # use Claude instead of Gemin
 uv run python -m turkish_legal_assistant.ingest     # re-download and re-split the laws
 uv run python -m turkish_legal_assistant.evaluate   # score the retrievers
 uv run pytest                                       # tests (no model or API needed)
+uv run python -m turkish_legal_assistant.judge report --judge gemini   # answer-quality scores
 ```
 
 Local model (NVIDIA GPU, 12 GB):
@@ -221,12 +262,13 @@ src/turkish_legal_assistant/
 ├── finetune.py      # QLoRA training
 ├── compare.py       # model comparison on the eval split
 ├── serve.py         # vLLM server for the fine-tuned model
-└── local.py         # LLM_PROVIDER=local
+├── local.py         # LLM_PROVIDER=local
+└── judge.py         # LLM-as-a-judge
 data/
 ├── articles.json    # 348 articles
 ├── golden.json      # 39 test questions
-└── finetune/        # training data and comparison outputs
-tests/               # 119 pytest tests, no GPU or API key needed
+└── finetune/        # training data, comparison outputs, judge verdicts
+tests/               # 133 pytest tests, no GPU or API key needed
 ```
 
 ---

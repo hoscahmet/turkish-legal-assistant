@@ -49,7 +49,19 @@ Question answering system over Turkish legislation.
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
   - 1 epoch denemesi (2026-11-10): `finetune --size 4b --epochs 1`, eval loss 0.390, agree 0.67 (3 epoch 0.70).
     3 epoch'luk adaptör varsayılan kaldı; loss farkı cevap kalitesine yansımadı.
-- Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
+- Faz 7: LLM-as-a-judge ve CI kalite kapısı (tamamlandı 2026-11-10, dal: phase-7/judge); RAGAS ve Langfuse yapılmadı
+  - judge.py: hakem cevabı iddialara ayırır (supported/contradicted/unsupported) + complete. Kararlar
+    data/finetune/judge/<hakem>/<model>.jsonl (commit'li); aynı çıktı + aynı hakem ise yeniden kullanılır.
+  - İki hakem: gemini-3.5-flash (ana hakem) ve yerel Qwen3-8B-AWQ (ücretsiz). Gemini 3.5 Flash: student-4b doğru %42,
+    çelişkili %34; Flash-Lite %83 / %0; teacher %58 / %28. Qwen hakemi student-4b'ye %68 verdi (fazla hoşgörülü).
+  - Hakemler ~1/3 cevapta ayrışıyor; 19 vaka elle incelendi, ~16'sında Gemini haklı. Gemini kendi ailesini hafif kayırıyor.
+    Öğrencinin hataları: maddeyi yanlış duruma uygulama (askerlik maddesi, kıdem şartı), süre/koşul atlama.
+  - Gemini hakemi student, base-4b, base için çalışmadı (fatura sorunu); student-4b-1ep 52/53.
+  - ÜCRET: Gemini 3.5 Flash ile ~211 istek kullanıcıya 450 TL'ye mal oldu; ücretli API'yi fiyatı ölçüp TL olarak
+    gösterip onay almadan asla çalıştırma. Varsayılan hakem local.
+  - CI: .github/workflows/ci.yml (uv sync --no-group finetune, pytest). tests/test_quality.py: student-4b atıf ve
+    Gemini hakem puanları eşiklerin altına düşerse ya da çıktılar yeniden puanlanmadan değişirse başarısız.
+  - Push yapılamadı (WSL'de git kimlik bilgisi yok); main origin'in önünde.
 - Faz 8: Docker Compose, demo arayüz, README
 
 ## Commands
@@ -64,4 +76,5 @@ Question answering system over Turkish legislation.
 - QLoRA training (GPU): `uv run python -m turkish_legal_assistant.finetune --size 1.7b|4b` (1.7B ~25 min, writes `models/qwen3-<size>-legal-lora/`)
 - Serve the student (GPU): `uv run python -m turkish_legal_assistant.serve --size 4b`, then `LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app` (`LOCAL_LLM_URL` overrides `http://localhost:8001/v1`)
 - Compare models (GPU, one per process): `uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|teacher|gemini`, then `... compare report` (outputs in `data/finetune/compare/`)
+- Judge answers (LLM-as-a-judge): `uv run python -m turkish_legal_assistant.judge [model ...] --judge local|gemini`, then `... judge report --judge gemini` (local = Qwen3-8B on the GPU, free; gemini needs a paid key)
 - Test: `uv run pytest`
