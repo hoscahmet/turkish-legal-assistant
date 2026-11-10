@@ -1,6 +1,6 @@
 """QLoRA fine-tune of a Qwen3 student (1.7B or 4B) on the teacher's answers in data/finetune/.
 
-  uv run python -m turkish_legal_assistant.finetune [--size 1.7b|4b]
+  uv run python -m turkish_legal_assistant.finetune [--size 1.7b|4b] [--epochs N]
 
 The base model is loaded in 4 bits and frozen; only small LoRA matrices are trained, so a 1.7B or 4B model fits
 in 12 GB with room for 5k-token prompts. Loss is computed on the answer only: the student should learn to
@@ -20,8 +20,13 @@ STUDENTS = {"1.7b": "Qwen/Qwen3-1.7B", "4b": "Qwen/Qwen3-4B"}
 MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
 
 
-def adapter_dir(size: str) -> Path:
-    return MODELS_DIR / f"qwen3-{size}-legal-lora"
+DEFAULT_EPOCHS = 3
+
+
+def adapter_dir(size: str, epochs: int = DEFAULT_EPOCHS) -> Path:
+    """The default run keeps the plain name; other epoch counts get their own folder so nothing is overwritten."""
+    suffix = "" if epochs == DEFAULT_EPOCHS else f"-{epochs}ep"
+    return MODELS_DIR / f"qwen3-{size}{suffix}-legal-lora"
 
 # The longest example is 5,327 tokens. Truncating would cut the answer at the end, so nothing is truncated.
 MAX_LENGTH = 5376
@@ -46,8 +51,10 @@ def load_split(name: str, render: Callable[[Messages], str], eos: str) -> list[d
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--size", choices=STUDENTS, default="1.7b")
+    parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
     args = parser.parse_args()
-    student, out_dir = STUDENTS[args.size], adapter_dir(args.size)
+    epochs = args.epochs
+    student, out_dir = STUDENTS[args.size], adapter_dir(args.size, epochs)
 
     # Heavy imports here, so tests can import this module without a GPU stack.
     import torch
@@ -89,7 +96,7 @@ def main() -> None:
         output_dir=str(out_dir),
         max_length=MAX_LENGTH,
         completion_only_loss=True,
-        num_train_epochs=3,
+        num_train_epochs=epochs,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=8,  # effective batch of 8 examples
         learning_rate=2e-4,
