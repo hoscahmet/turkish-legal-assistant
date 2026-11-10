@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      # The tests need no GPU, model download or API key. vLLM and the training stack are skipped.
+      - run: uv sync --locked --no-group finetune
+      # Includes the quality gate (tests/test_quality.py): the committed model outputs and judge verdicts
+      # must stay above the recorded scores.
+      - run: uv run pytest

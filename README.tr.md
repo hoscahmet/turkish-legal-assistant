@@ -76,7 +76,8 @@ Bu yaklaşımın adı **RAG** (Retrieval-Augmented Generation): önce doğru mad
 | 4 | LangGraph agent | ✅ |
 | 5 | MCP sunucusu | ✅ |
 | 6 | Küçük bir modeli QLoRA ile eğitmek, vLLM ile sunmak | ✅ |
-| 7 | RAGAS, LLM-as-a-judge, Langfuse, CI'da regresyon testi | ⏳ |
+| 7 | LLM-as-a-judge, CI kalite kapısı | ✅ |
+| 7+ | RAGAS, Langfuse izleme | ⏳ |
 | 8 | Docker Compose, demo arayüzü | ⏳ |
 
 ## 📊 Arama sonuçları
@@ -119,13 +120,54 @@ Cevap adımı, tek bir oyuncu ekran kartında (RTX 4070 Ti, 12 GB) çalışan k�
 *Dayanaklı:* her atıf verilen maddelerden biri. *Doğru kaynak:* soru hangi maddeden yazıldıysa ona atıf var (madde bulunmuşsa). *Uyum:* öğretmenin cevabına göre atıf F1'i (öğretmen bu yüzden doğal olarak yüksek çıkar).
 
 **Çıkarımlar**
-- Fine-tuning, olmayan maddelere atıf yapan 4B'lik bir modeli bu ölçütlerde Gemini ile başa baş hale getiriyor ve yerelde çalışıyor.
+- Fine-tuning, olmayan maddelere atıf yapan 4B'lik bir modeli bu atıf ölçütlerinde Gemini ile başa baş hale getiriyor ve yerelde çalışıyor. İçerikte ise değil; bir sonraki bölüme bakın.
 - 1 epoch daha düşük değerlendirme kaybı verdi (0.390'a karşı 0.405) ama daha iyi cevap vermedi; 3 epoch'luk adaptör kullanılıyor.
-- Bu ölçütler atıfları kontrol eder, hukuki içeriği değil. Öğrenci yine de bir bilgiyi yanlış verebilir (örn. TBK 344'teki kira artışı TÜFE sınırını atladı); içerik değerlendirmesi Faz 7'de.
+- Bu ölçütler atıfları kontrol eder, hukuki içeriği değil. Öğrenci yine de bir bilgiyi yanlış verebilir (örn. TBK 344'teki kira artışı TÜFE sınırını atladı); içerik değerlendirmesi bir sonraki bölümde.
+
+## 🧑‍⚖️ Cevap kalitesi (LLM-as-a-judge)
+
+Yukarıdaki atıf ölçütleri, doğru maddeye atıf yapan ama yanlış bilgi veren bir cevabı doğru cevaptan ayıramaz. Bu yüzden bir hakem model her cevabı verilen maddelerle birlikte okur, iddialara ayırır ve her iddiayı **doğrulanan**, **çelişen** (madde aksini söylüyor ya da cevap, maddelerde olan bir şeyin olmadığını söylüyor) veya **dayanaksız** diye işaretler. Ayrıca cevabın **tam** olup olmadığına bakar: soru için gereken kural, sayı ya da koşul verilmiş mi?
+
+*Doğru:* tam ve hiç çelişen iddia yok. *Sadık:* bütün iddialar doğrulanıyor. *Çelişkili:* en az bir iddia maddelerle çelişiyor.
+
+**Hakem: Gemini 3.5 Flash** (Qwen modellerinden bağımsız; puanlanan Flash-Lite'tan daha güçlü)
+
+| Model | Doğru | Tam | Sadık | Çelişkili |
+|---|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, eğitilmiş | %34 | %43 | %47 | %43 |
+| Qwen3-4B, eğitilmiş (kullanılan) | %42 | %47 | %58 | %34 |
+| Qwen3-4B, 1 epoch eğitilmiş | %34 | %42 | %47 | %38 |
+| Qwen3-8B öğretmen | %58 | %68 | %60 | %28 |
+| Gemini 3.5 Flash-Lite | **%83** | **%83** | **%100** | **%0** |
+
+Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar için aşağıdaki yerel hakeme bakın.
+
+**Hakem: Qwen3-8B** (yerel ve ücretsiz, ama öğrencinin eğitim verisini o yazdı)
+
+| Model | Doğru | Tam | Sadık | Çelişkili |
+|---|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, temel | %9 | %9 | %19 | %2 |
+| Qwen3-1.7B, eğitilmiş | %38 | %38 | %53 | %30 |
+| Qwen3-4B, temel | %51 | %51 | %79 | %11 |
+| Qwen3-4B, eğitilmiş (kullanılan) | %68 | %72 | %74 | %17 |
+| Qwen3-4B, 1 epoch eğitilmiş | %58 | %60 | %81 | %9 |
+| Qwen3-8B öğretmen | %81 | %81 | %81 | %8 |
+| Gemini 3.5 Flash-Lite | %68 | %70 | %92 | %6 |
+
+**Hakemler ayrıştığı için elle kontrol edildi.** Cevapların yaklaşık üçte birinde doğru/yanlış kararları farklı. Bunlardan 19'u madde metniyle karşılaştırıldı:
+- Yaklaşık 16'sında Gemini haklı çıktı. Qwen hakemi, askerlik maddesini her işten çıkarmaya uygulayan ya da hastalık ödeneğini işsizlik parasıyla karıştıran cevapları geçirdi; bazen sorunun kendisini iddia saydı.
+- Gemini de kendi ailesini biraz kayırıyor: öğrencide yanlış saydığı aynı hatayı yapan bir Flash-Lite cevabını geçirdi.
+
+**Çıkarımlar**
+- Burada güvenilecek hakem Gemini 3.5 Flash; yerel hakem kendi öğrencisine karşı fazla hoşgörülü.
+- İçerikte eğitilmiş 4B model Gemini ile başa baş **değil**: yaklaşık %42'ye karşı %83 doğru (farkın bir kısmı hakemin aile kayırmasından). Başlıca hataları bir maddeyi yanlış duruma uygulamak ve süre gibi temel koşulları atlamak.
+- Yine de fine-tuning çok işe yarıyor: iki hakem de her eğitilmiş modeli kendi temel modelinin üstünde görüyor.
+
+**Kalite kapısı.** Çıktılar ve hakem kararları commit'lenir; `tests/test_quality.py`, kullanılan modelin atıf ya da hakem puanları kayıtlı seviyenin altına düşerse veya çıktıları yeniden puanlanmadan değişirse CI'ı durdurur.
 
 ## 🧪 Testler
 
-**119 test, hepsi yaklaşık iki saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
+**133 test, hepsi yaklaşık iki saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
 
 | Alan | Test | Neyi doğruluyor |
 |---|:---:|---|
@@ -138,6 +180,7 @@ Cevap adımı, tek bir oyuncu ekran kartında (RTX 4070 Ti, 12 GB) çalışan k�
 | 🧑‍🏫 Fine-tuning verisi | 10 | Soru ve cevap ayrıştırma, verilmeyen maddeye atıf yapan cevaplar atılıyor, üç GPU aşaması dosyalar üzerinden veri aktarıyor |
 | 🎓 Eğitim ve karşılaştırma | 13 | Kayıp yalnızca cevapta, eğitim ve değerlendirme setleri madde paylaşmıyor, tüm karşılaştırma ölçütleri, rapor |
 | 🏠 Yerel model | 9 | Thinking kapalı eğitim prompt'u ve JSON şeması, verilmeyen maddelere atıf atılıyor, araçsız agent yolu, sunucu hataları, vLLM komutu |
+| 🧑‍⚖️ Hakem ve kalite kapısı | 14 | Geçersiz cevaplar hakeme gitmiyor, karar yalnızca aynı çıktı ve aynı hakem için yeniden kullanılıyor, toplu işleme, puanlar; kullanılan model kayıtlı puanlarının üstünde kalıyor |
 
 ```bash
 uv run pytest
@@ -162,6 +205,7 @@ export LLM_PROVIDER=claude ANTHROPIC_API_KEY=...   # Gemini yerine Claude
 uv run python -m turkish_legal_assistant.ingest     # kanunları yeniden indirip böl
 uv run python -m turkish_legal_assistant.evaluate   # arama yöntemlerini ölç
 uv run pytest                                       # testler (model ya da API gerekmez)
+uv run python -m turkish_legal_assistant.judge report --judge gemini   # cevap kalitesi puanları
 ```
 
 Yerel model (NVIDIA GPU, 12 GB):
@@ -220,12 +264,13 @@ src/turkish_legal_assistant/
 ├── finetune.py      # QLoRA eğitimi
 ├── compare.py       # değerlendirme setinde model karşılaştırma
 ├── serve.py         # eğitilmiş model için vLLM sunucusu
-└── local.py         # LLM_PROVIDER=local
+├── local.py         # LLM_PROVIDER=local
+└── judge.py         # LLM-as-a-judge
 data/
 ├── articles.json    # 348 madde
 ├── golden.json      # 39 test sorusu
-└── finetune/        # eğitim verisi ve karşılaştırma çıktıları
-tests/               # 119 pytest testi, GPU ya da API anahtarı gerekmez
+└── finetune/        # eğitim verisi, karşılaştırma çıktıları, hakem kararları
+tests/               # 133 pytest testi, GPU ya da API anahtarı gerekmez
 ```
 
 ---
