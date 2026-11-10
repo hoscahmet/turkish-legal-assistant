@@ -135,10 +135,13 @@ The citation scores above cannot tell a right answer from a wrong one that cites
 
 | Model | Correct | Complete | Faithful | Contradicted |
 |---|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, fine-tuned | 34% | 43% | 47% | 43% |
 | Qwen3-4B, fine-tuned (used) | 42% | 47% | 58% | 34% |
-| Qwen3-4B, fine-tuned 1 epoch | 34% | 42% | 47% | 36% |
+| Qwen3-4B, fine-tuned 1 epoch | 34% | 42% | 47% | 38% |
 | Qwen3-8B teacher | 58% | 68% | 60% | 28% |
 | Gemini 3.5 Flash-Lite | **83%** | **83%** | **100%** | **0%** |
+
+The base models were not judged by Gemini (the run was stopped for cost); see the local judge below.
 
 **Judge: Qwen3-8B** (local and free, but it wrote the student's training data)
 

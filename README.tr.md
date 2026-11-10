@@ -134,10 +134,13 @@ Yukarıdaki atıf ölçütleri, doğru maddeye atıf yapan ama yanlış bilgi ve
 
 | Model | Doğru | Tam | Sadık | Çelişkili |
 |---|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, eğitilmiş | %34 | %43 | %47 | %43 |
 | Qwen3-4B, eğitilmiş (kullanılan) | %42 | %47 | %58 | %34 |
-| Qwen3-4B, 1 epoch eğitilmiş | %34 | %42 | %47 | %36 |
+| Qwen3-4B, 1 epoch eğitilmiş | %34 | %42 | %47 | %38 |
 | Qwen3-8B öğretmen | %58 | %68 | %60 | %28 |
 | Gemini 3.5 Flash-Lite | **%83** | **%83** | **%100** | **%0** |
+
+Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar için aşağıdaki yerel hakeme bakın.
 
 **Hakem: Qwen3-8B** (yerel ve ücretsiz, ama öğrencinin eğitim verisini o yazdı)
 

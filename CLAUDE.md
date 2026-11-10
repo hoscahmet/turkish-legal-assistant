@@ -56,7 +56,8 @@ Question answering system over Turkish legislation.
     çelişkili %34; Flash-Lite %83 / %0; teacher %58 / %28. Qwen hakemi student-4b'ye %68 verdi (fazla hoşgörülü).
   - Hakemler ~1/3 cevapta ayrışıyor; 19 vaka elle incelendi, ~16'sında Gemini haklı. Gemini kendi ailesini hafif kayırıyor.
     Öğrencinin hataları: maddeyi yanlış duruma uygulama (askerlik maddesi, kıdem şartı), süre/koşul atlama.
-  - Gemini hakemi student, base-4b, base için çalışmadı (fatura sorunu); student-4b-1ep 52/53.
+  - Gemini hakemi 2026-11-11'de student (doğru %34, çelişkili %43) ve student-4b-1ep (53/53, %34 / %38) için tamamlandı.
+    base-4b 32/53'te bırakıldı, base hiç yok: hesap yine "outstanding balance" verdi, kullanıcı bırakmayı seçti.
   - ÜCRET: Gemini 3.5 Flash ile ~211 istek kullanıcıya 450 TL'ye mal oldu; ücretli API'yi fiyatı ölçüp TL olarak
     gösterip onay almadan asla çalıştırma. Varsayılan hakem local.
   - CI: .github/workflows/ci.yml (uv sync --no-group finetune, pytest). tests/test_quality.py: student-4b atıf ve
