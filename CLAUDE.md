@@ -49,7 +49,7 @@ Question answering system over Turkish legislation.
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
   - 1 epoch denemesi (2026-11-10): `finetune --size 4b --epochs 1`, eval loss 0.390, agree 0.67 (3 epoch 0.70).
     3 epoch'luk adaptör varsayılan kaldı; loss farkı cevap kalitesine yansımadı.
-- Faz 7: LLM-as-a-judge ve CI kalite kapısı (tamamlandı 2026-11-10, dal: phase-7/judge); RAGAS ve Langfuse yapılmadı
+- Faz 7: LLM-as-a-judge ve CI kalite kapısı (tamamlandı 2026-11-11, main'e birleştirildi); RAGAS ve Langfuse yapılmadı
   - judge.py: hakem cevabı iddialara ayırır (supported/contradicted/unsupported) + complete. Kararlar
     data/finetune/judge/<hakem>/<model>.jsonl (commit'li); aynı çıktı + aynı hakem ise yeniden kullanılır.
   - İki hakem: gemini-3.5-flash (ana hakem) ve yerel Qwen3-8B-AWQ (ücretsiz). Gemini 3.5 Flash: student-4b doğru %42,
