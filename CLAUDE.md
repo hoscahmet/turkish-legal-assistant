@@ -20,7 +20,7 @@ Question answering system over Turkish legislation.
   golden dataset ile Recall@k / MRR ölçümü (tamamlandı; en iyi: dense, MRR 0.77)
 - Faz 4: LangGraph agent (tamamlandı)
 - Faz 5: MCP server (tamamlandı)
-- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis (devam ediyor, dal: phase-6/finetune)
+- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis (tamamlandı 2026-11-10, main'e birleştirildi)
   - Donanım: Windows PC, RTX 4070 Ti 12 GB (~11 GB boş), WSL2 Ubuntu, RAM 11 GB (.wslconfig), CUDA 13.3
   - Öğretmen: Qwen/Qwen3-8B-AWQ (vLLM), öğrenci: Qwen/Qwen3-1.7B (QLoRA). İkisi de Apache 2.0;
     Claude/Gemini çıktısıyla eğitim yok (kullanım şartları)
@@ -47,14 +47,8 @@ Question answering system over Turkish legislation.
   - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
   - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
   - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
-  - Sabah buradan devam (2026-11-09 gecesi bırakıldı), seçenekler:
-    1. ~~4B'yi 1 epoch ile yeniden eğit~~ Yapıldı 2026-11-10: `finetune --size 4b --epochs 1` (20 dk, eval loss 0.390,
-       adaptör models/qwen3-4b-1ep-legal-lora). compare student-4b-1ep: agree 0.67 (3 epoch 0.70), diğer metrikler aynı.
-       Karar: 3 epoch'luk adaptör varsayılan kalır; loss farkı cevap kalitesine yansımadı.
-    2. Faz 6'yı README/README.tr'ye yaz, phase-6/finetune dalını push'la ve main'e birleştir
-       (dal origin'in 12+ commit önünde, push yapılmadı)
-    3. Faz 7'ye geç: hakem model ile içerik doğruluğu (ör. TBK 344 TÜFE hatası)
-  - Kullanıcıya hatırlat: sohbete yazılan Gemini anahtarını AI Studio'dan yenilesin; anahtar hiçbir dosyada yok
+  - 1 epoch denemesi (2026-11-10): `finetune --size 4b --epochs 1`, eval loss 0.390, agree 0.67 (3 epoch 0.70).
+    3 epoch'luk adaptör varsayılan kaldı; loss farkı cevap kalitesine yansımadı.
 - Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
 - Faz 8: Docker Compose, demo arayüz, README
 

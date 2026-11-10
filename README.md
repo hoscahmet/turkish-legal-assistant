@@ -40,7 +40,7 @@ Every answer comes from the law text itself, not from the model's memory. Citati
 | 🤖 **Agent** | The model searches, reads, searches again if needed, then answers |
 | 🔌 **MCP server** | Plug the search into Claude Desktop, Claude Code or any MCP client |
 | 🛡️ **Hallucination guard** | Only real, existing articles are shown as sources |
-| 🔄 **Any LLM** | Gemini (free tier) or Claude, switched with one setting |
+| 🔄 **Any LLM** | Gemini (free tier), Claude, or a fine-tuned local Qwen3-4B, switched with one setting |
 
 ## 🏗️ How it works
 
@@ -76,7 +76,7 @@ This pattern is called **RAG** (Retrieval-Augmented Generation): first *find* th
 | 3 | BGE-M3 embeddings, Qdrant, hybrid search, reranker, evaluation | ✅ |
 | 4 | LangGraph agent | ✅ |
 | 5 | MCP server | ✅ |
-| 6 | Fine-tune a small model with QLoRA, serve with vLLM | 🚧 |
+| 6 | Fine-tune a small model with QLoRA, serve with vLLM | ✅ |
 | 7 | RAGAS, LLM-as-a-judge, Langfuse, CI regression tests | ⏳ |
 | 8 | Docker Compose, demo UI | ⏳ |
 
@@ -97,9 +97,36 @@ Measured on 39 everyday Turkish questions with known correct articles.
 - Hybrid fusion and the reranker did *not* help on this data. The reranker tends to push long, general articles above the specific answer.
 - With 39 questions, a 0.05 MRR gap is about two questions, so small differences are not conclusive.
 
+## 🎓 Local model (fine-tuning)
+
+The answer step can also run on a small open model on one consumer GPU (RTX 4070 Ti, 12 GB), with no API at all.
+
+1. **Teacher data.** Qwen3-8B (AWQ, served with vLLM) answers generated questions from the retrieved articles: 460 training and 53 evaluation examples. Articles behind the evaluation questions never appear in training. Only Apache-2.0 models write the data; no Claude or Gemini output is used for training.
+2. **QLoRA.** Qwen3-4B is loaded in 4 bits and frozen. Small LoRA adapters (0.8% of the weights) learn to turn *question + articles* into the answer JSON. The loss is computed on the answer only. Training takes 52 minutes.
+3. **Serving.** vLLM serves the base model with the adapter on top, as an OpenAI-compatible server. With `LLM_PROVIDER=local` the API retrieves the articles and sends them to it in one step, with the JSON schema enforced.
+
+Measured on the 53 evaluation questions, every model getting the same prompt:
+
+| Model | Valid JSON | Grounded | Right source | Agreement | s/question |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, base | 21% | 0% | 0% | 0.00 | 0.63 |
+| Qwen3-1.7B, fine-tuned | 100% | 96% | 69% | 0.64 | 0.50 |
+| Qwen3-4B, base | 100% | 62% | 49% | 0.40 | 0.94 |
+| 🏆 **Qwen3-4B, fine-tuned** (used) | 100% | **100%** | 77% | **0.70** | 0.92 |
+| Qwen3-4B, fine-tuned 1 epoch | 100% | 100% | 77% | 0.67 | 1.40 |
+| Gemini 3.5 Flash-Lite | 100% | 100% | 77% | 0.68 | 6.24 |
+| Qwen3-8B teacher | 100% | 98% | 82% | 0.87 | 2.38 |
+
+*Grounded:* every citation is one of the articles given. *Right source:* cites the article the question was written from, when it was retrieved. *Agreement:* citation F1 against the teacher's answer (so the teacher scores high by construction).
+
+**Takeaways**
+- Fine-tuning turns a 4B model that cites made-up articles into one that matches Gemini on these scores, running locally.
+- One epoch gave a lower evaluation loss (0.390 vs 0.405) but not better answers, so the 3-epoch adapter is kept.
+- These scores check citations, not legal content. The student can still get a fact wrong (e.g. it missed the CPI cap on rent increases in TBK 344); judging content is Phase 7.
+
 ## 🧪 Tests
 
-**97 tests, all passing in about one second.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
+**119 tests, all passing in about two seconds.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
 
 | Area | Tests | What they check |
 |---|:---:|---|
@@ -110,6 +137,8 @@ Measured on 39 everyday Turkish questions with known correct articles.
 | 🌐 API | 13 | Every endpoint, input validation, LLM errors mapped to HTTP codes, Turkish refusal message |
 | 🔌 MCP server | 6 | Tools are read-only, law filter, invalid input and missing articles become tool errors |
 | 🧑‍🏫 Fine-tuning data | 10 | Question and answer parsing, citations to articles not given are dropped, the three GPU stages round-trip through files |
+| 🎓 Training & comparison | 13 | Loss only on the answer, train/eval splits share no articles, every comparison score, report |
+| 🏠 Local model | 9 | Training prompt with thinking off and JSON schema, citations not given are dropped, no-tool agent path, server errors, vLLM command |
 
 ```bash
 uv run pytest
@@ -134,6 +163,14 @@ export LLM_PROVIDER=claude ANTHROPIC_API_KEY=...   # use Claude instead of Gemin
 uv run python -m turkish_legal_assistant.ingest     # re-download and re-split the laws
 uv run python -m turkish_legal_assistant.evaluate   # score the retrievers
 uv run pytest                                       # tests (no model or API needed)
+```
+
+Local model (NVIDIA GPU, 12 GB):
+
+```bash
+uv run python -m turkish_legal_assistant.finetune --size 4b      # train the adapter (~52 min)
+uv run python -m turkish_legal_assistant.serve --size 4b         # vLLM server on port 8001
+LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app
 ```
 
 </details>
@@ -180,11 +217,16 @@ src/turkish_legal_assistant/
 ├── main.py          # FastAPI app
 ├── mcp_server.py    # MCP server
 ├── evaluate.py      # Recall@k / MRR
-└── finetune_data.py # teacher-generated training data (Phase 6)
+├── finetune_data.py # teacher-generated training data
+├── finetune.py      # QLoRA training
+├── compare.py       # model comparison on the eval split
+├── serve.py         # vLLM server for the fine-tuned model
+└── local.py         # LLM_PROVIDER=local
 data/
 ├── articles.json    # 348 articles
-└── golden.json      # 39 test questions
-tests/               # 97 pytest tests, no GPU or API key needed
+├── golden.json      # 39 test questions
+└── finetune/        # training data and comparison outputs
+tests/               # 119 pytest tests, no GPU or API key needed
 ```
 
 ---
