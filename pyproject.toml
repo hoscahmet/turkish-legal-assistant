@@ -11,6 +11,7 @@ license = "MIT"
 dependencies = [
     "fastapi>=0.162.0",
     "flagembedding>=1.4.2",
+    "httpx>=0.28.1",
     "langchain>=1.4.9",
     "langchain-anthropic>=1.7.10",
     "langchain-google-genai>=4.4.3",
@@ -29,3 +30,13 @@ dev = [
     "httpx>=0.28.1",
     "pytest>=9.2.0",
 ]
+finetune = [
+    "bitsandbytes>=0.50.2",
+    "peft>=0.21.2",
+    "trl>=1.17.1",
+    "vllm>=0.22.1",
+]
+
+[tool.uv]
+# vLLM is only needed to generate data and serve the fine-tuned model; Docker can skip it with --no-group finetune.
+default-groups = ["dev", "finetune"]

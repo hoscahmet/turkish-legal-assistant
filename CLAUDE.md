@@ -3,6 +3,7 @@
 Question answering system over Turkish legislation.
 
 ## Kurallar
+- Kullanıcıyla sohbet (açıklamalar, ara notlar) Türkçe. Kullanıcı öğreniyor: her değişikliği kısaca açıkla.
 - Kod, isimler, yorumlar, testler, README ve commit mesajları İngilizce.
 - Kanun metinleri, test soruları ve son kullanıcıya verilen cevaplar Türkçe.
 - Paket yönetimi uv ile. Her yeni özellik için pytest testi yazılır.
@@ -19,7 +20,35 @@ Question answering system over Turkish legislation.
   golden dataset ile Recall@k / MRR ölçümü (tamamlandı; en iyi: dense, MRR 0.77)
 - Faz 4: LangGraph agent (tamamlandı)
 - Faz 5: MCP server (tamamlandı)
-- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis
+- Faz 6: Küçük modeli QLoRA ile fine-tune, vLLM ile servis (tamamlandı 2026-11-10, main'e birleştirildi)
+  - Donanım: Windows PC, RTX 4070 Ti 12 GB (~11 GB boş), WSL2 Ubuntu, RAM 11 GB (.wslconfig), CUDA 13.3
+  - Öğretmen: Qwen/Qwen3-8B-AWQ (vLLM), öğrenci: Qwen/Qwen3-1.7B (QLoRA). İkisi de Apache 2.0;
+    Claude/Gemini çıktısıyla eğitim yok (kullanım şartları)
+  - Öğrenci kanunu değil, RAG cevap adımını öğrenir: soru + bulunan maddeler -> LegalAnswer JSON
+  - Yapıldı: veri üretimi (data/finetune/: train 460, eval 53; eval kaynak maddeleri train'de yok).
+  - Yapıldı: QLoRA eğitimi (finetune.py, 3 epoch, 23 dk, adaptör models/ altında, gitignored).
+    Eval loss 0.499 / 0.479 / 0.493: 3. epoch hafif overfit, gerekirse 2 epoch'a in.
+  - Yapıldı: karşılaştırma (compare.py, eval split, 53 soru; hakemsiz ölçütler):
+    temel 1.7B valid %21 / grounded %0; öğrenci valid %100, grounded %96, source %69, agree 0.64, 0.50 sn/soru;
+    öğretmen valid %100, grounded %98, source %82, agree 0.87 (referansı kendisi yazdı), 2.38 sn/soru.
+    gemini-3.5-flash-lite valid %100, grounded %100, source %77, agree 0.68 (6.24 sn/soru, 5 sn'si rate-limit beklemesi).
+    Öğrencide Türkçe ek hataları ("madde 5'ye") ve tekrar var.
+  - Yapıldı: LLM_PROVIDER=local (local.py) ve serve.py (vLLM OpenAI sunucusu, LoRA adı "legal", port 8001).
+    Öğrenci tool calling bilmez: local modda agent yok, retrieve -> eğitim prompt'u -> JSON şeması zorunlu.
+    4B bf16 servis için KV cache'e yer bırakmaz: --quantization bitsandbytes (eğitimdeki NF4 ile aynı).
+    API'yi EMBED_DEVICE=cpu ile çalıştır, BGE-M3 vLLM ile GPU'yu paylaşmasın.
+  - Yapıldı: Qwen3-4B öğrenci (52 dk, eval loss 0.385 / 0.387 / 0.405; 1. epoch en iyi, 3. hafif overfit).
+    compare (4B 4-bit yüklenir): base-4b valid %100, grounded %62, source %49, agree 0.40;
+    student-4b valid %100, grounded %100, source %77, agree 0.70, 0.92 sn/soru (Gemini ile başa baş).
+    Uçtan uca /ask çalışıyor (local, 4B): ilk istek ~20 sn (BGE-M3 CPU'ya yükleniyor), sonra ~2 sn.
+    Hata örneği: kira artışı sorusunda TBK 344'teki TÜFE sınırını "belirtilmemiş" dedi (içerik doğruluğu Faz 7).
+  - WSL: vLLM sunucusu V2 model runner seçiyor, pinned memory (UVA) yok -> VLLM_USE_V2_MODEL_RUNNER=0 (serve.py)
+  - HF indirmesi xet ile takıldı; HF_HUB_DISABLE_XET=1 ile klasik HTTP çalıştı
+  - BGE-M3 ve vLLM aynı anda GPU'ya sığmaz: veri üretimi 3 ayrı process (questions/retrieve/answers)
+  - WSL'de CUDA toolkit (nvcc) yok: FlashInfer sampler kapalı (VLLM_USE_FLASHINFER_SAMPLER=0)
+  - Öğretmen cevaplarda thinking açık; kapalıyken maddelerle çelişen cevaplar yazıyordu
+  - 1 epoch denemesi (2026-11-10): `finetune --size 4b --epochs 1`, eval loss 0.390, agree 0.67 (3 epoch 0.70).
+    3 epoch'luk adaptör varsayılan kaldı; loss farkı cevap kalitesine yansımadı.
 - Faz 7: RAGAS, LLM-as-a-judge, Langfuse, CI'da regression testi
 - Faz 8: Docker Compose, demo arayüz, README
 
@@ -31,4 +60,8 @@ Question answering system over Turkish legislation.
 - Evaluate retrieval: `uv run python -m turkish_legal_assistant.evaluate` (golden set: `data/golden.json`, Turkish questions with expected articles)
 - MCP server (stdio): `uv run python -m turkish_legal_assistant.mcp_server` (mcp 2.x: `MCPServer`, not `FastMCP`; tests use the in-process `Client(server)`)
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
+- Fine-tuning data (GPU): `uv run python -m turkish_legal_assistant.finetune_data questions|retrieve|answers` (run in order; `--limit N` for a trial; ~25 min total)
+- QLoRA training (GPU): `uv run python -m turkish_legal_assistant.finetune --size 1.7b|4b` (1.7B ~25 min, writes `models/qwen3-<size>-legal-lora/`)
+- Serve the student (GPU): `uv run python -m turkish_legal_assistant.serve --size 4b`, then `LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app` (`LOCAL_LLM_URL` overrides `http://localhost:8001/v1`)
+- Compare models (GPU, one per process): `uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|teacher|gemini`, then `... compare report` (outputs in `data/finetune/compare/`)
 - Test: `uv run pytest`

@@ -39,7 +39,7 @@ Her cevap modelin hafızasından değil, kanun metninin kendisinden gelir. Var o
 | 🤖 **Agent** | Model arar, okur, gerekirse tekrar arar, sonra cevaplar |
 | 🔌 **MCP sunucusu** | Aramayı Claude Desktop, Claude Code ya da herhangi bir MCP istemcisine bağlayın |
 | 🛡️ **Halüsinasyon koruması** | Kaynak olarak sadece gerçekten var olan maddeler gösterilir |
-| 🔄 **Model bağımsız** | Gemini (ücretsiz katman) ya da Claude, tek ayarla değişir |
+| 🔄 **Model bağımsız** | Gemini (ücretsiz katman), Claude ya da yerelde eğitilmiş Qwen3-4B, tek ayarla değişir |
 
 ## 🏗️ Nasıl çalışıyor
 
@@ -75,7 +75,7 @@ Bu yaklaşımın adı **RAG** (Retrieval-Augmented Generation): önce doğru mad
 | 3 | BGE-M3 embedding, Qdrant, hybrid arama, reranker, ölçüm | ✅ |
 | 4 | LangGraph agent | ✅ |
 | 5 | MCP sunucusu | ✅ |
-| 6 | Küçük bir modeli QLoRA ile eğitmek, vLLM ile sunmak | 🚧 |
+| 6 | Küçük bir modeli QLoRA ile eğitmek, vLLM ile sunmak | ✅ |
 | 7 | RAGAS, LLM-as-a-judge, Langfuse, CI'da regresyon testi | ⏳ |
 | 8 | Docker Compose, demo arayüzü | ⏳ |
 
@@ -96,6 +96,53 @@ Doğru maddesi bilinen 39 günlük Türkçe soru üzerinde ölçüldü.
 - Hybrid birleştirme ve reranker bu veride işe *yaramadı*. Reranker uzun ve genel maddeleri asıl cevabın önüne geçirme eğiliminde.
 - 39 soruda 0.05'lik MRR farkı yaklaşık iki soruya denk geliyor; küçük farklar kesin sonuç sayılmaz.
 
+## 🎓 Yerel model (fine-tuning)
+
+Cevap adımı, tek bir oyuncu ekran kartında (RTX 4070 Ti, 12 GB) çalışan küçük, açık bir modelle de yapılabiliyor; hiçbir API gerekmez.
+
+1. **Öğretmen verisi.** Qwen3-8B (AWQ, vLLM ile) üretilen soruları bulunan maddelere dayanarak cevaplar: 460 eğitim, 53 değerlendirme örneği. Değerlendirme sorularının dayandığı maddeler eğitimde hiç yer almaz. Veriyi yalnızca Apache-2.0 lisanslı modeller yazar; eğitimde Claude ya da Gemini çıktısı kullanılmaz.
+2. **QLoRA.** Qwen3-4B 4 bit olarak yüklenip dondurulur. Küçük LoRA adaptörleri (ağırlıkların %0.8'i) *soru + maddeler*den cevap JSON'unu üretmeyi öğrenir. Kayıp yalnızca cevap üzerinden hesaplanır. Eğitim 52 dakika sürer.
+3. **Sunum.** vLLM, temel modeli adaptörle birlikte OpenAI uyumlu bir sunucu olarak sunar. `LLM_PROVIDER=local` ile API maddeleri bulup tek adımda bu sunucuya gönderir, JSON şeması zorunlu tutulur.
+
+53 değerlendirme sorusunda, her modele aynı prompt verilerek ölçüldü:
+
+| Model | Geçerli JSON | Dayanaklı | Doğru kaynak | Uyum | sn/soru |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Qwen3-1.7B, temel | %21 | %0 | %0 | 0.00 | 0.63 |
+| Qwen3-1.7B, eğitilmiş | %100 | %96 | %69 | 0.64 | 0.50 |
+| Qwen3-4B, temel | %100 | %62 | %49 | 0.40 | 0.94 |
+| 🏆 **Qwen3-4B, eğitilmiş** (kullanılan) | %100 | **%100** | %77 | **0.70** | 0.92 |
+| Qwen3-4B, 1 epoch eğitilmiş | %100 | %100 | %77 | 0.67 | 1.40 |
+| Gemini 3.5 Flash-Lite | %100 | %100 | %77 | 0.68 | 6.24 |
+| Qwen3-8B öğretmen | %100 | %98 | %82 | 0.87 | 2.38 |
+
+*Dayanaklı:* her atıf verilen maddelerden biri. *Doğru kaynak:* soru hangi maddeden yazıldıysa ona atıf var (madde bulunmuşsa). *Uyum:* öğretmenin cevabına göre atıf F1'i (öğretmen bu yüzden doğal olarak yüksek çıkar).
+
+**Çıkarımlar**
+- Fine-tuning, olmayan maddelere atıf yapan 4B'lik bir modeli bu ölçütlerde Gemini ile başa baş hale getiriyor ve yerelde çalışıyor.
+- 1 epoch daha düşük değerlendirme kaybı verdi (0.390'a karşı 0.405) ama daha iyi cevap vermedi; 3 epoch'luk adaptör kullanılıyor.
+- Bu ölçütler atıfları kontrol eder, hukuki içeriği değil. Öğrenci yine de bir bilgiyi yanlış verebilir (örn. TBK 344'teki kira artışı TÜFE sınırını atladı); içerik değerlendirmesi Faz 7'de.
+
+## 🧪 Testler
+
+**119 test, hepsi yaklaşık iki saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
+
+| Alan | Test | Neyi doğruluyor |
+|---|:---:|---|
+| 📥 Veri çekme | 7 | Kanunlar doğru madde sınırlarından bölünüyor, metadata, 4 kanunun hepsi var, tekrar yok, TBK'da yalnızca kira bölümü var |
+| 🔎 Arama | 11 | Dense anlama göre, sparse ortak kelimeye göre sıralıyor, hybrid ikisini birleştiriyor, kanun filtresi, reranker, Türkçe `İ`/`ı` küçültme |
+| 📊 Ölçüm | 42 | Recall@k ve MRR hesabı, 39 test sorusunun her biri gerçekten var olan bir maddeyi gösteriyor |
+| 🤖 Agent | 8 | Önce arıyor sonra cevaplıyor, olmayan madde modele bildiriliyor, araç döngüsü sınırlı, sağlayıcı ayarları |
+| 🌐 API | 13 | Bütün uç noktalar, girdi doğrulama, LLM hatalarının HTTP kodlarına çevrilmesi, Türkçe ret mesajı |
+| 🔌 MCP sunucusu | 6 | Araçlar salt okunur, kanun filtresi, hatalı girdi ve olmayan madde araç hatası olarak dönüyor |
+| 🧑‍🏫 Fine-tuning verisi | 10 | Soru ve cevap ayrıştırma, verilmeyen maddeye atıf yapan cevaplar atılıyor, üç GPU aşaması dosyalar üzerinden veri aktarıyor |
+| 🎓 Eğitim ve karşılaştırma | 13 | Kayıp yalnızca cevapta, eğitim ve değerlendirme setleri madde paylaşmıyor, tüm karşılaştırma ölçütleri, rapor |
+| 🏠 Yerel model | 9 | Thinking kapalı eğitim prompt'u ve JSON şeması, verilmeyen maddelere atıf atılıyor, araçsız agent yolu, sunucu hataları, vLLM komutu |
+
+```bash
+uv run pytest
+```
+
 ## 🚀 Hızlı başlangıç
 
 ```bash
@@ -115,6 +162,14 @@ export LLM_PROVIDER=claude ANTHROPIC_API_KEY=...   # Gemini yerine Claude
 uv run python -m turkish_legal_assistant.ingest     # kanunları yeniden indirip böl
 uv run python -m turkish_legal_assistant.evaluate   # arama yöntemlerini ölç
 uv run pytest                                       # testler (model ya da API gerekmez)
+```
+
+Yerel model (NVIDIA GPU, 12 GB):
+
+```bash
+uv run python -m turkish_legal_assistant.finetune --size 4b      # adaptörü eğit (~52 dk)
+uv run python -m turkish_legal_assistant.serve --size 4b         # 8001 portunda vLLM sunucusu
+LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app
 ```
 
 </details>
@@ -160,10 +215,17 @@ src/turkish_legal_assistant/
 ├── agent.py         # LangGraph agent
 ├── main.py          # FastAPI uygulaması
 ├── mcp_server.py    # MCP sunucusu
-└── evaluate.py      # Recall@k / MRR
+├── evaluate.py      # Recall@k / MRR
+├── finetune_data.py # öğretmen modelle eğitim verisi üretimi
+├── finetune.py      # QLoRA eğitimi
+├── compare.py       # değerlendirme setinde model karşılaştırma
+├── serve.py         # eğitilmiş model için vLLM sunucusu
+└── local.py         # LLM_PROVIDER=local
 data/
 ├── articles.json    # 348 madde
-└── golden.json      # 39 test sorusu
+├── golden.json      # 39 test sorusu
+└── finetune/        # eğitim verisi ve karşılaştırma çıktıları
+tests/               # 119 pytest testi, GPU ya da API anahtarı gerekmez
 ```
 
 ---
