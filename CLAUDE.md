@@ -72,8 +72,14 @@ Question answering system over Turkish legislation.
     tests/test_docker.py: compose'daki vLLM bayrakları serve.py'deki serve_command ile aynı kalmalı.
   - Docker testi (2026-11-11, Docker Desktop WSL entegrasyonu, `--profile local`): iki imaj build oldu, vLLM GPU'yu gördü ve
     healthy oldu, API ardından açıldı; /, /info, /health, /laws, /ask çalışıyor (ilk soru ~21 sn, sonrakiler ~3 sn).
-    İmajlar büyük: api 17.5 GB (flagembedding CUDA'lı torch çekiyor), vllm 35.2 GB. Konteynerler açıkken GPU ~10.5/12.3 GB dolu.
+    vllm imajı 35.2 GB. Konteynerler açıkken GPU ~10.5/12.3 GB dolu.
     Profilsiz Gemini yolu (`docker compose up`) Docker'da denenmedi (ücretli API).
+  - API imajı 17.5 GB -> 2.62 GB (2026-11-11): Dockerfile uv.lock'u export eder, torch'un CUDA tekerleklerini (nvidia-*, cuda-*, triton)
+    ayıklar, torch'u aynı sürümle PyTorch CPU index'inden kurar; uv önbelleği cache mount'ta kalır (eski katmanın ~5.8 GB'ı önbellekti).
+    Proje editable kurulmalı (`-e .`): kod data/ yolunu kendi konumuna göre buluyor, yoksa /ask ve /laws FileNotFoundError verir.
+    tests/test_docker.py: ayıklama deseni kilitteki tüm CUDA paketlerini kapsamalı.
+  - WSL interop bozulursa (`UtilAcceptVsock ... accept4 failed 110`) docker build "error getting credentials" verir (kimlik yardımcısı
+    bir Windows exe'si). Kalıcı çözüm `wsl --shutdown`; geçici: boş config.json içeren bir DOCKER_CONFIG dizini (imajlar herkese açık).
 
 ## Commands
 - Install: `uv sync`
