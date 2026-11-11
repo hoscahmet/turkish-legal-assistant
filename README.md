@@ -13,6 +13,8 @@
 ![Qdrant](https://img.shields.io/badge/Qdrant-vector_search-DC244C)
 ![BGE-M3](https://img.shields.io/badge/BGE--M3-embeddings-FFD21E?logo=huggingface&logoColor=black)
 ![MCP](https://img.shields.io/badge/MCP-server-8A2BE2)
+![vLLM](https://img.shields.io/badge/vLLM-QLoRA_student-30A2FF)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![uv](https://img.shields.io/badge/uv-package_manager-DE5FE9)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
@@ -41,6 +43,8 @@ Every answer comes from the law text itself, not from the model's memory. Citati
 | 🔌 **MCP server** | Plug the search into Claude Desktop, Claude Code or any MCP client |
 | 🛡️ **Hallucination guard** | Only real, existing articles are shown as sources |
 | 🔄 **Any LLM** | Gemini (free tier), Claude, or a fine-tuned local Qwen3-4B, switched with one setting |
+| 🖥️ **Demo page** | Ask in the browser and read the cited articles; the page shows which model answered |
+| 🐳 **Docker Compose** | One command starts the API and demo page; a second, GPU-backed container serves the local model |
 
 ## 🏗️ How it works
 
@@ -168,7 +172,7 @@ The base models were not judged by Gemini (the run was stopped for cost); see th
 
 ## 🧪 Tests
 
-**133 tests, all passing in about two seconds.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
+**141 tests, all passing in about two seconds.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
 
 | Area | Tests | What they check |
 |---|:---:|---|
@@ -176,12 +180,13 @@ The base models were not judged by Gemini (the run was stopped for cost); see th
 | 🔎 Search | 11 | Dense ranks by meaning, sparse by shared words, hybrid fuses both, law filter, reranker, Turkish `İ`/`ı` lowercasing |
 | 📊 Evaluation | 42 | Recall@k and MRR math, and every one of the 39 golden questions points to an article that exists |
 | 🤖 Agent | 8 | Searches then answers, unknown articles reported back to the model, tool loop capped, provider settings |
-| 🌐 API | 13 | Every endpoint, input validation, LLM errors mapped to HTTP codes, Turkish refusal message |
+| 🌐 API & demo page | 17 | Every endpoint, input validation, LLM errors mapped to HTTP codes, Turkish refusal message, the demo page and `/info` |
 | 🔌 MCP server | 6 | Tools are read-only, law filter, invalid input and missing articles become tool errors |
 | 🧑‍🏫 Fine-tuning data | 10 | Question and answer parsing, citations to articles not given are dropped, the three GPU stages round-trip through files |
 | 🎓 Training & comparison | 13 | Loss only on the answer, train/eval splits share no articles, every comparison score, report |
 | 🏠 Local model | 9 | Training prompt with thinking off and JSON schema, citations not given are dropped, no-tool agent path, server errors, vLLM command |
 | 🧑‍⚖️ Judge & quality gate | 14 | Invalid answers skip the judge, verdicts reused only for the same output and judge, batching, scores; the served model stays above its recorded scores |
+| 🐳 Docker | 4 | The vLLM container gets the same flags as `serve.py`, the API reaches it by service name, the GPU service is opt-in, the API image drops every CUDA wheel |
 
 ```bash
 uv run pytest
@@ -238,6 +243,13 @@ docker compose --profile local up --build          # vLLM starts first; the API 
 
 `data/`, `models/` and the Hugging Face cache are mounted, not copied, so models are not downloaded again.
 
+| Image | Size | What is inside |
+|---|:---:|---|
+| `api` | 2.6 GB | FastAPI, the agent and BGE-M3 on the CPU. torch is installed from the CPU index at the locked version, without its CUDA wheels (17.5 GB before) |
+| `vllm` | 35 GB | The official vLLM image plus bitsandbytes, serving Qwen3-4B in 4 bits with the adapter |
+
+**Tested** with the `local` profile on Docker Desktop (WSL 2, RTX 4070 Ti): both images build, vLLM turns healthy on the GPU, then the API starts and the demo page answers from the fine-tuned model. The first question takes about 20 seconds (BGE-M3 loads), later ones 3 to 6. The two containers use about 10.5 GB of the 12 GB of GPU memory. This is a local setup: nothing is deployed to a server, and the page has no login or rate limit.
+
 ## 🌐 API
 
 | Method | Path | Description |
@@ -293,8 +305,8 @@ data/
 ├── articles.json    # 348 articles
 ├── golden.json      # 39 test questions
 └── finetune/        # training data, comparison outputs, judge verdicts
-tests/               # 140 pytest tests, no GPU or API key needed
-Dockerfile           # API image (no vLLM / training stack)
+tests/               # 141 pytest tests, no GPU or API key needed
+Dockerfile           # API image (CPU-only torch, no vLLM / training stack)
 docker/vllm.Dockerfile # vLLM image + bitsandbytes
 compose.yaml         # api + optional vllm (profile: local)
 ```
