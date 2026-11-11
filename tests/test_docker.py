@@ -1,3 +1,5 @@
+import re
+import tomllib
 from pathlib import Path
 
 import yaml
@@ -43,3 +45,23 @@ def test_api_reaches_vllm_by_service_name():
 def test_vllm_is_opt_in():
     assert COMPOSE["services"]["vllm"]["profiles"] == ["local"]
     assert COMPOSE["services"]["api"]["depends_on"]["vllm"]["required"] is False
+
+
+def test_api_image_drops_every_cuda_wheel():
+    # The Dockerfile filters torch's Linux-only (CUDA) wheels out of the locked requirements by name.
+    # If a torch upgrade adds a wheel the pattern misses, the image silently grows by gigabytes.
+    dockerfile = (ROOT / "Dockerfile").read_text()
+    pattern = re.compile(re.search(r"grep -vE '([^']+)'", dockerfile).group(1))
+    packages = {p["name"]: p for p in tomllib.loads((ROOT / "uv.lock").read_text())["package"]}
+
+    todo = [d["name"] for d in packages["torch"]["dependencies"] if "sys_platform == 'linux'" in d.get("marker", "")]
+    assert todo  # the lock still has CUDA wheels to drop
+    cuda_only: set[str] = set()
+    while todo:
+        name = todo.pop()
+        if name not in cuda_only:
+            cuda_only.add(name)
+            todo += [d["name"] for d in packages[name].get("dependencies", [])]
+
+    assert [name for name in sorted(cuda_only) if not pattern.match(name)] == []
+    assert "download.pytorch.org/whl/cpu" in dockerfile
