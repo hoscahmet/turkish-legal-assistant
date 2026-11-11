@@ -2,7 +2,7 @@
 # With the fine-tuned student (GPU): set LLM_PROVIDER=local in .env, then docker compose --profile local up --build
 #
 # Both need the embedding cache in data/ (uv run python -m turkish_legal_assistant.vectors);
-# the local profile also needs the LoRA adapter in models/ (uv run python -m turkish_legal_assistant.finetune --size 4b).
+# the local profile also needs the LoRA adapter in models/ (uv run python -m turkish_legal_assistant.finetune --size 4b --data 2).
 
 services:
   api:
@@ -37,7 +37,8 @@ services:
       - --gpu-memory-utilization=0.75
       - --enable-lora
       - --max-lora-rank=16
-      - --lora-modules=legal=/models/qwen3-4b-legal-lora
+      - --lora-modules=legal=/models/qwen3-4b-v2-legal-lora
+      - --reasoning-parser=qwen3
       - --quantization=bitsandbytes
     environment:
       # Same WSL workarounds as serve.py: no nvcc for FlashInfer, no pinned memory for the V2 model runner.

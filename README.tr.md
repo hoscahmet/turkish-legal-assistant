@@ -41,7 +41,7 @@ Her cevap modelin hafızasından değil, kanun metninin kendisinden gelir. Var o
 | 🤖 **Agent** | Model arar, okur, gerekirse tekrar arar, sonra cevaplar |
 | 🔌 **MCP sunucusu** | Aramayı Claude Desktop, Claude Code ya da herhangi bir MCP istemcisine bağlayın |
 | 🛡️ **Halüsinasyon koruması** | Kaynak olarak sadece gerçekten var olan maddeler gösterilir |
-| 🔄 **Model bağımsız** | Gemini (ücretsiz katman), Claude ya da yerelde eğitilmiş Qwen3-4B, tek ayarla değişir |
+| 🔄 **Model bağımsız** | Gemini (ücretsiz katman), Claude ya da yerelde eğitilmiş, cevaplamadan önce akıl yürüten Qwen3-4B; tek ayarla değişir |
 | 🖥️ **Demo sayfası** | Tarayıcıdan sorun, dayanılan maddeleri okuyun; sayfa hangi modelin cevap verdiğini gösterir |
 | 🐳 **Docker Compose** | Tek komut API'yi ve demo sayfasını açar; GPU kullanan ikinci bir konteyner yerel modeli sunar |
 
@@ -83,6 +83,7 @@ Bu yaklaşımın adı **RAG** (Retrieval-Augmented Generation): önce doğru mad
 | 7 | LLM-as-a-judge, CI kalite kapısı | ✅ |
 | 7+ | RAGAS, Langfuse izleme | ⏳ |
 | 8 | Docker Compose, demo arayüzü | ✅ |
+| 9 | Hakem denetiminden geçmiş eğitim verisi, düşünerek cevaplayan öğrenci | ✅ |
 
 ## 📊 Arama sonuçları
 
@@ -108,6 +109,7 @@ Cevap adımı, tek bir oyuncu ekran kartında (RTX 4070 Ti, 12 GB) çalışan k�
 1. **Öğretmen verisi.** Qwen3-8B (AWQ, vLLM ile) üretilen soruları bulunan maddelere dayanarak cevaplar: 460 eğitim, 53 değerlendirme örneği. Değerlendirme sorularının dayandığı maddeler eğitimde hiç yer almaz. Veriyi yalnızca Apache-2.0 lisanslı modeller yazar; eğitimde Claude ya da Gemini çıktısı kullanılmaz.
 2. **QLoRA.** Qwen3-4B 4 bit olarak yüklenip dondurulur. Küçük LoRA adaptörleri (ağırlıkların %0.8'i) *soru + maddeler*den cevap JSON'unu üretmeyi öğrenir. Kayıp yalnızca cevap üzerinden hesaplanır. Eğitim 52 dakika sürer.
 3. **Sunum.** vLLM, temel modeli adaptörle birlikte OpenAI uyumlu bir sunucu olarak sunar. `LLM_PROVIDER=local` ile API maddeleri bulup tek adımda bu sunucuya gönderir, JSON şeması zorunlu tutulur.
+4. **Denetlenmiş veri ve düşünme.** İkinci bir adaptör daha temiz ve daha büyük bir veriyle eğitildi ve cevaplamadan önce akıl yürütüyor; şu an sunulan adaptör bu. Bkz. [Öğrenciyi iyileştirme](#-öğrenciyi-iyileştirme).
 
 53 değerlendirme sorusunda, her modele aynı prompt verilerek ölçüldü:
 
@@ -116,8 +118,9 @@ Cevap adımı, tek bir oyuncu ekran kartında (RTX 4070 Ti, 12 GB) çalışan k�
 | Qwen3-1.7B, temel | %21 | %0 | %0 | 0.00 | 0.63 |
 | Qwen3-1.7B, eğitilmiş | %100 | %96 | %69 | 0.64 | 0.50 |
 | Qwen3-4B, temel | %100 | %62 | %49 | 0.40 | 0.94 |
-| 🏆 **Qwen3-4B, eğitilmiş** (kullanılan) | %100 | **%100** | %77 | **0.70** | 0.92 |
+| Qwen3-4B, eğitilmiş | %100 | **%100** | %77 | 0.70 | 0.92 |
 | Qwen3-4B, 1 epoch eğitilmiş | %100 | %100 | %77 | 0.67 | 1.40 |
+| 🏆 **Qwen3-4B, denetlenmiş veri + düşünme** (kullanılan) | %100 | %98 | %77 | **0.82** | 1.90 |
 | Gemini 3.5 Flash-Lite | %100 | %100 | %77 | 0.68 | 6.24 |
 | Qwen3-8B öğretmen | %100 | %98 | %82 | 0.87 | 2.38 |
 
@@ -139,12 +142,12 @@ Yukarıdaki atıf ölçütleri, doğru maddeye atıf yapan ama yanlış bilgi ve
 | Model | Doğru | Tam | Sadık | Çelişkili |
 |---|:---:|:---:|:---:|:---:|
 | Qwen3-1.7B, eğitilmiş | %34 | %43 | %47 | %43 |
-| Qwen3-4B, eğitilmiş (kullanılan) | %42 | %47 | %58 | %34 |
+| Qwen3-4B, eğitilmiş | %42 | %47 | %58 | %34 |
 | Qwen3-4B, 1 epoch eğitilmiş | %34 | %42 | %47 | %38 |
 | Qwen3-8B öğretmen | %58 | %68 | %60 | %28 |
 | Gemini 3.5 Flash-Lite | **%83** | **%83** | **%100** | **%0** |
 
-Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar için aşağıdaki yerel hakeme bakın.
+Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); şu an sunulan adaptör de (denetlenmiş veri + düşünme) henüz puanlanmadı. Onlar için aşağıdaki yerel hakeme bakın.
 
 **Hakem: Qwen3-8B** (yerel ve ücretsiz, ama öğrencinin eğitim verisini o yazdı)
 
@@ -153,8 +156,9 @@ Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar i�
 | Qwen3-1.7B, temel | %9 | %9 | %19 | %2 |
 | Qwen3-1.7B, eğitilmiş | %38 | %38 | %53 | %30 |
 | Qwen3-4B, temel | %51 | %51 | %79 | %11 |
-| Qwen3-4B, eğitilmiş (kullanılan) | %68 | %72 | %74 | %17 |
+| Qwen3-4B, eğitilmiş | %68 | %72 | %74 | %17 |
 | Qwen3-4B, 1 epoch eğitilmiş | %58 | %60 | %81 | %9 |
+| Qwen3-4B, denetlenmiş veri + düşünme (kullanılan) | %72 | %72 | %75 | %11 |
 | Qwen3-8B öğretmen | %81 | %81 | %81 | %8 |
 | Gemini 3.5 Flash-Lite | %68 | %70 | %92 | %6 |
 
@@ -164,14 +168,36 @@ Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar i�
 
 **Çıkarımlar**
 - Burada güvenilecek hakem Gemini 3.5 Flash; yerel hakem kendi öğrencisine karşı fazla hoşgörülü.
-- İçerikte eğitilmiş 4B model Gemini ile başa baş **değil**: yaklaşık %42'ye karşı %83 doğru (farkın bir kısmı hakemin aile kayırmasından). Başlıca hataları bir maddeyi yanlış duruma uygulamak ve süre gibi temel koşulları atlamak.
+- İçerikte ilk eğitilmiş 4B model Gemini ile başa baş **değil**: yaklaşık %42'ye karşı %83 doğru (farkın bir kısmı hakemin aile kayırmasından). Başlıca hataları bir maddeyi yanlış duruma uygulamak ve süre gibi temel koşulları atlamak.
 - Yine de fine-tuning çok işe yarıyor: iki hakem de her eğitilmiş modeli kendi temel modelinin üstünde görüyor.
 
-**Kalite kapısı.** Çıktılar ve hakem kararları commit'lenir; `tests/test_quality.py`, kullanılan modelin atıf ya da hakem puanları kayıtlı seviyenin altına düşerse veya çıktıları yeniden puanlanmadan değişirse CI'ı durdurur.
+**Kalite kapısı.** Çıktılar ve hakem kararları commit'lenir; `tests/test_quality.py`, kullanılan modelin atıf ya da yerel hakem puanları kayıtlı seviyenin altına düşerse veya çıktıları yeniden puanlanmadan değişirse CI'ı durdurur. Gemini kontrolü, kullanılan modelin Gemini kararları gelene kadar atlanır.
+
+## 🔧 Öğrenciyi iyileştirme
+
+İlk 4B öğrenci, Gemini hakemine göre cevaplarının yaklaşık %42'sini doğru veriyordu. Üç şey denendi; her biri aynı 53 değerlendirme sorusunda yerel hakemle ölçüldü. Tek bir çalıştırma yaklaşık beş puan oynadığı için her yapılandırma üç kez çalıştırıldı:
+
+| Yapılandırma | Doğru (3 çalıştırma) | Ortalama | sn/soru |
+|---|:---:|:---:|:---:|
+| İlk adaptör (önceden sunulan) | %60 / 64 / 70 | %65 | 0.8 |
+| İlk adaptör, sıcaklık 0 ya da tekrar cezası | %62 / 64 | %63 | 0.7 |
+| İlk adaptör, düşünme açık | %64 / 68 / 60 | %64 | 1.6 |
+| Denetlenmiş veriyle adaptör, düşünme kapalı | %62 / 64 / 70 | %65 | 0.7 |
+| 🏆 **Denetlenmiş veriyle adaptör, düşünme açık** (kullanılan) | %72 / 83 / 85 | **%80** | 1.8 |
+
+1. **Üretim ayarları işe yaramadı.** Daha düşük sıcaklık, tekrar cezası ya da prompt'a daha az madde koymak ölçüm gürültüsünün içinde kaldı.
+2. **Eğitim verisi denetlendi.** Yerel hakem, öğretmenin yazdığı 460 eğitim cevabını okudu ve yaklaşık dörtte birini kusurlu buldu: 70'i eksik, 25'i maddelerle çelişiyor, 13'ü dayanaksız iddia içeriyor. `verify.py` veriyi yeniden kurar: kusurlu cevaplar üç kez yeniden yazdırılır ve hakemden geçen ilki alınır; eğitim maddeleri için 683 yeni soru eklenir; yalnızca tam, bütün iddiaları doğrulanan, `[4857/53]` gibi madde kodu ve tekrar eden cümle içermeyen cevaplar veriye girer. Sonuç 460 yerine 815 örnek. Değerlendirme soruları ve maddeleri aynı kalır.
+3. **Düşünme açıldı.** Öğrenci artık öğretmen gibi JSON'u yazmadan önce `<think>` içinde akıl yürütüyor.
+
+**Çıkarımlar**
+- İki değişiklik tek başına işe yaramıyor; birlikte yaklaşık 15 puan kazandırıyor. Temiz veri düşünme olmadan puanı yükseltmedi; ilk adaptör ise düşünmesi istendiğinde bozuluyor (cevaplarının %11'i geçersiz JSON).
+- Bedeli hız: soru başına yaklaşık bir saniye daha.
+- Yukarıdaki tablolarda yer alan commit'li çalıştırma %72 aldı, yani bu aralığın alt ucu. Dört çalıştırmanın ortalaması %78.
+- Bu sayılar, öğretmene %81 veren hoşgörülü yerel hakemden. Gemini yeni adaptörü henüz puanlamadı; güvenilecek hakemdeki kazanç bu yüzden henüz bilinmiyor.
 
 ## 🧪 Testler
 
-**141 test, hepsi yaklaşık iki saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
+**153 test, hepsi yaklaşık iki saniyede geçiyor.** Bir test daha, kullanılan modelin Gemini kararları gelene kadar atlanır. GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
 
 | Alan | Test | Neyi doğruluyor |
 |---|:---:|---|
@@ -182,9 +208,10 @@ Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar i�
 | 🌐 API ve demo sayfası | 17 | Bütün uç noktalar, girdi doğrulama, LLM hatalarının HTTP kodlarına çevrilmesi, Türkçe ret mesajı, demo sayfası ve `/info` |
 | 🔌 MCP sunucusu | 6 | Araçlar salt okunur, kanun filtresi, hatalı girdi ve olmayan madde araç hatası olarak dönüyor |
 | 🧑‍🏫 Fine-tuning verisi | 10 | Soru ve cevap ayrıştırma, verilmeyen maddeye atıf yapan cevaplar atılıyor, üç GPU aşaması dosyalar üzerinden veri aktarıyor |
-| 🎓 Eğitim ve karşılaştırma | 13 | Kayıp yalnızca cevapta, eğitim ve değerlendirme setleri madde paylaşmıyor, tüm karşılaştırma ölçütleri, rapor |
-| 🏠 Yerel model | 9 | Thinking kapalı eğitim prompt'u ve JSON şeması, verilmeyen maddelere atıf atılıyor, araçsız agent yolu, sunucu hataları, vLLM komutu |
-| 🧑‍⚖️ Hakem ve kalite kapısı | 14 | Geçersiz cevaplar hakeme gitmiyor, karar yalnızca aynı çıktı ve aynı hakem için yeniden kullanılıyor, toplu işleme, puanlar; kullanılan model kayıtlı puanlarının üstünde kalıyor |
+| 🎓 Eğitim ve karşılaştırma | 14 | Kayıp yalnızca cevapta, eğitim ve değerlendirme setleri madde paylaşmıyor, her veri sürümünün kendi adaptör klasörü var, tüm karşılaştırma ölçütleri, rapor |
+| 🏠 Yerel model | 11 | Thinking açık eğitim prompt'u ve JSON şeması, Çinceye kayan cevap yeniden soruluyor, verilmeyen maddelere atıf atılıyor, araçsız agent yolu, sunucu hataları, vLLM komutu |
+| ✅ Denetlenmiş eğitim verisi | 8 | Yalnızca tam ve bütün iddiaları doğrulanan cevaplar alınıyor, madde kodu ve tekrar eden cümle reddediliyor, kusurlu cevaplara aday yazılıyor ve temiz çıkan ilki alınıyor, yeni sorular yalnızca eğitim maddeleri için |
+| 🧑‍⚖️ Hakem ve kalite kapısı | 15 | Geçersiz cevaplar hakeme gitmiyor, karar yalnızca aynı çıktı ve aynı hakem için yeniden kullanılıyor, toplu işleme, puanlar; kullanılan model kayıtlı puanlarının üstünde kalıyor |
 | 🐳 Docker | 4 | vLLM konteyneri `serve.py` ile aynı bayrakları alıyor, API ona servis adıyla ulaşıyor, GPU servisi isteğe bağlı, API imajı bütün CUDA paketlerini dışarıda bırakıyor |
 
 ```bash
@@ -216,7 +243,7 @@ uv run python -m turkish_legal_assistant.judge report --judge gemini   # cevap k
 Yerel model (NVIDIA GPU, 12 GB):
 
 ```bash
-uv run python -m turkish_legal_assistant.finetune --size 4b      # adaptörü eğit (~52 dk)
+uv run python -m turkish_legal_assistant.finetune --size 4b --data 2   # sunulan adaptörü denetlenmiş veriyle eğit (~90 dk)
 uv run python -m turkish_legal_assistant.serve --size 4b         # 8001 portunda vLLM sunucusu
 LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app
 ```
@@ -247,7 +274,7 @@ docker compose --profile local up --build          # önce vLLM açılır; API, 
 | `api` | 2,6 GB | FastAPI, agent ve CPU'da çalışan BGE-M3. torch, kilit dosyasındaki sürümle CPU deposundan, CUDA paketleri olmadan kurulur (önceden 17,5 GB) |
 | `vllm` | 35 GB | Resmi vLLM imajı ve bitsandbytes; Qwen3-4B'yi 4 bit olarak adaptörle birlikte sunar |
 
-**Test edildi:** `local` profiliyle, Docker Desktop üzerinde (WSL 2, RTX 4070 Ti). İki imaj da build oluyor, vLLM GPU'da hazır duruma geçiyor, ardından API açılıyor ve demo sayfası eğitilmiş modelden cevap veriyor. İlk soru yaklaşık 20 saniye sürüyor (BGE-M3 yükleniyor), sonrakiler 3 ile 6 saniye. İki konteyner 12 GB GPU belleğinin yaklaşık 10,5 GB'ını kullanıyor. Bu yerel bir kurulumdur: bir sunucuya deploy edilmedi; sayfada giriş ya da istek sınırı yok.
+**Test edildi:** `local` profiliyle, Docker Desktop üzerinde (WSL 2, RTX 4070 Ti). İki imaj da build oluyor, vLLM GPU'da hazır duruma geçiyor, ardından API açılıyor ve demo sayfası eğitilmiş modelden cevap veriyor. İlk soru yaklaşık 20 saniye sürüyor (BGE-M3 yükleniyor), sonrakiler 5 ile 10 saniye (model cevaplamadan önce düşünüyor). İki konteyner 12 GB GPU belleğinin yaklaşık 10,5 GB'ını kullanıyor. Bu yerel bir kurulumdur: bir sunucuya deploy edilmedi; sayfada giriş ya da istek sınırı yok.
 
 ## 🌐 API
 
@@ -299,12 +326,13 @@ src/turkish_legal_assistant/
 ├── serve.py         # eğitilmiş model için vLLM sunucusu
 ├── local.py         # LLM_PROVIDER=local
 ├── judge.py         # LLM-as-a-judge
+├── verify.py        # hakem denetiminden geçmiş eğitim verisi (data/finetune/v2/)
 └── static/index.html # demo sayfası (düz HTML + JS, derleme adımı yok)
 data/
 ├── articles.json    # 348 madde
 ├── golden.json      # 39 test sorusu
 └── finetune/        # eğitim verisi, karşılaştırma çıktıları, hakem kararları
-tests/               # 141 pytest testi, GPU ya da API anahtarı gerekmez
+tests/               # 153 pytest testi, GPU ya da API anahtarı gerekmez
 Dockerfile           # API imajı (yalnızca CPU torch; vLLM / eğitim paketleri yok)
 docker/vllm.Dockerfile # vLLM imajı + bitsandbytes
 compose.yaml         # api + isteğe bağlı vllm (profil: local)

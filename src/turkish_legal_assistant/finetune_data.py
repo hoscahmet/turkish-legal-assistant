@@ -186,6 +186,8 @@ def vllm_generate(
     # FlashInfer's sampler is JIT-compiled with nvcc, and WSL here has the CUDA driver but no toolkit.
     # PyTorch's own top-p/top-k sampler needs no compiler and is fast enough for offline batches.
     os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
+    # With a LoRA adapter vLLM picks its V2 model runner, which needs pinned CPU memory (UVA); WSL has none.
+    os.environ.setdefault("VLLM_USE_V2_MODEL_RUNNER", "0")
     from vllm import LLM, SamplingParams  # imported here: heavy, and only this machine's GPU stages need it
     from vllm.lora.request import LoRARequest
     from vllm.sampling_params import StructuredOutputsParams

@@ -42,7 +42,7 @@ Every answer comes from the law text itself, not from the model's memory. Citati
 | 🤖 **Agent** | The model searches, reads, searches again if needed, then answers |
 | 🔌 **MCP server** | Plug the search into Claude Desktop, Claude Code or any MCP client |
 | 🛡️ **Hallucination guard** | Only real, existing articles are shown as sources |
-| 🔄 **Any LLM** | Gemini (free tier), Claude, or a fine-tuned local Qwen3-4B, switched with one setting |
+| 🔄 **Any LLM** | Gemini (free tier), Claude, or a fine-tuned local Qwen3-4B that reasons before it answers, switched with one setting |
 | 🖥️ **Demo page** | Ask in the browser and read the cited articles; the page shows which model answered |
 | 🐳 **Docker Compose** | One command starts the API and demo page; a second, GPU-backed container serves the local model |
 
@@ -84,6 +84,7 @@ This pattern is called **RAG** (Retrieval-Augmented Generation): first *find* th
 | 7 | LLM-as-a-judge, CI quality gate | ✅ |
 | 7+ | RAGAS, Langfuse tracing | ⏳ |
 | 8 | Docker Compose, demo UI | ✅ |
+| 9 | Judge-verified training data, student answers with thinking | ✅ |
 
 ## 📊 Retrieval results
 
@@ -109,6 +110,7 @@ The answer step can also run on a small open model on one consumer GPU (RTX 4070
 1. **Teacher data.** Qwen3-8B (AWQ, served with vLLM) answers generated questions from the retrieved articles: 460 training and 53 evaluation examples. Articles behind the evaluation questions never appear in training. Only Apache-2.0 models write the data; no Claude or Gemini output is used for training.
 2. **QLoRA.** Qwen3-4B is loaded in 4 bits and frozen. Small LoRA adapters (0.8% of the weights) learn to turn *question + articles* into the answer JSON. The loss is computed on the answer only. Training takes 52 minutes.
 3. **Serving.** vLLM serves the base model with the adapter on top, as an OpenAI-compatible server. With `LLM_PROVIDER=local` the API retrieves the articles and sends them to it in one step, with the JSON schema enforced.
+4. **Verified data and thinking.** A second adapter is trained on a cleaner, larger set and reasons before it answers; this is the one served now. See [Improving the student](#-improving-the-student).
 
 Measured on the 53 evaluation questions, every model getting the same prompt:
 
@@ -117,8 +119,9 @@ Measured on the 53 evaluation questions, every model getting the same prompt:
 | Qwen3-1.7B, base | 21% | 0% | 0% | 0.00 | 0.63 |
 | Qwen3-1.7B, fine-tuned | 100% | 96% | 69% | 0.64 | 0.50 |
 | Qwen3-4B, base | 100% | 62% | 49% | 0.40 | 0.94 |
-| 🏆 **Qwen3-4B, fine-tuned** (used) | 100% | **100%** | 77% | **0.70** | 0.92 |
+| Qwen3-4B, fine-tuned | 100% | **100%** | 77% | 0.70 | 0.92 |
 | Qwen3-4B, fine-tuned 1 epoch | 100% | 100% | 77% | 0.67 | 1.40 |
+| 🏆 **Qwen3-4B, verified data + thinking** (used) | 100% | 98% | 77% | **0.82** | 1.90 |
 | Gemini 3.5 Flash-Lite | 100% | 100% | 77% | 0.68 | 6.24 |
 | Qwen3-8B teacher | 100% | 98% | 82% | 0.87 | 2.38 |
 
@@ -140,12 +143,12 @@ The citation scores above cannot tell a right answer from a wrong one that cites
 | Model | Correct | Complete | Faithful | Contradicted |
 |---|:---:|:---:|:---:|:---:|
 | Qwen3-1.7B, fine-tuned | 34% | 43% | 47% | 43% |
-| Qwen3-4B, fine-tuned (used) | 42% | 47% | 58% | 34% |
+| Qwen3-4B, fine-tuned | 42% | 47% | 58% | 34% |
 | Qwen3-4B, fine-tuned 1 epoch | 34% | 42% | 47% | 38% |
 | Qwen3-8B teacher | 58% | 68% | 60% | 28% |
 | Gemini 3.5 Flash-Lite | **83%** | **83%** | **100%** | **0%** |
 
-The base models were not judged by Gemini (the run was stopped for cost); see the local judge below.
+The base models were not judged by Gemini (the run was stopped for cost), and neither was the adapter served now (verified data + thinking); see the local judge below.
 
 **Judge: Qwen3-8B** (local and free, but it wrote the student's training data)
 
@@ -154,8 +157,9 @@ The base models were not judged by Gemini (the run was stopped for cost); see th
 | Qwen3-1.7B, base | 9% | 9% | 19% | 2% |
 | Qwen3-1.7B, fine-tuned | 38% | 38% | 53% | 30% |
 | Qwen3-4B, base | 51% | 51% | 79% | 11% |
-| Qwen3-4B, fine-tuned (used) | 68% | 72% | 74% | 17% |
+| Qwen3-4B, fine-tuned | 68% | 72% | 74% | 17% |
 | Qwen3-4B, fine-tuned 1 epoch | 58% | 60% | 81% | 9% |
+| Qwen3-4B, verified data + thinking (used) | 72% | 72% | 75% | 11% |
 | Qwen3-8B teacher | 81% | 81% | 81% | 8% |
 | Gemini 3.5 Flash-Lite | 68% | 70% | 92% | 6% |
 
@@ -165,14 +169,36 @@ The base models were not judged by Gemini (the run was stopped for cost); see th
 
 **Takeaways**
 - Gemini 3.5 Flash is the judge to trust here; the local judge is too lenient on its own student.
-- On content, the fine-tuned 4B does **not** match Gemini: about 42% correct against 83% (some of that gap is the judge's family bias). Its main faults are applying an article to the wrong situation and leaving out key conditions such as deadlines.
+- On content, the first fine-tuned 4B does **not** match Gemini: about 42% correct against 83% (some of that gap is the judge's family bias). Its main faults are applying an article to the wrong situation and leaving out key conditions such as deadlines.
 - Fine-tuning still helps a lot: both judges rank every fine-tuned model above its base model.
 
-**Quality gate.** The outputs and verdicts are committed, and `tests/test_quality.py` fails CI if the served model's citation or judge scores drop below the recorded level, or if its outputs change without being judged again.
+**Quality gate.** The outputs and verdicts are committed, and `tests/test_quality.py` fails CI if the served model's citation or local-judge scores drop below the recorded level, or if its outputs change without being judged again. The Gemini check is skipped until the served model has Gemini verdicts.
+
+## 🔧 Improving the student
+
+The first 4B student got about 42% of its answers right by the Gemini judge. Three things were tried, each measured on the same 53 evaluation questions with the local judge, three runs each because one run moves by about five points:
+
+| Setup | Correct (3 runs) | Mean | s/question |
+|---|:---:|:---:|:---:|
+| First adapter (as served before) | 60 / 64 / 70% | 65% | 0.8 |
+| First adapter, temperature 0 or repetition penalty | 62 / 64% | 63% | 0.7 |
+| First adapter, thinking on | 64 / 68 / 60% | 64% | 1.6 |
+| Verified-data adapter, thinking off | 62 / 64 / 70% | 65% | 0.7 |
+| 🏆 **Verified-data adapter, thinking on** (used) | 72 / 83 / 85% | **80%** | 1.8 |
+
+1. **Decoding settings did nothing.** Lower temperature, a repetition penalty or fewer articles in the prompt all stayed inside the run-to-run noise.
+2. **The training data was checked.** The local judge read the teacher's own 460 training answers and flagged about a quarter: 70 incomplete, 25 contradicted by the articles, 13 with unsupported claims. `verify.py` rebuilds the set: flagged answers are rewritten three times and the first one the judge passes is kept; 683 new questions are added for the training articles; and only answers that are complete, fully supported, free of article codes like `[4857/53]` and free of repeated sentences go in. The result is 815 examples instead of 460. The evaluation questions and their articles are untouched.
+3. **Thinking was turned on.** The student now reasons in `<think>` before writing the JSON, as the teacher does.
+
+**Takeaways**
+- Neither change helps alone; together they add about 15 points. Cleaner data did not raise the score without thinking, and the first adapter breaks when asked to think (11% of its replies are not valid JSON).
+- The cost is speed: about one more second per question.
+- The committed run in the tables above scored 72%, the low end of this range. Four runs average 78%.
+- These numbers come from the lenient local judge, which gave the teacher 81%. Gemini has not judged the new adapter, so its gain on the judge to trust is not known yet.
 
 ## 🧪 Tests
 
-**141 tests, all passing in about two seconds.** No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
+**153 tests, all passing in about two seconds.** One more is skipped until the served model has Gemini verdicts. No GPU, model download or API key is needed: the LLM is a scripted fake, and BGE-M3 is replaced by tiny hand-made vectors.
 
 | Area | Tests | What they check |
 |---|:---:|---|
@@ -183,9 +209,10 @@ The base models were not judged by Gemini (the run was stopped for cost); see th
 | 🌐 API & demo page | 17 | Every endpoint, input validation, LLM errors mapped to HTTP codes, Turkish refusal message, the demo page and `/info` |
 | 🔌 MCP server | 6 | Tools are read-only, law filter, invalid input and missing articles become tool errors |
 | 🧑‍🏫 Fine-tuning data | 10 | Question and answer parsing, citations to articles not given are dropped, the three GPU stages round-trip through files |
-| 🎓 Training & comparison | 13 | Loss only on the answer, train/eval splits share no articles, every comparison score, report |
-| 🏠 Local model | 9 | Training prompt with thinking off and JSON schema, citations not given are dropped, no-tool agent path, server errors, vLLM command |
-| 🧑‍⚖️ Judge & quality gate | 14 | Invalid answers skip the judge, verdicts reused only for the same output and judge, batching, scores; the served model stays above its recorded scores |
+| 🎓 Training & comparison | 14 | Loss only on the answer, train/eval splits share no articles, one adapter folder per data version, every comparison score, report |
+| 🏠 Local model | 11 | Training prompt with thinking on and JSON schema, a reply that drifts into Chinese is asked again, citations not given are dropped, no-tool agent path, server errors, vLLM command |
+| ✅ Verified training data | 8 | Only complete, fully supported answers are kept, article codes and repeated sentences are rejected, flagged answers get candidates and the first clean one wins, new questions only for training articles |
+| 🧑‍⚖️ Judge & quality gate | 15 | Invalid answers skip the judge, verdicts reused only for the same output and judge, batching, scores; the served model stays above its recorded scores |
 | 🐳 Docker | 4 | The vLLM container gets the same flags as `serve.py`, the API reaches it by service name, the GPU service is opt-in, the API image drops every CUDA wheel |
 
 ```bash
@@ -217,7 +244,7 @@ uv run python -m turkish_legal_assistant.judge report --judge gemini   # answer-
 Local model (NVIDIA GPU, 12 GB):
 
 ```bash
-uv run python -m turkish_legal_assistant.finetune --size 4b      # train the adapter (~52 min)
+uv run python -m turkish_legal_assistant.finetune --size 4b --data 2   # train the served adapter on the verified set (~90 min)
 uv run python -m turkish_legal_assistant.serve --size 4b         # vLLM server on port 8001
 LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app
 ```
@@ -248,7 +275,7 @@ docker compose --profile local up --build          # vLLM starts first; the API 
 | `api` | 2.6 GB | FastAPI, the agent and BGE-M3 on the CPU. torch is installed from the CPU index at the locked version, without its CUDA wheels (17.5 GB before) |
 | `vllm` | 35 GB | The official vLLM image plus bitsandbytes, serving Qwen3-4B in 4 bits with the adapter |
 
-**Tested** with the `local` profile on Docker Desktop (WSL 2, RTX 4070 Ti): both images build, vLLM turns healthy on the GPU, then the API starts and the demo page answers from the fine-tuned model. The first question takes about 20 seconds (BGE-M3 loads), later ones 3 to 6. The two containers use about 10.5 GB of the 12 GB of GPU memory. This is a local setup: nothing is deployed to a server, and the page has no login or rate limit.
+**Tested** with the `local` profile on Docker Desktop (WSL 2, RTX 4070 Ti): both images build, vLLM turns healthy on the GPU, then the API starts and the demo page answers from the fine-tuned model. The first question takes about 20 seconds (BGE-M3 loads), later ones 5 to 10 (the model thinks before it answers). The two containers use about 10.5 GB of the 12 GB of GPU memory. This is a local setup: nothing is deployed to a server, and the page has no login or rate limit.
 
 ## 🌐 API
 
@@ -300,12 +327,13 @@ src/turkish_legal_assistant/
 ├── serve.py         # vLLM server for the fine-tuned model
 ├── local.py         # LLM_PROVIDER=local
 ├── judge.py         # LLM-as-a-judge
+├── verify.py        # judge-verified training set (data/finetune/v2/)
 └── static/index.html # demo page (plain HTML + JS, no build step)
 data/
 ├── articles.json    # 348 articles
 ├── golden.json      # 39 test questions
 └── finetune/        # training data, comparison outputs, judge verdicts
-tests/               # 141 pytest tests, no GPU or API key needed
+tests/               # 153 pytest tests, no GPU or API key needed
 Dockerfile           # API image (CPU-only torch, no vLLM / training stack)
 docker/vllm.Dockerfile # vLLM image + bitsandbytes
 compose.yaml         # api + optional vllm (profile: local)

@@ -15,6 +15,9 @@ data/raw/
 data/embeddings_*
 .DS_Store
 
+# Intermediate files of the verified training set (rebuild with: uv run python -m turkish_legal_assistant.verify)
+data/finetune/v2/work/
+
 # Trained LoRA adapters (rebuild with: uv run python -m turkish_legal_assistant.finetune)
 models/
 

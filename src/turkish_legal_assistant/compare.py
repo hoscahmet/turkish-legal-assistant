@@ -2,7 +2,7 @@
 
 Every model gets the exact prompt the student was trained on (question + retrieved articles) and must reply
 with LegalAnswer JSON. One model per process, because two vLLM models do not fit on the 12 GB GPU:
-  uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|student-4b-1ep|teacher|gemini
+  uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|student-4b-1ep|student-4b-v2|teacher|gemini
   uv run python -m turkish_legal_assistant.compare report
 Each run writes data/finetune/compare/<model>.jsonl; `report` scores every file found there.
 
@@ -28,7 +28,8 @@ from .models import LegalAnswer
 
 COMPARE_DIR = OUT_DIR / "compare"
 # "base"/"student" are the 1.7B model without/with its adapter; "-4b" the same for Qwen3-4B.
-MODELS = ["base", "student", "base-4b", "student-4b", "student-4b-1ep", "teacher", "gemini"]
+# "student-4b-v2" is the 4B adapter trained on the verified set (verify.py), answering with thinking on: the served model.
+MODELS = ["base", "student", "base-4b", "student-4b", "student-4b-1ep", "student-4b-v2", "teacher", "gemini"]
 # The articles in a prompt start lines like "[4857/53] İş Kanunu, madde 53: ..."
 ARTICLE_REF = re.compile(r"^\[(\d+)/([^\]]+)\] ", re.MULTILINE)
 CODE_FENCE = re.compile(r"^```(?:json)?\s*|\s*```$")
@@ -143,7 +144,11 @@ def local_generate(name: str) -> Generate:
     if name == "teacher":
         # As when it wrote the reference answers: thinking on, JSON enforced.
         return vllm_generate(thinking=True, json_schema=LegalAnswer.model_json_schema())
-    # The student was trained with thinking off and no JSON constraint; the base model gets the same setup.
+    if name == "student-4b-v2":
+        # As local.py serves it: thinking on, JSON enforced after the thinking.
+        return vllm_generate(thinking=True, json_schema=LegalAnswer.model_json_schema(), model=STUDENTS["4b"],
+                             adapter=adapter_dir("4b", data=2), quantization="bitsandbytes")
+    # The first students were trained with thinking off and no JSON constraint; the base model gets the same setup.
     size = "4b" if "-4b" in name else "1.7b"
     epochs = int(name.rsplit("-", 1)[1].removesuffix("ep")) if name.endswith("ep") else DEFAULT_EPOCHS
     adapter = adapter_dir(size, epochs) if name.startswith("student") else None
