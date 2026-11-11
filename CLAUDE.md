@@ -96,6 +96,10 @@ Question answering system over Turkish legislation.
   - Kalite kapısı artık student-4b-v2'ye bakıyor: atıf + yerel hakem zorunlu, Gemini testi kararlar gelene kadar skip.
     Gemini ile doğrulanmadı (ücretli ya da günde 20 istek); kullanıcıdan onay almadan çalıştırma.
   - Deney betikleri ve ham çıktılar models/experiments-2026-11-11/ altında (gitignored).
+  - README düzeni (2026-11-11): en üstte docs/demo.png, yerel modelin kararlı cevapladığı örnek (deneme süresi, m. 15), "Sonuçlar bir bakışta";
+    ayrıntılı tablolar altta. Yerel model + dense aramanın bulamadığı sorular: TBK 350 (oğul için tahliye), 6502/48 (internetten iade);
+    demo sayfasındaki hazır sorular yerel modelle sınandı. "İhbar süresi" sorusu 5 denemenin 2'sinde bir basamağı atlıyor.
+    Ekran görüntüsü: uvx playwright + chromium-headless-shell; libnss3/libnspr4/libasound2 root'suz `apt-get download` + `dpkg -x` + LD_LIBRARY_PATH.
   - WSL: çevrimdışı vLLM (LLM(...)) LoRA ile V2 runner seçiyor -> vllm_generate VLLM_USE_V2_MODEL_RUNNER=0 ayarlar;
     kendi betiğinde `if __name__ == "__main__":` şart (vLLM alt süreç başlatır).
 
