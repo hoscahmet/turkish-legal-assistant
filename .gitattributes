@@ -1,0 +1,3 @@
+# Always check out text files with LF line endings, also with Windows git (e.g. GitHub Desktop),
+# so switching branches there does not show every file as modified.
+* text=auto eol=lf

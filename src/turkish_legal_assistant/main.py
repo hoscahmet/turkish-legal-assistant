@@ -1,4 +1,8 @@
+import os
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from langchain_core.exceptions import (
     ModelAPIError,
     ModelAuthenticationError,
@@ -13,6 +17,18 @@ from .models import Article, AskRequest, AskResponse, Law
 
 app = FastAPI(title="Turkish Legal Assistant")
 REFUSAL_ANSWER = "Bu soruya cevap veremiyorum."
+DEMO_PAGE = Path(__file__).parent / "static" / "index.html"
+
+
+@app.get("/", include_in_schema=False)
+def demo() -> FileResponse:
+    # A single static page that calls /info and /ask; no frontend build step.
+    return FileResponse(DEMO_PAGE)
+
+
+@app.get("/info")
+def info() -> dict[str, str]:
+    return {"llm_provider": os.environ.get("LLM_PROVIDER", "gemini"), "model": agent.model_label()}
 
 
 @app.get("/health")

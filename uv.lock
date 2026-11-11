@@ -6135,6 +6135,7 @@ dependencies = [
 dev = [
     { name = "httpx" },
     { name = "pytest" },
+    { name = "pyyaml" },
 ]
 finetune = [
     { name = "bitsandbytes" },
@@ -6161,6 +6162,7 @@ requires-dist = [
 dev = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pytest", specifier = ">=9.2.0" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
 ]
 finetune = [
     { name = "bitsandbytes", specifier = ">=0.50.2" },

@@ -1,0 +1,62 @@
+# API + demo UI:                     docker compose up --build        -> http://localhost:8000
+# With the fine-tuned student (GPU): set LLM_PROVIDER=local in .env, then docker compose --profile local up --build
+#
+# Both need the embedding cache in data/ (uv run python -m turkish_legal_assistant.vectors);
+# the local profile also needs the LoRA adapter in models/ (uv run python -m turkish_legal_assistant.finetune --size 4b).
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      LOCAL_LLM_URL: http://vllm:8001/v1
+      EMBED_DEVICE: cpu
+    volumes:
+      - ./data:/app/data:ro
+      # Reuse the host's Hugging Face cache so BGE-M3 (~2.3 GB) is not downloaded again.
+      - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+    depends_on:
+      vllm:
+        condition: service_healthy
+        required: false  # only started with --profile local
+
+  vllm:
+    profiles: ["local"]
+    build:
+      context: .
+      dockerfile: docker/vllm.Dockerfile
+    # Same flags as serve.py's serve_command("4b").
+    command:
+      - Qwen/Qwen3-4B
+      - --port=8001
+      - --max-model-len=8192
+      - --gpu-memory-utilization=0.75
+      - --enable-lora
+      - --max-lora-rank=16
+      - --lora-modules=legal=/models/qwen3-4b-legal-lora
+      - --quantization=bitsandbytes
+    environment:
+      # Same WSL workarounds as serve.py: no nvcc for FlashInfer, no pinned memory for the V2 model runner.
+      VLLM_USE_FLASHINFER_SAMPLER: "0"
+      VLLM_USE_V2_MODEL_RUNNER: "0"
+      HF_HUB_DISABLE_XET: "1"
+    volumes:
+      - ./models:/models:ro
+      - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+    ipc: host  # vLLM uses shared memory between its processes
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 10s
+      start_period: 300s
+      retries: 6
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

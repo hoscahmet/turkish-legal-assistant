@@ -29,6 +29,7 @@ build-backend = "uv_build"
 dev = [
     "httpx>=0.28.1",
     "pytest>=9.2.0",
+    "pyyaml>=6.0.3",
 ]
 finetune = [
     "bitsandbytes>=0.50.2",
