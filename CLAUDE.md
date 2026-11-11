@@ -63,7 +63,15 @@ Question answering system over Turkish legislation.
   - CI: .github/workflows/ci.yml (uv sync --no-group finetune, pytest). tests/test_quality.py: student-4b atıf ve
     Gemini hakem puanları eşiklerin altına düşerse ya da çıktılar yeniden puanlanmadan değişirse başarısız.
   - Push yapılamadı (WSL'de git kimlik bilgisi yok); main origin'in önünde.
-- Faz 8: Docker Compose, demo arayüz, README
+- Faz 8: Docker Compose, demo arayüz, README (dal phase-8/demo; Docker henüz test edilmedi)
+  - Demo arayüz: src/turkish_legal_assistant/static/index.html (düz HTML+JS, derleme yok), FastAPI `/` adresinden sunar.
+    `/info` hangi modelin cevap verdiğini döner (agent.model_label). Yeni bağımlılık yok (Streamlit/Gradio bilinçli olarak eklenmedi).
+  - Uçtan uca denendi (2026-11-11, local 4B): sayfa + /ask çalışıyor, ~2-3 sn/soru. vLLM kapalıyken /ask 503 + açıklama.
+  - Docker: Dockerfile (api, --no-group finetune, EMBED_DEVICE=cpu), docker/vllm.Dockerfile (vllm-openai v0.22.1 + bitsandbytes),
+    compose.yaml (vllm servisi `--profile local` ile açılır; data/, models/, HF önbelleği mount edilir). .env.example.
+    tests/test_docker.py: compose'daki vLLM bayrakları serve.py'deki serve_command ile aynı kalmalı.
+  - Bu WSL'de docker yok: Docker Desktop > Settings > Resources > WSL integration açılmalı. Test edilmeyen riskler:
+    vllm imajının entrypoint'i (`vllm serve` + model pozisyonel), API imajının boyutu (flagembedding CUDA'lı torch çeker).
 
 ## Commands
 - Install: `uv sync`

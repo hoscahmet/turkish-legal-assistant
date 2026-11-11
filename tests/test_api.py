@@ -74,3 +74,19 @@ def test_ask_refusal_returns_turkish_message(monkeypatch):
 def test_ask_validates_input():
     assert client.post("/ask", json={"question": "a"}).status_code == 422
     assert client.post("/ask", json={"question": "kira", "top_k": 0}).status_code == 422
+
+
+def test_demo_page():
+    r = client.get("/")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/html")
+    assert "Mevzuat Asistanı" in r.text
+
+
+@pytest.mark.parametrize(
+    ("provider", "model"),
+    [("gemini", agent.GEMINI_MODEL), ("claude", agent.CLAUDE_MODEL), ("local", "fine-tuned Qwen3 student (vLLM)")],
+)
+def test_info_reports_model(monkeypatch, provider, model):
+    monkeypatch.setenv("LLM_PROVIDER", provider)
+    assert client.get("/info").json() == {"llm_provider": provider, "model": model}

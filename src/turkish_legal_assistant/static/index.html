@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mevzuat Asistanı</title>
+<style>
+  :root {
+    --bg: #f7f6f3; --surface: #ffffff; --text: #1d1d1b; --muted: #6b6a66;
+    --border: #e2e0da; --accent: #8a2b1f; --accent-text: #ffffff; --error: #a3261b;
+    --error-bg: #fbeae8; --code-bg: #f1efe9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161614; --surface: #201f1d; --text: #ecebe7; --muted: #a09e98;
+      --border: #34332f; --accent: #e07a64; --accent-text: #161614; --error: #f19b8e;
+      --error-bg: #3a1f1b; --code-bg: #2a2926;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .lead { color: var(--muted); margin: 0 0 24px; }
+  .lead small { display: block; font-size: .85rem; margin-top: 4px; }
+  form { display: flex; flex-direction: column; gap: 10px; }
+  textarea {
+    width: 100%; min-height: 96px; resize: vertical; padding: 12px 14px; font: inherit;
+    color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .row label { color: var(--muted); font-size: .9rem; }
+  select {
+    font: inherit; padding: 6px 8px; color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  button {
+    font: inherit; font-weight: 600; padding: 9px 20px; margin-left: auto; cursor: pointer;
+    color: var(--accent-text); background: var(--accent); border: 0; border-radius: 8px;
+  }
+  button:disabled { opacity: .55; cursor: wait; }
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 28px; }
+  .examples button {
+    margin: 0; font-weight: 400; font-size: .88rem; padding: 6px 12px;
+    color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .answer { white-space: pre-wrap; margin: 0; }
+  .meta { color: var(--muted); font-size: .85rem; margin-top: 12px; }
+  .error { background: var(--error-bg); color: var(--error); border-color: transparent; }
+  h2 { font-size: 1.05rem; margin: 28px 0 10px; }
+  details { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); margin-bottom: 8px; }
+  summary { cursor: pointer; padding: 10px 14px; }
+  summary .law { color: var(--muted); font-size: .88rem; }
+  .article { padding: 0 14px 12px; }
+  .article p { white-space: pre-wrap; margin: 0 0 8px; font-size: .94rem; background: var(--code-bg); padding: 10px 12px; border-radius: 8px; }
+  .article a { color: var(--accent); font-size: .88rem; }
+  .disclaimer { color: var(--muted); font-size: .82rem; margin-top: 36px; border-top: 1px solid var(--border); padding-top: 14px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Mevzuat Asistanı</h1>
+  <p class="lead">
+    İş Kanunu, KVKK, Tüketicinin Korunması Hakkında Kanun ve Türk Borçlar Kanunu (kira) hakkında soru sorun.
+    <small id="model">Model bilgisi yükleniyor…</small>
+  </p>
+
+  <form id="ask">
+    <textarea id="question" name="question" maxlength="1000" required
+              placeholder="Örn. İşe yeni başladım, kaç gün yıllık izin hakkım var?"></textarea>
+    <div class="row">
+      <label for="top_k">Kaynak madde sayısı</label>
+      <select id="top_k" name="top_k">
+        <option>3</option><option selected>5</option><option>8</option>
+      </select>
+      <button type="submit" id="submit">Sor</button>
+    </div>
+  </form>
+
+  <div class="examples" id="examples"></div>
+
+  <section id="result" hidden>
+    <div class="card" id="answer-card"><p class="answer" id="answer"></p><div class="meta" id="timing"></div></div>
+    <div id="sources-block" hidden>
+      <h2>Dayanılan maddeler</h2>
+      <div id="sources"></div>
+    </div>
+  </section>
+
+  <p class="disclaimer">
+    Bu araç genel bilgi verir, hukuki danışmanlık değildir. Cevaplar yapay zekâ tarafından üretilir ve hatalı olabilir;
+    her zaman kaynak maddeleri okuyun. Somut durumunuz için bir avukata danışın.
+  </p>
+</main>
+
+<script>
+const EXAMPLES = [
+  "İşe yeni başladım, kaç gün yıllık izin hakkım var?",
+  "Deneme süresi en fazla ne kadar olabilir?",
+  "Ev sahibi kirayı her yıl ne kadar artırabilir?",
+  "İnternetten aldığım ürünü kaç gün içinde iade edebilirim?",
+  "Şirket kişisel verilerimi izinsiz başkasıyla paylaşabilir mi?",
+];
+
+const $ = (id) => document.getElementById(id);
+const form = $("ask"), question = $("question"), submit = $("submit");
+
+for (const text of EXAMPLES) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = text;
+  b.addEventListener("click", () => { question.value = text; form.requestSubmit(); });
+  $("examples").append(b);
+}
+
+fetch("info").then((r) => r.json()).then((info) => {
+  $("model").textContent = `Cevaplayan model: ${info.model}`;
+}).catch(() => { $("model").textContent = ""; });
+
+function showError(message) {
+  $("answer-card").classList.add("error");
+  $("answer").textContent = message;
+  $("timing").textContent = "";
+  $("sources-block").hidden = true;
+}
+
+function renderSources(sources) {
+  const box = $("sources");
+  box.replaceChildren();
+  for (const a of sources) {
+    const d = document.createElement("details");
+    const s = document.createElement("summary");
+    const law = document.createElement("span");
+    law.className = "law";
+    law.textContent = `${a.law_number} sayılı ${a.law_name} · `;
+    s.append(law, `Madde ${a.article_number}${a.title ? " – " + a.title : ""}`);
+    const body = document.createElement("div");
+    body.className = "article";
+    const p = document.createElement("p");
+    p.textContent = a.text;
+    const link = document.createElement("a");
+    link.href = a.source_url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "mevzuat.gov.tr'de aç";
+    body.append(p, link);
+    d.append(s, body);
+    box.append(d);
+  }
+  $("sources-block").hidden = sources.length === 0;
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const text = question.value.trim();
+  if (text.length < 3) return;
+  submit.disabled = true;
+  submit.textContent = "Düşünüyor…";
+  $("result").hidden = false;
+  $("answer-card").classList.remove("error");
+  $("answer").textContent = "Maddeler aranıyor ve cevap yazılıyor… (ilk soru 20-30 saniye sürebilir)";
+  $("timing").textContent = "";
+  $("sources-block").hidden = true;
+  const started = performance.now();
+  try {
+    const r = await fetch("ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: text, top_k: Number($("top_k").value) }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      const detail = typeof data.detail === "string" ? data.detail : "Geçersiz istek.";
+      showError(`Hata (${r.status}): ${detail}`);
+      return;
+    }
+    $("answer").textContent = data.answer;
+    $("timing").textContent = `${((performance.now() - started) / 1000).toFixed(1)} sn`;
+    renderSources(data.sources);
+  } catch {
+    showError("Sunucuya ulaşılamadı. API çalışıyor mu?");
+  } finally {
+    submit.disabled = false;
+    submit.textContent = "Sor";
+  }
+});
+</script>
+</body>
+</html>

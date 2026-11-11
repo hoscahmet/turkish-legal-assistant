@@ -78,7 +78,7 @@ Bu yaklaşımın adı **RAG** (Retrieval-Augmented Generation): önce doğru mad
 | 6 | Küçük bir modeli QLoRA ile eğitmek, vLLM ile sunmak | ✅ |
 | 7 | LLM-as-a-judge, CI kalite kapısı | ✅ |
 | 7+ | RAGAS, Langfuse izleme | ⏳ |
-| 8 | Docker Compose, demo arayüzü | ⏳ |
+| 8 | Docker Compose, demo arayüzü | 🚧 |
 
 ## 📊 Arama sonuçları
 
@@ -195,7 +195,7 @@ uv run python -m turkish_legal_assistant.vectors   # bir kerelik: maddeleri vekt
 uv run uvicorn turkish_legal_assistant.main:app --reload
 ```
 
-http://localhost:8000/docs adresini açıp `POST /ask` ile deneyin.
+Demo sayfası için http://localhost:8000 adresini açın (soru sorun, dayanılan maddeleri okuyun); API için http://localhost:8000/docs.
 
 <details>
 <summary>Diğer komutlar</summary>
@@ -218,11 +218,32 @@ LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:
 
 </details>
 
+## 🐳 Docker
+
+API ve demo sayfası tek konteynerde çalışır. Eğitilmiş öğrenci model ise ayrı, GPU kullanan bir vLLM konteynerinde çalışır ve yalnızca `local` profiliyle başlar.
+
+```bash
+uv run python -m turkish_legal_assistant.vectors   # bir kerelik, bilgisayarda: embedding önbelleği data/'dan bağlanır
+cp .env.example .env                               # GEMINI_API_KEY girin (ya da LLM_PROVIDER=claude / local)
+docker compose up --build                          # API + demo arayüzü: http://localhost:8000
+```
+
+Yerel modelle (NVIDIA GPU + [Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/), `models/` altında eğitilmiş adaptör):
+
+```bash
+# .env: LLM_PROVIDER=local
+docker compose --profile local up --build          # önce vLLM açılır; API, vLLM hazır olana kadar bekler
+```
+
+`data/`, `models/` ve Hugging Face önbelleği kopyalanmaz, bağlanır (mount). Böylece modeller tekrar indirilmez.
+
 ## 🌐 API
 
 | Metot | Yol | Açıklama |
 |---|---|---|
+| `GET` | `/` | Demo sayfası |
 | `GET` | `/health` | Sağlık kontrolü |
+| `GET` | `/info` | `/ask`'e hangi modelin cevap verdiği |
 | `GET` | `/laws` | Kanunları listeler |
 | `GET` | `/laws/{law}/articles/{article}` | Tek madde, örn. `/laws/4857/articles/53` |
 | `POST` | `/ask` | `{"question": "Yıllık izin kaç gündür?"}` |
@@ -265,12 +286,16 @@ src/turkish_legal_assistant/
 ├── compare.py       # değerlendirme setinde model karşılaştırma
 ├── serve.py         # eğitilmiş model için vLLM sunucusu
 ├── local.py         # LLM_PROVIDER=local
-└── judge.py         # LLM-as-a-judge
+├── judge.py         # LLM-as-a-judge
+└── static/index.html # demo sayfası (düz HTML + JS, derleme adımı yok)
 data/
 ├── articles.json    # 348 madde
 ├── golden.json      # 39 test sorusu
 └── finetune/        # eğitim verisi, karşılaştırma çıktıları, hakem kararları
-tests/               # 133 pytest testi, GPU ya da API anahtarı gerekmez
+tests/               # 140 pytest testi, GPU ya da API anahtarı gerekmez
+Dockerfile           # API imajı (vLLM / eğitim paketleri yok)
+docker/vllm.Dockerfile # vLLM imajı + bitsandbytes
+compose.yaml         # api + isteğe bağlı vllm (profil: local)
 ```
 
 ---

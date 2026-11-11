@@ -115,6 +115,17 @@ def get_model() -> BaseChatModel:
     raise LLMNotConfigured(f"Unknown LLM_PROVIDER: {provider}")
 
 
+def model_label() -> str:
+    """Human-readable name of the model that answers /ask, shown in the demo UI."""
+    provider = os.environ.get("LLM_PROVIDER", "gemini")
+    labels = {
+        "gemini": GEMINI_MODEL,
+        "claude": CLAUDE_MODEL,
+        "local": "fine-tuned Qwen3 student (vLLM)",
+    }
+    return labels.get(provider, f"unknown provider: {provider}")
+
+
 def build_graph(model: BaseChatModel):
     model_with_tools = model.bind_tools(TOOLS)
     structured = model.with_structured_output(LegalAnswer)

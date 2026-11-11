@@ -17,3 +17,6 @@ data/embeddings_*
 
 # Trained LoRA adapters (rebuild with: uv run python -m turkish_legal_assistant.finetune)
 models/
+
+# Local secrets (template: .env.example)
+.env

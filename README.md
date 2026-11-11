@@ -79,7 +79,7 @@ This pattern is called **RAG** (Retrieval-Augmented Generation): first *find* th
 | 6 | Fine-tune a small model with QLoRA, serve with vLLM | ✅ |
 | 7 | LLM-as-a-judge, CI quality gate | ✅ |
 | 7+ | RAGAS, Langfuse tracing | ⏳ |
-| 8 | Docker Compose, demo UI | ⏳ |
+| 8 | Docker Compose, demo UI | 🚧 |
 
 ## 📊 Retrieval results
 
@@ -196,7 +196,7 @@ uv run python -m turkish_legal_assistant.vectors   # one-time: embed articles (d
 uv run uvicorn turkish_legal_assistant.main:app --reload
 ```
 
-Open http://localhost:8000/docs and try `POST /ask`.
+Open http://localhost:8000 for the demo page (ask a question, read the cited articles), or http://localhost:8000/docs for the API.
 
 <details>
 <summary>More commands</summary>
@@ -219,11 +219,32 @@ LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:
 
 </details>
 
+## 🐳 Docker
+
+The API and demo page run in one container; the fine-tuned student runs in a second, GPU-backed vLLM container that only starts with the `local` profile.
+
+```bash
+uv run python -m turkish_legal_assistant.vectors   # once, on the host: the embedding cache is mounted from data/
+cp .env.example .env                               # set GEMINI_API_KEY (or LLM_PROVIDER=claude / local)
+docker compose up --build                          # API + demo UI on http://localhost:8000
+```
+
+With the local model (NVIDIA GPU + [Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/), trained adapter in `models/`):
+
+```bash
+# .env: LLM_PROVIDER=local
+docker compose --profile local up --build          # vLLM starts first; the API waits until it is healthy
+```
+
+`data/`, `models/` and the Hugging Face cache are mounted, not copied, so models are not downloaded again.
+
 ## 🌐 API
 
 | Method | Path | Description |
 |---|---|---|
+| `GET` | `/` | Demo page |
 | `GET` | `/health` | Health check |
+| `GET` | `/info` | Which LLM answers `/ask` |
 | `GET` | `/laws` | List the laws |
 | `GET` | `/laws/{law}/articles/{article}` | One article, e.g. `/laws/4857/articles/53` |
 | `POST` | `/ask` | `{"question": "Yıllık izin kaç gündür?"}` |
@@ -266,12 +287,16 @@ src/turkish_legal_assistant/
 ├── compare.py       # model comparison on the eval split
 ├── serve.py         # vLLM server for the fine-tuned model
 ├── local.py         # LLM_PROVIDER=local
-└── judge.py         # LLM-as-a-judge
+├── judge.py         # LLM-as-a-judge
+└── static/index.html # demo page (plain HTML + JS, no build step)
 data/
 ├── articles.json    # 348 articles
 ├── golden.json      # 39 test questions
 └── finetune/        # training data, comparison outputs, judge verdicts
-tests/               # 133 pytest tests, no GPU or API key needed
+tests/               # 140 pytest tests, no GPU or API key needed
+Dockerfile           # API image (no vLLM / training stack)
+docker/vllm.Dockerfile # vLLM image + bitsandbytes
+compose.yaml         # api + optional vllm (profile: local)
 ```
 
 ---
