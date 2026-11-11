@@ -13,6 +13,8 @@
 ![Qdrant](https://img.shields.io/badge/Qdrant-vector_search-DC244C)
 ![BGE-M3](https://img.shields.io/badge/BGE--M3-embeddings-FFD21E?logo=huggingface&logoColor=black)
 ![MCP](https://img.shields.io/badge/MCP-server-8A2BE2)
+![vLLM](https://img.shields.io/badge/vLLM-QLoRA_student-30A2FF)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![uv](https://img.shields.io/badge/uv-package_manager-DE5FE9)
 [![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-green)](LICENSE)
 
@@ -40,6 +42,8 @@ Her cevap modelin hafızasından değil, kanun metninin kendisinden gelir. Var o
 | 🔌 **MCP sunucusu** | Aramayı Claude Desktop, Claude Code ya da herhangi bir MCP istemcisine bağlayın |
 | 🛡️ **Halüsinasyon koruması** | Kaynak olarak sadece gerçekten var olan maddeler gösterilir |
 | 🔄 **Model bağımsız** | Gemini (ücretsiz katman), Claude ya da yerelde eğitilmiş Qwen3-4B, tek ayarla değişir |
+| 🖥️ **Demo sayfası** | Tarayıcıdan sorun, dayanılan maddeleri okuyun; sayfa hangi modelin cevap verdiğini gösterir |
+| 🐳 **Docker Compose** | Tek komut API'yi ve demo sayfasını açar; GPU kullanan ikinci bir konteyner yerel modeli sunar |
 
 ## 🏗️ Nasıl çalışıyor
 
@@ -167,7 +171,7 @@ Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar i�
 
 ## 🧪 Testler
 
-**133 test, hepsi yaklaşık iki saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
+**141 test, hepsi yaklaşık iki saniyede geçiyor.** GPU, model indirme ya da API anahtarı gerekmez: LLM yerine senaryolu sahte bir model, BGE-M3 yerine elle yazılmış küçük vektörler kullanılır.
 
 | Alan | Test | Neyi doğruluyor |
 |---|:---:|---|
@@ -175,12 +179,13 @@ Temel modeller Gemini ile puanlanmadı (maliyet yüzünden durduruldu); onlar i�
 | 🔎 Arama | 11 | Dense anlama göre, sparse ortak kelimeye göre sıralıyor, hybrid ikisini birleştiriyor, kanun filtresi, reranker, Türkçe `İ`/`ı` küçültme |
 | 📊 Ölçüm | 42 | Recall@k ve MRR hesabı, 39 test sorusunun her biri gerçekten var olan bir maddeyi gösteriyor |
 | 🤖 Agent | 8 | Önce arıyor sonra cevaplıyor, olmayan madde modele bildiriliyor, araç döngüsü sınırlı, sağlayıcı ayarları |
-| 🌐 API | 13 | Bütün uç noktalar, girdi doğrulama, LLM hatalarının HTTP kodlarına çevrilmesi, Türkçe ret mesajı |
+| 🌐 API ve demo sayfası | 17 | Bütün uç noktalar, girdi doğrulama, LLM hatalarının HTTP kodlarına çevrilmesi, Türkçe ret mesajı, demo sayfası ve `/info` |
 | 🔌 MCP sunucusu | 6 | Araçlar salt okunur, kanun filtresi, hatalı girdi ve olmayan madde araç hatası olarak dönüyor |
 | 🧑‍🏫 Fine-tuning verisi | 10 | Soru ve cevap ayrıştırma, verilmeyen maddeye atıf yapan cevaplar atılıyor, üç GPU aşaması dosyalar üzerinden veri aktarıyor |
 | 🎓 Eğitim ve karşılaştırma | 13 | Kayıp yalnızca cevapta, eğitim ve değerlendirme setleri madde paylaşmıyor, tüm karşılaştırma ölçütleri, rapor |
 | 🏠 Yerel model | 9 | Thinking kapalı eğitim prompt'u ve JSON şeması, verilmeyen maddelere atıf atılıyor, araçsız agent yolu, sunucu hataları, vLLM komutu |
 | 🧑‍⚖️ Hakem ve kalite kapısı | 14 | Geçersiz cevaplar hakeme gitmiyor, karar yalnızca aynı çıktı ve aynı hakem için yeniden kullanılıyor, toplu işleme, puanlar; kullanılan model kayıtlı puanlarının üstünde kalıyor |
+| 🐳 Docker | 4 | vLLM konteyneri `serve.py` ile aynı bayrakları alıyor, API ona servis adıyla ulaşıyor, GPU servisi isteğe bağlı, API imajı bütün CUDA paketlerini dışarıda bırakıyor |
 
 ```bash
 uv run pytest
@@ -237,6 +242,13 @@ docker compose --profile local up --build          # önce vLLM açılır; API, 
 
 `data/`, `models/` ve Hugging Face önbelleği kopyalanmaz, bağlanır (mount). Böylece modeller tekrar indirilmez.
 
+| İmaj | Boyut | İçinde ne var |
+|---|:---:|---|
+| `api` | 2,6 GB | FastAPI, agent ve CPU'da çalışan BGE-M3. torch, kilit dosyasındaki sürümle CPU deposundan, CUDA paketleri olmadan kurulur (önceden 17,5 GB) |
+| `vllm` | 35 GB | Resmi vLLM imajı ve bitsandbytes; Qwen3-4B'yi 4 bit olarak adaptörle birlikte sunar |
+
+**Test edildi:** `local` profiliyle, Docker Desktop üzerinde (WSL 2, RTX 4070 Ti). İki imaj da build oluyor, vLLM GPU'da hazır duruma geçiyor, ardından API açılıyor ve demo sayfası eğitilmiş modelden cevap veriyor. İlk soru yaklaşık 20 saniye sürüyor (BGE-M3 yükleniyor), sonrakiler 3 ile 6 saniye. İki konteyner 12 GB GPU belleğinin yaklaşık 10,5 GB'ını kullanıyor. Bu yerel bir kurulumdur: bir sunucuya deploy edilmedi; sayfada giriş ya da istek sınırı yok.
+
 ## 🌐 API
 
 | Metot | Yol | Açıklama |
@@ -292,8 +304,8 @@ data/
 ├── articles.json    # 348 madde
 ├── golden.json      # 39 test sorusu
 └── finetune/        # eğitim verisi, karşılaştırma çıktıları, hakem kararları
-tests/               # 140 pytest testi, GPU ya da API anahtarı gerekmez
-Dockerfile           # API imajı (vLLM / eğitim paketleri yok)
+tests/               # 141 pytest testi, GPU ya da API anahtarı gerekmez
+Dockerfile           # API imajı (yalnızca CPU torch; vLLM / eğitim paketleri yok)
 docker/vllm.Dockerfile # vLLM imajı + bitsandbytes
 compose.yaml         # api + isteğe bağlı vllm (profil: local)
 ```
