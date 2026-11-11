@@ -1,6 +1,8 @@
 """QLoRA fine-tune of a Qwen3 student (1.7B or 4B) on the teacher's answers in data/finetune/.
 
-  uv run python -m turkish_legal_assistant.finetune [--size 1.7b|4b] [--epochs N]
+  uv run python -m turkish_legal_assistant.finetune [--size 1.7b|4b] [--epochs N] [--data 1|2]
+
+--data 2 trains on the verified set in data/finetune/v2/ (see verify.py) and saves a separate "-v2" adapter.
 
 The base model is loaded in 4 bits and frozen; only small LoRA matrices are trained, so a 1.7B or 4B model fits
 in 12 GB with room for 5k-token prompts. Loss is computed on the answer only: the student should learn to
@@ -23,10 +25,18 @@ MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
 DEFAULT_EPOCHS = 3
 
 
-def adapter_dir(size: str, epochs: int = DEFAULT_EPOCHS) -> Path:
-    """The default run keeps the plain name; other epoch counts get their own folder so nothing is overwritten."""
-    suffix = "" if epochs == DEFAULT_EPOCHS else f"-{epochs}ep"
+DATA_VERSIONS = (1, 2)  # 1: every teacher answer (finetune_data.py); 2: judge-verified and larger (verify.py)
+
+
+def adapter_dir(size: str, epochs: int = DEFAULT_EPOCHS, data: int = 1) -> Path:
+    """The default run keeps the plain name; other epoch counts and data versions get their own folder."""
+    suffix = ("" if data == 1 else f"-v{data}") + ("" if epochs == DEFAULT_EPOCHS else f"-{epochs}ep")
     return MODELS_DIR / f"qwen3-{size}{suffix}-legal-lora"
+
+
+def train_file(data: int = 1) -> Path:
+    return OUT_DIR / "train.jsonl" if data == 1 else OUT_DIR / f"v{data}" / "train.jsonl"
+
 
 # The longest example is 5,327 tokens. Truncating would cut the answer at the end, so nothing is truncated.
 MAX_LENGTH = 5376
@@ -43,8 +53,8 @@ def to_prompt_completion(example: dict, render: Callable[[Messages], str], eos: 
     return {"prompt": render(prompt), "completion": answer["content"] + eos}
 
 
-def load_split(name: str, render: Callable[[Messages], str], eos: str) -> list[dict]:
-    lines = (OUT_DIR / f"{name}.jsonl").read_text().splitlines()
+def load_split(path: Path, render: Callable[[Messages], str], eos: str) -> list[dict]:
+    lines = path.read_text().splitlines()
     return [to_prompt_completion(json.loads(line), render, eos) for line in lines if line]
 
 
@@ -52,9 +62,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--size", choices=STUDENTS, default="1.7b")
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
+    parser.add_argument("--data", type=int, choices=DATA_VERSIONS, default=1)
     args = parser.parse_args()
-    epochs = args.epochs
-    student, out_dir = STUDENTS[args.size], adapter_dir(args.size, epochs)
+    epochs, data = args.epochs, args.data
+    student, out_dir = STUDENTS[args.size], adapter_dir(args.size, epochs, data)
 
     # Heavy imports here, so tests can import this module without a GPU stack.
     import torch
@@ -70,8 +81,8 @@ def main() -> None:
             messages, tokenize=False, add_generation_prompt=True, enable_thinking=False
         )
 
-    train = Dataset.from_list(load_split("train", render, tokenizer.eos_token))
-    evaluation = Dataset.from_list(load_split("eval", render, tokenizer.eos_token))
+    train = Dataset.from_list(load_split(train_file(data), render, tokenizer.eos_token))
+    evaluation = Dataset.from_list(load_split(OUT_DIR / "eval.jsonl", render, tokenizer.eos_token))
 
     model = AutoModelForCausalLM.from_pretrained(
         student,

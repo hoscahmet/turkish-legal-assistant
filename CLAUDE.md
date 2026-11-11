@@ -80,6 +80,24 @@ Question answering system over Turkish legislation.
     tests/test_docker.py: ayıklama deseni kilitteki tüm CUDA paketlerini kapsamalı.
   - WSL interop bozulursa (`UtilAcceptVsock ... accept4 failed 110`) docker build "error getting credentials" verir (kimlik yardımcısı
     bir Windows exe'si). Kalıcı çözüm `wsl --shutdown`; geçici: boş config.json içeren bir DOCKER_CONFIG dizini (imajlar herkese açık).
+- Faz 9: öğrencinin cevap kalitesi (tamamlandı 2026-11-11, dal phase-9/student-v2)
+  - Ölçüm: 53 eval sorusu, yerel hakem, her yapılandırma 3 çalıştırma (tek çalıştırma ±5 puan oynar).
+    İlk adaptör %65 doğru; sıcaklık 0 / tekrar cezası / 3 madde fark yaratmadı; ilk adaptör + düşünme %64 (JSON'un %11'i bozuk);
+    v2 adaptör düşünmeden %65; v2 adaptör + düşünme %80 (72/83/85). Commit'li resmi çalıştırma %72 (4 çalıştırma ort. %78).
+  - verify.py: öğretmenin 460 eğitim cevabını yerel hakem puanladı, 108'i kusurlu (70 eksik, 25 çelişkili, 13 dayanaksız).
+    Kusurlulara 3 aday yazdırılır, hakemden geçen ilki alınır (91/113 onarıldı); eğitim maddelerine 683 yeni soru;
+    yalnızca tam + tüm iddiaları doğrulanan + köşeli kod/tekrar içermeyen cevaplar girer -> data/finetune/v2/train.jsonl (815).
+    Ara dosyalar data/finetune/v2/work/ (gitignored). Eval split ve soruları aynı.
+  - Sunulan model: models/qwen3-4b-v2-legal-lora (finetune --size 4b --data 2, 89 dk, eval loss 0.376/0.376/0.401),
+    local.py düşünme açık (LOCAL_THINKING=0 ile kapanır; ilk adaptörler için), vLLM `--reasoning-parser qwen3` (serve.py + compose.yaml).
+    ~1.8 sn/soru. Cevap Çinceye kayarsa local.py bir kez yeniden sorar.
+    Docker'da yeniden test edildi (2026-11-11): ilk soru ~30 sn, sonrakiler 5-10 sn (tek istek; 1.8 sn toplu çalıştırma hızı).
+    Demo sorusu "ev sahibi oğlu oturacak diye çıkarabilir mi" top_k=3 ile TBK 350'yi bulamıyor, model "maddeler cevaplamıyor" diyor (arama sorunu).
+  - Kalite kapısı artık student-4b-v2'ye bakıyor: atıf + yerel hakem zorunlu, Gemini testi kararlar gelene kadar skip.
+    Gemini ile doğrulanmadı (ücretli ya da günde 20 istek); kullanıcıdan onay almadan çalıştırma.
+  - Deney betikleri ve ham çıktılar models/experiments-2026-11-11/ altında (gitignored).
+  - WSL: çevrimdışı vLLM (LLM(...)) LoRA ile V2 runner seçiyor -> vllm_generate VLLM_USE_V2_MODEL_RUNNER=0 ayarlar;
+    kendi betiğinde `if __name__ == "__main__":` şart (vLLM alt süreç başlatır).
 
 ## Commands
 - Install: `uv sync`
@@ -91,7 +109,8 @@ Question answering system over Turkish legislation.
 - Run: `uv run uvicorn turkish_legal_assistant.main:app --reload`
 - Fine-tuning data (GPU): `uv run python -m turkish_legal_assistant.finetune_data questions|retrieve|answers` (run in order; `--limit N` for a trial; ~25 min total)
 - QLoRA training (GPU): `uv run python -m turkish_legal_assistant.finetune --size 1.7b|4b` (1.7B ~25 min, writes `models/qwen3-<size>-legal-lora/`)
-- Serve the student (GPU): `uv run python -m turkish_legal_assistant.serve --size 4b`, then `LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app` (`LOCAL_LLM_URL` overrides `http://localhost:8001/v1`)
-- Compare models (GPU, one per process): `uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|teacher|gemini`, then `... compare report` (outputs in `data/finetune/compare/`)
+- Verified training set (GPU, one stage per process): `uv run python -m turkish_legal_assistant.verify questions|retrieve|answers|judge|repair|judge|build` (writes `data/finetune/v2/train.jsonl`), then `... finetune --size 4b --data 2`
+- Serve the student (GPU): `uv run python -m turkish_legal_assistant.serve --size 4b` (the `--data 2` adapter, thinking on), then `LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app` (`LOCAL_LLM_URL` overrides `http://localhost:8001/v1`)
+- Compare models (GPU, one per process): `uv run python -m turkish_legal_assistant.compare base|student|base-4b|student-4b|student-4b-v2|teacher|gemini`, then `... compare report` (outputs in `data/finetune/compare/`)
 - Judge answers (LLM-as-a-judge): `uv run python -m turkish_legal_assistant.judge [model ...] --judge local|gemini`, then `... judge report --judge gemini` (local = Qwen3-8B on the GPU, free; gemini needs a paid key)
 - Test: `uv run pytest`

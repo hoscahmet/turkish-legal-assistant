@@ -3,6 +3,7 @@
   uv run python -m turkish_legal_assistant.serve [--size 1.7b|4b] [--port 8001]
 
 The base model is loaded once and the LoRA adapter is applied on top under the name "legal" (no merging).
+4B serves the adapter trained on the verified set (finetune --size 4b --data 2), which local.py runs with thinking on.
 4B in bf16 (8 GB) leaves too little KV cache on a 12 GB GPU, so it is quantized to 4 bits on load:
 the same NF4 format it was trained against with QLoRA.
 Run the API with EMBED_DEVICE=cpu so BGE-M3 does not compete with vLLM for GPU memory.
@@ -20,10 +21,15 @@ from .local import SERVED_NAME
 DEFAULT_PORT = 8001  # 8000 is uvicorn's default
 
 
+SERVED_DATA = {"1.7b": 1, "4b": 2}  # the training-data version of the adapter served for each size
+
+
 def serve_command(size: str, port: int = DEFAULT_PORT) -> list[str]:
-    adapter = adapter_dir(size)
+    data = SERVED_DATA[size]
+    adapter = adapter_dir(size, data=data)
     if not adapter.exists():
-        raise SystemExit(f"{adapter} missing: train it with `python -m turkish_legal_assistant.finetune --size {size}`")
+        train = f"python -m turkish_legal_assistant.finetune --size {size} --data {data}"
+        raise SystemExit(f"{adapter} missing: train it with `{train}`")
     command = [
         str(Path(sys.executable).parent / "vllm"),  # the vllm CLI installed in this virtualenv
         "serve",
@@ -34,6 +40,8 @@ def serve_command(size: str, port: int = DEFAULT_PORT) -> list[str]:
         "--enable-lora",
         "--max-lora-rank", "16",
         "--lora-modules", f"{SERVED_NAME}={adapter}",
+        # Splits <think>...</think> from the reply, so the JSON schema applies only to the answer.
+        "--reasoning-parser", "qwen3",
     ]
     if size == "4b":
         command += ["--quantization", "bitsandbytes"]

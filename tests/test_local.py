@@ -28,22 +28,43 @@ class FakeServer:
         return self.response
 
 
-def test_answer_sends_the_training_prompt_with_thinking_off_and_a_schema():
+def test_answer_sends_the_training_prompt_with_thinking_on_and_a_schema():
     server = FakeServer(reply(("4857", "53")))
     result = local.answer("Kaç gün iznim var?", [IZIN, SURE], post=server)
 
     url, payload = server.requests[0]
     assert url.endswith("/chat/completions") and payload["model"] == "legal"
-    assert payload["chat_template_kwargs"] == {"enable_thinking": False}
+    assert payload["chat_template_kwargs"] == {"enable_thinking": True}
+    assert payload["max_tokens"] == 3072  # room for the thinking before the answer
     assert payload["response_format"]["json_schema"]["name"] == "LegalAnswer"
     user = payload["messages"][-1]["content"]
     assert "[4857/53]" in user and "[4857/54]" in user and user.endswith("Soru: Kaç gün iznim var?")
     assert result.answer.startswith("İş Kanunu madde 53") and result.sources == [IZIN]
 
 
+def test_thinking_can_be_turned_off_for_the_first_adapters(monkeypatch):
+    monkeypatch.setattr(local, "THINKING", False)
+    payload = local.chat_payload([])
+    assert payload["chat_template_kwargs"] == {"enable_thinking": False}
+    assert (payload["temperature"], payload["max_tokens"]) == (0.7, 1024)
+
+
 def test_answer_drops_citations_it_was_not_given_and_duplicates():
     server = FakeServer(reply(("4857", "54"), ("4857", "999"), ("4857", "54")))
     assert local.answer("Soru?", [IZIN, SURE], post=server).sources == [SURE]
+
+
+def test_answer_asks_again_once_when_the_reply_drifts_into_chinese():
+    replies = [reply(("4857", "53"), answer="İşveren sorumluluk承担 eder."), reply(("4857", "53"))]
+    requests = []
+
+    def server(url, payload):
+        requests.append(payload)
+        return replies[len(requests) - 1]
+
+    result = local.answer("Kaç gün iznim var?", [IZIN], post=server)
+    assert len(requests) == 2 and requests[0] == requests[1]
+    assert result.answer.startswith("İş Kanunu madde 53")
 
 
 def test_answer_rejects_invalid_json():
@@ -87,15 +108,18 @@ def test_api_maps_local_model_errors(monkeypatch, error, status):
 
 
 def test_serve_command(tmp_path, monkeypatch):
-    monkeypatch.setattr(serve, "adapter_dir", lambda size: tmp_path)
+    seen = []
+    monkeypatch.setattr(serve, "adapter_dir", lambda size, data: seen.append((size, data)) or tmp_path)
     command = serve.serve_command("4b", port=9000)
     assert command[1:3] == ["serve", "Qwen/Qwen3-4B"]
     assert f"legal={tmp_path}" in command and "9000" in command
+    assert seen == [("4b", 2)]  # the adapter trained on the verified set
+    assert command[command.index("--reasoning-parser") + 1] == "qwen3"
     assert command[-2:] == ["--quantization", "bitsandbytes"]
     assert "--quantization" not in serve.serve_command("1.7b")
 
 
 def test_serve_command_needs_a_trained_adapter(tmp_path, monkeypatch):
-    monkeypatch.setattr(serve, "adapter_dir", lambda size: tmp_path / "missing")
+    monkeypatch.setattr(serve, "adapter_dir", lambda size, data: tmp_path / "missing")
     with pytest.raises(SystemExit):
         serve.serve_command("4b")
