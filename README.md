@@ -16,6 +16,7 @@
 ![vLLM](https://img.shields.io/badge/vLLM-QLoRA_student-30A2FF)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![uv](https://img.shields.io/badge/uv-package_manager-DE5FE9)
+[![CI](https://github.com/hoscahmet/turkish-legal-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/hoscahmet/turkish-legal-assistant/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 </div>
@@ -24,14 +25,17 @@
 
 ## 💬 Example
 
-> **Question:** *Ev sahibi oğlu oturacak diye beni evden çıkarabilir mi?*
-> (Can my landlord evict me because his son will move in?)
->
-> **Answer:** Yes, but only through a court case, and only if his son genuinely needs to live there. If he evicts you this way, he cannot rent the flat to anyone else for 3 years without a valid reason.
->
-> 📎 **Sources:** Turkish Code of Obligations, art. 350 · art. 355
+<p align="center"><img src="docs/demo.png" alt="The demo page answering a question about probation periods, with the cited article below" width="640"></p>
 
-Every answer comes from the law text itself, not from the model's memory. Citations to articles that do not exist are removed automatically.
+> **Question:** *Deneme süresi en fazla ne kadar olabilir?*
+> (How long can a probation period be at most?)
+>
+> **Answer:** *Deneme süresi en çok iki ay olabilir. Toplu iş sözleşmeleriyle dört aya kadar uzatılabilir.*
+> (At most two months. Collective agreements can extend it to four.)
+>
+> 📎 **Source:** Labour Law, art. 15
+
+This answer was written by the fine-tuned local model, on one consumer GPU. Every answer comes from the law text itself, not from the model's memory. Citations to articles that do not exist are removed automatically.
 
 ## ✨ What it does
 
@@ -45,6 +49,15 @@ Every answer comes from the law text itself, not from the model's memory. Citati
 | 🔄 **Any LLM** | Gemini (free tier), Claude, or a fine-tuned local Qwen3-4B that reasons before it answers, switched with one setting |
 | 🖥️ **Demo page** | Ask in the browser and read the cited articles; the page shows which model answered |
 | 🐳 **Docker Compose** | One command starts the API and demo page; a second, GPU-backed container serves the local model |
+
+## 📌 Results at a glance
+
+- **Search:** dense BGE-M3 retrieval reaches MRR 0.77 on 39 everyday questions; keyword search gets 0.30.
+- **Local model:** a fine-tuned Qwen3-4B on a 12 GB GPU cites only the articles it was given in 98% of answers, and a local judge finds 72 to 85% of its answers correct, up from 65% after its training data was verified and it was allowed to think.
+- **Honest limits:** by an independent Gemini judge the first student was 42% correct against 83% for Gemini Flash-Lite, and the improved student has not been judged by Gemini yet. Search still misses the right article for some questions.
+- **Engineering:** 153 tests with no GPU or API key, a CI gate on the committed model scores, one-command Docker Compose.
+
+Details and every table are further down.
 
 ## 🏗️ How it works
 
@@ -70,21 +83,97 @@ flowchart LR
 
 This pattern is called **RAG** (Retrieval-Augmented Generation): first *find* the right articles, then let the model *write* the answer from them only.
 
-## 🗺️ Roadmap
+## 🚀 Quick start
 
-| Phase | What | Status |
-|:---:|---|:---:|
-| 0 | FastAPI skeleton, Pydantic models | ✅ |
-| 1 | Scrape mevzuat.gov.tr, split into articles with metadata | ✅ |
-| 2 | LLM with tool calling and structured output | ✅ |
-| 3 | BGE-M3 embeddings, Qdrant, hybrid search, reranker, evaluation | ✅ |
-| 4 | LangGraph agent | ✅ |
-| 5 | MCP server | ✅ |
-| 6 | Fine-tune a small model with QLoRA, serve with vLLM | ✅ |
-| 7 | LLM-as-a-judge, CI quality gate | ✅ |
-| 7+ | RAGAS, Langfuse tracing | ⏳ |
-| 8 | Docker Compose, demo UI | ✅ |
-| 9 | Judge-verified training data, student answers with thinking | ✅ |
+```bash
+uv sync
+export GEMINI_API_KEY=...   # free key from aistudio.google.com
+uv run python -m turkish_legal_assistant.vectors   # one-time: embed articles (downloads BGE-M3, ~2.3 GB)
+uv run uvicorn turkish_legal_assistant.main:app --reload
+```
+
+Open http://localhost:8000 for the demo page (ask a question, read the cited articles), or http://localhost:8000/docs for the API.
+
+<details>
+<summary>More commands</summary>
+
+```bash
+export LLM_PROVIDER=claude ANTHROPIC_API_KEY=...   # use Claude instead of Gemini
+uv run python -m turkish_legal_assistant.ingest     # re-download and re-split the laws
+uv run python -m turkish_legal_assistant.evaluate   # score the retrievers
+uv run pytest                                       # tests (no model or API needed)
+uv run python -m turkish_legal_assistant.judge report --judge gemini   # answer-quality scores
+```
+
+Local model (NVIDIA GPU, 12 GB):
+
+```bash
+uv run python -m turkish_legal_assistant.finetune --size 4b --data 2   # train the served adapter on the verified set (~90 min)
+uv run python -m turkish_legal_assistant.serve --size 4b         # vLLM server on port 8001
+LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app
+```
+
+</details>
+
+## 🐳 Docker
+
+The API and demo page run in one container; the fine-tuned student runs in a second, GPU-backed vLLM container that only starts with the `local` profile.
+
+```bash
+uv run python -m turkish_legal_assistant.vectors   # once, on the host: the embedding cache is mounted from data/
+cp .env.example .env                               # set GEMINI_API_KEY (or LLM_PROVIDER=claude / local)
+docker compose up --build                          # API + demo UI on http://localhost:8000
+```
+
+With the local model (NVIDIA GPU + [Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/), trained adapter in `models/`):
+
+```bash
+# .env: LLM_PROVIDER=local
+docker compose --profile local up --build          # vLLM starts first; the API waits until it is healthy
+```
+
+`data/`, `models/` and the Hugging Face cache are mounted, not copied, so models are not downloaded again.
+
+| Image | Size | What is inside |
+|---|:---:|---|
+| `api` | 2.6 GB | FastAPI, the agent and BGE-M3 on the CPU. torch is installed from the CPU index at the locked version, without its CUDA wheels (17.5 GB before) |
+| `vllm` | 35 GB | The official vLLM image plus bitsandbytes, serving Qwen3-4B in 4 bits with the adapter |
+
+**Tested** with the `local` profile on Docker Desktop (WSL 2, RTX 4070 Ti): both images build, vLLM turns healthy on the GPU, then the API starts and the demo page answers from the fine-tuned model. The first question takes about 20 seconds (BGE-M3 loads), later ones 5 to 10 (the model thinks before it answers). The two containers use about 10.5 GB of the 12 GB of GPU memory. This is a local setup: nothing is deployed to a server, and the page has no login or rate limit.
+
+## 🌐 API
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/` | Demo page |
+| `GET` | `/health` | Health check |
+| `GET` | `/info` | Which LLM answers `/ask` |
+| `GET` | `/laws` | List the laws |
+| `GET` | `/laws/{law}/articles/{article}` | One article, e.g. `/laws/4857/articles/53` |
+| `POST` | `/ask` | `{"question": "Yıllık izin kaç gündür?"}` |
+
+## 🔌 MCP server
+
+Gives any MCP client three read-only tools: `search_articles`, `get_article`, `list_laws`. The client's own model does the reasoning, so no API key is needed.
+
+**Claude Code**
+
+```bash
+claude mcp add turkish-legal -- uv run --directory /path/to/turkish-legal-assistant python -m turkish_legal_assistant.mcp_server
+```
+
+**Claude Desktop** (`claude_desktop_config.json`)
+
+```json
+{
+  "mcpServers": {
+    "turkish-legal": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/turkish-legal-assistant", "python", "-m", "turkish_legal_assistant.mcp_server"]
+    }
+  }
+}
+```
 
 ## 📊 Retrieval results
 
@@ -219,97 +308,21 @@ The first 4B student got about 42% of its answers right by the Gemini judge. Thr
 uv run pytest
 ```
 
-## 🚀 Quick start
+## 🗺️ Roadmap
 
-```bash
-uv sync
-export GEMINI_API_KEY=...   # free key from aistudio.google.com
-uv run python -m turkish_legal_assistant.vectors   # one-time: embed articles (downloads BGE-M3, ~2.3 GB)
-uv run uvicorn turkish_legal_assistant.main:app --reload
-```
-
-Open http://localhost:8000 for the demo page (ask a question, read the cited articles), or http://localhost:8000/docs for the API.
-
-<details>
-<summary>More commands</summary>
-
-```bash
-export LLM_PROVIDER=claude ANTHROPIC_API_KEY=...   # use Claude instead of Gemini
-uv run python -m turkish_legal_assistant.ingest     # re-download and re-split the laws
-uv run python -m turkish_legal_assistant.evaluate   # score the retrievers
-uv run pytest                                       # tests (no model or API needed)
-uv run python -m turkish_legal_assistant.judge report --judge gemini   # answer-quality scores
-```
-
-Local model (NVIDIA GPU, 12 GB):
-
-```bash
-uv run python -m turkish_legal_assistant.finetune --size 4b --data 2   # train the served adapter on the verified set (~90 min)
-uv run python -m turkish_legal_assistant.serve --size 4b         # vLLM server on port 8001
-LLM_PROVIDER=local EMBED_DEVICE=cpu uv run uvicorn turkish_legal_assistant.main:app
-```
-
-</details>
-
-## 🐳 Docker
-
-The API and demo page run in one container; the fine-tuned student runs in a second, GPU-backed vLLM container that only starts with the `local` profile.
-
-```bash
-uv run python -m turkish_legal_assistant.vectors   # once, on the host: the embedding cache is mounted from data/
-cp .env.example .env                               # set GEMINI_API_KEY (or LLM_PROVIDER=claude / local)
-docker compose up --build                          # API + demo UI on http://localhost:8000
-```
-
-With the local model (NVIDIA GPU + [Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/), trained adapter in `models/`):
-
-```bash
-# .env: LLM_PROVIDER=local
-docker compose --profile local up --build          # vLLM starts first; the API waits until it is healthy
-```
-
-`data/`, `models/` and the Hugging Face cache are mounted, not copied, so models are not downloaded again.
-
-| Image | Size | What is inside |
-|---|:---:|---|
-| `api` | 2.6 GB | FastAPI, the agent and BGE-M3 on the CPU. torch is installed from the CPU index at the locked version, without its CUDA wheels (17.5 GB before) |
-| `vllm` | 35 GB | The official vLLM image plus bitsandbytes, serving Qwen3-4B in 4 bits with the adapter |
-
-**Tested** with the `local` profile on Docker Desktop (WSL 2, RTX 4070 Ti): both images build, vLLM turns healthy on the GPU, then the API starts and the demo page answers from the fine-tuned model. The first question takes about 20 seconds (BGE-M3 loads), later ones 5 to 10 (the model thinks before it answers). The two containers use about 10.5 GB of the 12 GB of GPU memory. This is a local setup: nothing is deployed to a server, and the page has no login or rate limit.
-
-## 🌐 API
-
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/` | Demo page |
-| `GET` | `/health` | Health check |
-| `GET` | `/info` | Which LLM answers `/ask` |
-| `GET` | `/laws` | List the laws |
-| `GET` | `/laws/{law}/articles/{article}` | One article, e.g. `/laws/4857/articles/53` |
-| `POST` | `/ask` | `{"question": "Yıllık izin kaç gündür?"}` |
-
-## 🔌 MCP server
-
-Gives any MCP client three read-only tools: `search_articles`, `get_article`, `list_laws`. The client's own model does the reasoning, so no API key is needed.
-
-**Claude Code**
-
-```bash
-claude mcp add turkish-legal -- uv run --directory /path/to/turkish-legal-assistant python -m turkish_legal_assistant.mcp_server
-```
-
-**Claude Desktop** (`claude_desktop_config.json`)
-
-```json
-{
-  "mcpServers": {
-    "turkish-legal": {
-      "command": "uv",
-      "args": ["run", "--directory", "/path/to/turkish-legal-assistant", "python", "-m", "turkish_legal_assistant.mcp_server"]
-    }
-  }
-}
-```
+| Phase | What | Status |
+|:---:|---|:---:|
+| 0 | FastAPI skeleton, Pydantic models | ✅ |
+| 1 | Scrape mevzuat.gov.tr, split into articles with metadata | ✅ |
+| 2 | LLM with tool calling and structured output | ✅ |
+| 3 | BGE-M3 embeddings, Qdrant, hybrid search, reranker, evaluation | ✅ |
+| 4 | LangGraph agent | ✅ |
+| 5 | MCP server | ✅ |
+| 6 | Fine-tune a small model with QLoRA, serve with vLLM | ✅ |
+| 7 | LLM-as-a-judge, CI quality gate | ✅ |
+| 7+ | RAGAS, Langfuse tracing | ⏳ |
+| 8 | Docker Compose, demo UI | ✅ |
+| 9 | Judge-verified training data, student answers with thinking | ✅ |
 
 ## 📁 Project structure
 
