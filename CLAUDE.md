@@ -63,15 +63,17 @@ Question answering system over Turkish legislation.
   - CI: .github/workflows/ci.yml (uv sync --no-group finetune, pytest). tests/test_quality.py: student-4b atıf ve
     Gemini hakem puanları eşiklerin altına düşerse ya da çıktılar yeniden puanlanmadan değişirse başarısız.
   - Push yapılamadı (WSL'de git kimlik bilgisi yok); main origin'in önünde.
-- Faz 8: Docker Compose, demo arayüz, README (dal phase-8/demo; Docker henüz test edilmedi)
+- Faz 8: Docker Compose, demo arayüz, README (main'e merge edildi 2026-11-11)
   - Demo arayüz: src/turkish_legal_assistant/static/index.html (düz HTML+JS, derleme yok), FastAPI `/` adresinden sunar.
     `/info` hangi modelin cevap verdiğini döner (agent.model_label). Yeni bağımlılık yok (Streamlit/Gradio bilinçli olarak eklenmedi).
   - Uçtan uca denendi (2026-11-11, local 4B): sayfa + /ask çalışıyor, ~2-3 sn/soru. vLLM kapalıyken /ask 503 + açıklama.
   - Docker: Dockerfile (api, --no-group finetune, EMBED_DEVICE=cpu), docker/vllm.Dockerfile (vllm-openai v0.22.1 + bitsandbytes),
     compose.yaml (vllm servisi `--profile local` ile açılır; data/, models/, HF önbelleği mount edilir). .env.example.
     tests/test_docker.py: compose'daki vLLM bayrakları serve.py'deki serve_command ile aynı kalmalı.
-  - Bu WSL'de docker yok: Docker Desktop > Settings > Resources > WSL integration açılmalı. Test edilmeyen riskler:
-    vllm imajının entrypoint'i (`vllm serve` + model pozisyonel), API imajının boyutu (flagembedding CUDA'lı torch çeker).
+  - Docker testi (2026-11-11, Docker Desktop WSL entegrasyonu, `--profile local`): iki imaj build oldu, vLLM GPU'yu gördü ve
+    healthy oldu, API ardından açıldı; /, /info, /health, /laws, /ask çalışıyor (ilk soru ~21 sn, sonrakiler ~3 sn).
+    İmajlar büyük: api 17.5 GB (flagembedding CUDA'lı torch çekiyor), vllm 35.2 GB. Konteynerler açıkken GPU ~10.5/12.3 GB dolu.
+    Profilsiz Gemini yolu (`docker compose up`) Docker'da denenmedi (ücretli API).
 
 ## Commands
 - Install: `uv sync`

@@ -79,7 +79,7 @@ This pattern is called **RAG** (Retrieval-Augmented Generation): first *find* th
 | 6 | Fine-tune a small model with QLoRA, serve with vLLM | ✅ |
 | 7 | LLM-as-a-judge, CI quality gate | ✅ |
 | 7+ | RAGAS, Langfuse tracing | ⏳ |
-| 8 | Docker Compose, demo UI | 🚧 |
+| 8 | Docker Compose, demo UI | ✅ |
 
 ## 📊 Retrieval results
 

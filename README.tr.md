@@ -78,7 +78,7 @@ Bu yaklaşımın adı **RAG** (Retrieval-Augmented Generation): önce doğru mad
 | 6 | Küçük bir modeli QLoRA ile eğitmek, vLLM ile sunmak | ✅ |
 | 7 | LLM-as-a-judge, CI kalite kapısı | ✅ |
 | 7+ | RAGAS, Langfuse izleme | ⏳ |
-| 8 | Docker Compose, demo arayüzü | 🚧 |
+| 8 | Docker Compose, demo arayüzü | ✅ |
 
 ## 📊 Arama sonuçları
 
