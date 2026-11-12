@@ -23,3 +23,6 @@ models/
 
 # Local secrets (template: .env.example)
 .env
+
+# Social-media animation (videos and the files that render them), not part of the repo
+docs/animation/
